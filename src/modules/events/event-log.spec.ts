@@ -80,8 +80,10 @@ describe('EventLog, recording a refusal rather than throwing it away', () => {
     );
 
     assert.equal(record.outcome, 'REFUSED');
-    assert.equal(record.refusal?.code, REFUSAL_CODE.SETTLEMENT_WITHOUT_AUTHORIZATION);
-    assert.equal(record.refusal?.detail, 'Auth-Z was never authorized.');
+    assert.deepEqual(record.refusal, {
+      code: REFUSAL_CODE.SETTLEMENT_WITHOUT_AUTHORIZATION,
+      detail: 'Auth-Z was never authorized.',
+    });
   });
 
   it('leaves an accepted record with no refusal attached', () => {
