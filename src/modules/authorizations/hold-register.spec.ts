@@ -122,8 +122,9 @@ describe('HoldRegister, a declined authorization', () => {
     register.decline('Auth-B', ACCOUNT, 9000n, 5, 'available would fall to (245.00)');
 
     const found = register.find('Auth-B');
-    assert.equal(found?.state, AUTHORIZATION_STATE.DECLINED);
-    assert.equal(found?.declineReason, 'available would fall to (245.00)');
+    assert.ok(found !== undefined);
+    assert.equal(found.state, AUTHORIZATION_STATE.DECLINED);
+    assert.equal(found.declineReason, 'available would fall to (245.00)');
   });
 
   it('is distinguishable from an authorization that was never requested', () => {
