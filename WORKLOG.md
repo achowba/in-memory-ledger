@@ -80,4 +80,13 @@ endings "none of which this model has". Two of the six were already handled here
 them wrongly. Corrected to four endings plus one mirror case, with the duplicate removed
 rather than left in both lists.
 
+**18:50** Restructured the README so the contents list is the first section rather than the
+third, and expanded it from nine flat links to every heading with a one line gloss on each.
+
+Twenty five anchors written by hand is where a contents list rots. A comma in a heading is the
+usual reason: GitHub drops punctuation from a slug, so `### Three fees, and the one that got
+away` becomes `#three-fees-and-the-one-that-got-away`, and an anchor keeping the comma renders
+as a normal link that goes nowhere. Generated the anchors from the headings rather than typing
+them.
+
 ## 2026-09-05
