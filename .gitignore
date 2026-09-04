@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+*.tsbuildinfo
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor and OS
+.DS_Store
+.idea/
+*.swp
+
+# Local agent instructions and personal convention addenda
+CLAUDE.local.md
+.claude/settings.local.json
+*.local.convention.md
+
+# Workflow output and source documents, see .agents/conventions/artifacts.convention.md
+artifacts/
+.artifacts/
+.remember/

@@ -1,0 +1,27 @@
+{
+  "name": "in-memory-ledger",
+  "version": "1.0.0",
+  "private": true,
+  "description": "An in-memory, append-only, value-dated account ledger core. No web layer, no persistence, no database.",
+  "license": "UNLICENSED",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "npm run build && node dist/src/main.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "npm run build && node --test \"dist/**/*spec.js\"",
+    "test:green": "npm run build && node --test --test-skip-pattern=\"known gap\" \"dist/**/*spec.js\"",
+    "lint": "prettier --check . && eslint .",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "eslint": "10.9.1",
+    "eslint-plugin-tsdoc": "0.5.2",
+    "prettier": "3.9.6",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.69.0"
+  }
+}
