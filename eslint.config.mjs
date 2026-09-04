@@ -19,7 +19,24 @@ const typedRules = {
   '@typescript-eslint/explicit-module-boundary-types': 'error',
 
   // A promise nobody awaits is a bug that hides until production.
-  '@typescript-eslint/no-floating-promises': 'error',
+  //
+  // node:test is the one honest exception. describe() and it() return a promise that the
+  // runner itself awaits, and a caller that awaits it as well changes the reported
+  // ordering. Listing them as known safe keeps the rule on everywhere else, which is the
+  // point: turning the rule off for spec files would hide a genuinely floating promise
+  // inside a test.
+  '@typescript-eslint/no-floating-promises': [
+    'error',
+    {
+      allowForKnownSafeCalls: [
+        {
+          from: 'package',
+          package: 'node:test',
+          name: ['describe', 'it', 'test', 'before', 'after', 'beforeEach', 'afterEach'],
+        },
+      ],
+    },
+  ],
 
   // Named exports only, so an import stays greppable and a rename stays honest.
   'no-restricted-syntax': [
