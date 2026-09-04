@@ -127,27 +127,45 @@ The runners up, in order: a TTL on the hold register, hash chaining the log for 
 
 Being precise about this first, because the list is short and its shortness is the finding.
 
-An authorization in [`authorization.types.ts`](src/modules/authorizations/authorization.types.ts) has three states. It ends as `SETTLED`, it ends as `DECLINED`, or it does not end.
+An authorization in [`authorization.types.ts`](src/modules/authorizations/authorization.types.ts) has three states: approved, settled, declined. Reading the paths in [`replay-engine.ts`](src/modules/replay/replay-engine.ts) rather than the state list, there are **three** ways one ends other than a settlement for the amount held, and a fourth path where it never ends at all.
 
-So there is exactly **one** way an authorization here ends other than a matching settlement, plus one way it fails to end at all.
+**1. Declined at creation.** Applying the hold would take the available balance below zero, so no hold is created and the state is terminal.
 
-**Declined at creation.** The available balance would fall below zero, so no hold is created and the state is terminal. The scenario is ordinary: a customer at a point of sale with insufficient funds. The behaviour this model mandates, and implements, is that the decline is recorded rather than discarded, with the balances that produced it, so the refusal is visible in the day's output and a later settlement can tell a refused authorization apart from one that was never requested.
+*Scenario:* the ordinary one. A customer at a point of sale with insufficient funds, or with funds already committed to an earlier hold.
 
-**Open forever.** An approved authorization that is never presented holds funds indefinitely. This is a defect, not a state. It does not surface in this replay only because the single unsettled authorization was declined, so no hold survives the window. On a longer stream it would appear as a hold that never releases.
+*Mandated behaviour, and implemented:* record the decline rather than discard it, with the balances that produced it. Two reasons. The refusal is an output the operator needs to see, not an error to swallow. And storing it lets a later settlement distinguish an authorization that was refused from one that was never requested, which are different situations deserving different handling even though neither recurs here.
+
+**2. Refused at creation as a duplicate identifier.** A second authorization arriving under an identifier already in the register is refused, and never becomes an authorization at all.
+
+*Scenario:* a retry. The acquirer did not receive the response and sends the request again, or a message is redelivered by a queue with at least once semantics.
+
+*Mandated behaviour, and implemented:* refuse, and leave the existing authorization untouched. The alternative, treating the retry as a new request, creates a second hold for the same purchase and locks twice the money. Note what this is not: it is refusal, not idempotency. A genuine idempotent path would return the original outcome so the retry succeeds. This model has no idempotency, which is listed in section 4.
+
+**3. Settled for an amount other than the amount held.** The presentment differs from the reservation. The authorization terminates and the whole hold is released, whatever the difference.
+
+*Scenario:* routine, and it is what happens in this replay. The final amount is rarely the estimate: a restaurant bill before a tip, a fuel pump pre authorization, a basket that changes before capture.
+
+*Mandated behaviour:* this is the one place the implemented behaviour is only conditionally right. Releasing the entire hold is correct for a single presentment product and wrong for a multi presentment one, where a hotel folio or a split shipment will present again and the residual should stay held until a final authorization or an expiry. I would mandate the release policy per product rather than globally, and I would treat a global choice as a defect regardless of which way it is set.
+
+**4. It never ends.** An approved authorization that is never presented holds funds indefinitely. There is no expiry, no acquirer void, and no sweep.
+
+*Scenario:* the merchant abandons the sale, the terminal drops the connection after approval, or a pre authorization is simply never captured.
+
+*Mandated behaviour:* this path should not exist, so what I would mandate is the expiry described below. It is worth being clear why the gap is invisible here: the only authorization left unsettled in this replay was declined, so no hold survives the window and nothing looks wrong. On a longer stream it appears as a hold that never releases against money a customer cannot spend and cannot get an explanation for.
+
+One guard is worth naming because it is what keeps a terminated authorization terminated. A settlement arriving against an already settled authorization is refused rather than posted, so a duplicate presentment cannot debit the account twice.
 
 ### What production must mandate
 
-Six further endings, none of which this model has.
+Four endings this model has no path for at all, plus one case that is their mirror image.
 
 **Expiry.** The merchant never presents. A restaurant pre authorizes and the table walks out, or an online order is abandoned after authorization. Mandate a TTL per product, not one global value: card present retail is commonly around seven days, hotel and vehicle rental thirty, and fuel at an automated pump much shorter. On expiry, append a release event and free the hold. Never mutate the authorization in place. A settlement arriving after expiry is then a force post and goes down that path rather than silently reviving a dead hold.
 
 **Acquirer initiated void or reversal.** The merchant cancels at the terminal, or an estimated authorization is replaced by a final one. Mandate immediate release, full or partial, on receipt of the reversal message, and no further settlement against that identifier. This is the cheapest hold to release and the one customers notice most when it is not, because they are standing at the counter.
 
-**Residual after a partial settlement.** The presented amount is less than the held amount. This implementation releases the whole hold, which is correct for a single presentment product and wrong for a multi presentment one. A hotel folio or a split shipment will present again. Mandate the policy per product rather than globally: release in full where only one presentment is possible, hold the residual until a final authorization or expiry where more than one is.
-
 **Over settlement beyond tolerance.** The presented amount exceeds the hold. Restaurant tips, fuel dispensed after the pre authorization, and currency movement on a foreign transaction all do this legitimately. Mandate a tolerance per merchant category, commonly around fifteen to twenty percent for restaurants and fuel and zero for most others. Within tolerance, post and release. Outside it, post anyway, because the issuer is generally obliged to honour the presentment, and raise an exception so the excess is investigated rather than absorbed.
 
-**Settlement with no authorization at all.** Offline and floor limit transactions, chip fallback, stand in processing during an issuer outage, and late presentment after expiry. This implementation refuses these, because the brief requires it, and no real issuer could. Mandate posting to a suspense account with an exception raised, then pursue chargeback rights if the authorization is genuinely absent. Never silently decline: the acquirer is unpaid and the customer has already taken the goods.
+**Settlement with no authorization at all.** Not an ending, because there is no authorization to end. Included because it is the mirror of every ending above, and because this model does have a path for it and takes the wrong one. Offline and floor limit transactions, chip fallback, stand in processing during an issuer outage, and late presentment after expiry. This implementation refuses these, because the brief requires it, and no real issuer could. Mandate posting to a suspense account with an exception raised, then pursue chargeback rights if the authorization is genuinely absent. Never silently decline: the acquirer is unpaid and the customer has already taken the goods.
 
 **Account state change between authorization and settlement.** A freeze, a sanctions match, a court order, a closure, or the death of the customer. Mandate that the existing hold survives, because those funds are already committed and releasing them into a frozen balance helps nobody, while new authorizations are declined. A settlement against a frozen account still posts, and the freeze is enforced at the balance level rather than by dropping the posting, so the bank does not create an unreconciled difference with the scheme. Escalate to compliance rather than resolving in the ledger.
 
