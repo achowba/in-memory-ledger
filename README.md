@@ -8,43 +8,30 @@ npm ci && npm start
 
 ---
 
-## Contents
+## Table of contents
 
-**[Where to look first](#where-to-look-first).** Read this if you read nothing else. The two clocks, the three files that matter, and why the suite reports a failure.
-
-- [The one thing to understand before anything else](#the-one-thing-to-understand-before-anything-else). Why one day has three different correct closing balances.
-- [The three files worth reading](#the-three-files-worth-reading). Roughly thirty lines that decide everything downstream.
-- [The three decisions most worth disagreeing with](#the-three-decisions-most-worth-disagreeing-with). Where a reasonable person would go the other way.
-- [The suite reports one failure, on purpose](#the-suite-reports-one-failure-on-purpose). Required by the brief, and annotated in place.
-
-**[Quickstart](#quickstart).** Node 22 and two commands. One devDependency toolchain, nothing at runtime.
-
-**[What the replay produces](#what-the-replay-produces).** The numbers, and where each is derived and asserted.
-
-- [Closing balance, as reported at each day close](#closing-balance-as-reported-at-each-day-close). Six days, two accounts, and what moved each day.
-- [The headline figures](#the-headline-figures). The seven numbers a reader is checking for.
-- [Three fees, and the one that got away](#three-fees-and-the-one-that-got-away). Why three and not one, and why Day 3 escapes by 5.00.
-
-**[The eight acceptance criteria](#the-eight-acceptance-criteria).** Four refused, one refused as a criterion rather than as a statement, three accepted. Each refusal is executed as a test, not just argued.
-
-**[How to read the output](#how-to-read-the-output).** The six sections printed per day, the bracket convention for a negative amount, and which section is the interesting one.
-
-**[Design](#design).** The four decisions the implementation rests on.
-
-- [Money is an integer](#money-is-an-integer). No floating point, no decimal library, and exactly two places a value can change.
-- [Interest accrues on restated balances](#interest-accrues-on-restated-balances). Why 0.93 and not 0.81.
-- [A reversal repairs interest and does not repair a fee](#a-reversal-repairs-interest-and-does-not-repair-a-fee). The asymmetry behind the failing test, and the 75.10 it costs.
-- [Value is conserved](#value-is-conserved). Two criteria break this in opposite directions, and both are refused for one reason.
-
-**[Project structure](#project-structure).** What lives where, and which folder owns which decision.
-
-**[Commands](#commands).** Every script, and the gate to run before a commit.
-
-- [Three things the tooling enforces that are worth naming](#three-things-the-tooling-enforces-that-are-worth-naming). TSDoc, prose punctuation, and every markdown link are all build errors rather than review items.
-
-**[The documents](#the-documents).** The other five and what each holds: [NUMBERS](NUMBERS.md) for every constant, [AMBIGUITIES](AMBIGUITIES.md) for the twenty two readings, [REJECTED](REJECTED.md) for the refusals and the abandoned approaches, [ARCHITECTURE](ARCHITECTURE.md) for Part 2, [WORKLOG](WORKLOG.md) for what happened when.
-
-**[What is deliberately missing](#what-is-deliberately-missing).** The four cuts that matter most, and the risk each defers.
+- [Where to look first](#where-to-look-first)
+  - [The one thing to understand before anything else](#the-one-thing-to-understand-before-anything-else)
+  - [The three files worth reading](#the-three-files-worth-reading)
+  - [The three decisions most worth disagreeing with](#the-three-decisions-most-worth-disagreeing-with)
+  - [The suite reports one failure, on purpose](#the-suite-reports-one-failure-on-purpose)
+- [Quickstart](#quickstart)
+- [What the replay produces](#what-the-replay-produces)
+  - [Closing balance, as reported at each day close](#closing-balance-as-reported-at-each-day-close)
+  - [The headline figures](#the-headline-figures)
+  - [Three fees, and the one that got away](#three-fees-and-the-one-that-got-away)
+- [The eight acceptance criteria](#the-eight-acceptance-criteria)
+- [How to read the output](#how-to-read-the-output)
+- [Design](#design)
+  - [Money is an integer](#money-is-an-integer)
+  - [Interest accrues on restated balances](#interest-accrues-on-restated-balances)
+  - [A reversal repairs interest and does not repair a fee](#a-reversal-repairs-interest-and-does-not-repair-a-fee)
+  - [Value is conserved](#value-is-conserved)
+- [Project structure](#project-structure)
+- [Commands](#commands)
+  - [What the tooling enforces](#what-the-tooling-enforces)
+- [The documents](#the-documents)
+- [What is deliberately missing](#what-is-deliberately-missing)
 
 ---
 

@@ -89,4 +89,13 @@ away` becomes `#three-fees-and-the-one-that-got-away`, and an anchor keeping the
 as a normal link that goes nowhere. Generated the anchors from the headings rather than typing
 them.
 
+**19:11** Reworked the contents list to match the shape used in the reference repository:
+heading of "Table of contents", plain nested bullets, two levels, no glosses. The previous
+version had bold top level entries and a sentence on each, which was more informative and
+did not look like the rest of the family of repositories. Consistency wins for something a
+reader recognises by shape before they read it.
+
+Generated the twenty two entries from the headings rather than typing them, so the list cannot
+disagree with the document it describes.
+
 ## 2026-09-05
