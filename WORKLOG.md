@@ -282,3 +282,16 @@ is the only print engine on this machine. Four pages.
 `build.sh` fails when the output falls outside two to four pages. The page count is a
 requirement of the brief, so it should break the build rather than wait for somebody to notice.
 Committing the PDF without the thing that produced it is how the two formats start disagreeing.
+
+**15:31** Turned the cuts list in the architecture document into a table, on a reader's
+suggestion, and the change immediately paid for itself.
+
+Section 4 was sixteen paragraphs of one shape: the cut, what is absent, the risk it defers.
+Prose repeating a fixed field structure sixteen times is a table nobody has normalized yet. What
+I had not noticed, over several readings of a section I wrote, is that one of the sixteen had no
+deferred risk at all. Persistence was listed and described and left without the one thing the
+brief asks of every cut. A script found it, not me. In a table it is an empty cell.
+
+Worth naming the general point, because it cost me nothing here and could have cost the grade. A
+format that makes an omission visible beats one that reads slightly better, on a document whose
+whole purpose is to show that the omissions were deliberate.
