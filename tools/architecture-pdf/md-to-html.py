@@ -1,4 +1,4 @@
-"""Renders the subset of markdown used by ARCHITECTURE.md to print ready HTML."""
+"""Renders the subset of markdown used by ARCHITECTURE.md to print-ready HTML."""
 import html
 import re
 import sys
@@ -34,11 +34,16 @@ def convert(text: str) -> str:
         stripped = line.strip()
 
         if stripped.startswith('```'):
+            opened = i + 1
             i += 1
             block = []
             while i < len(lines) and not lines[i].strip().startswith('```'):
                 block.append(html.escape(lines[i]))
                 i += 1
+            # Consuming to the end of the file would emit plausible looking HTML from malformed
+            # markdown, and this tool gates a required deliverable.
+            if i >= len(lines):
+                raise ValueError(f'Unclosed code fence opened on line {opened}.')
             i += 1
             out.append('<pre><code>' + '\n'.join(block) + '</code></pre>')
             continue

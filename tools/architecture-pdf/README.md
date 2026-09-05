@@ -17,7 +17,9 @@ requirement of the brief rather than a preference.
 
 ## How it works
 
-Three parts, no dependency to install beyond a browser that is already present.
+Three parts. It needs `bash`, `python3` and Chrome or Chromium, all of which macOS and most
+Linux distributions already have, so there is nothing to install. `build.sh` names whichever one
+is missing rather than letting the shell report a command it cannot find.
 
 | File            | Does                                                          |
 | --------------- | ------------------------------------------------------------- |

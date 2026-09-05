@@ -10,6 +10,11 @@ here="$root/tools/architecture-pdf"
 work="$(mktemp -d)"
 trap 'rm -rf "$work"' EXIT
 
+if ! command -v python3 > /dev/null 2>&1; then
+  echo "No python3 found. It renders the markdown, and macOS and most Linux ship with it." >&2
+  exit 1
+fi
+
 chrome=""
 for candidate in \
   "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
