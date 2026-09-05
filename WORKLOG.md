@@ -265,3 +265,20 @@ is worse than no test.
 The stale numbers were mine. Both READMEs quoted 229 tests against a suite that had been 273 for
 some hours and is 279 now. That is exactly the failure the `Numbers?` section of the pull request
 template exists to catch, in the repository that wrote the template.
+
+**15:16 to 15:35** The Part 2 deliverable is a PDF of two to four pages, and I had written
+markdown of 3,494 words, which is seven pages of anything readable. Two ways out: typeset it
+smaller, or write less. Took the second, because the brief asks for a concise document and
+9 point type is not concision.
+
+Cut to 2,945 words without dropping an argument. What went was words, not points: seven
+paragraphs in the regulatory surface became seven sentences, and sixteen entries in the cuts
+list each lost a clause. Every section still answers what it was asked.
+
+Rendered through a converter written for the markdown subset this one document uses, rather
+than through a general implementation or a LaTeX toolchain. Chrome prints it, since a browser
+is the only print engine on this machine. Four pages.
+
+`build.sh` fails when the output falls outside two to four pages. The page count is a
+requirement of the brief, so it should break the build rather than wait for somebody to notice.
+Committing the PDF without the thing that produced it is how the two formats start disagreeing.
