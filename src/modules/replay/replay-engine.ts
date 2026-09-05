@@ -1,7 +1,8 @@
 import { splitEvenly } from '../../common/allocation/allocation.js';
 import { OPENING_DAY, REPLAY_DAYS } from '../../common/day/day.constants.js';
 import { replayDaysThrough, type ReplayDay } from '../../common/day/day.js';
-import { REFUSAL_CODE, WARNING_CODE } from '../../common/errors/error-codes.js';
+import { FAULT_CODE, REFUSAL_CODE, WARNING_CODE } from '../../common/errors/error-codes.js';
+import { LedgerError } from '../../common/errors/ledger-error.js';
 import type { MinorUnits } from '../../common/money/money.js';
 import { formatAmount } from '../../common/money/money.js';
 import { isApprovable } from '../authorizations/authorization.types.js';
@@ -152,17 +153,32 @@ export function replay(
    * @param event - The event to apply.
    */
   const apply = (event: LedgerEvent): void => {
+    // Direction is carried by the event type, never by the sign of the input. The engine
+    // negates unconditionally when it posts. So a debit carrying a negative amount would post
+    // as a credit, and move money the wrong way, silently.
+    //
+    // An opening balance is exempt. It states a starting position rather than a movement, so
+    // zero is normal and a negative opening balance is an account that opens overdrawn.
+    if (event.type !== 'OPENING_BALANCE' && 'amountMinor' in event && event.amountMinor <= 0n) {
+      throw new LedgerError(
+        FAULT_CODE.NON_POSITIVE_AMOUNT,
+        `${event.eventId} is a ${event.type} carrying ${event.amountMinor}. An amount is a ` +
+          `magnitude, and the event type carries the direction.`,
+      );
+    }
+
     const account = accountOf(event.accountId);
     const warnings = warningsFor(event);
 
+    // A fault, not a refusal. An event naming an account that was never opened is something
+    // the model cannot represent, so it stops rather than continuing with a guessed answer.
+    // Refusing it as SETTLEMENT_WITHOUT_AUTHORIZATION named the wrong situation, and left a
+    // misleading code in the log for a reader and a test to branch on.
     if (account === undefined) {
-      eventLog.refuse(
-        event,
-        REFUSAL_CODE.SETTLEMENT_WITHOUT_AUTHORIZATION,
-        `no account ${event.accountId} is open`,
-        warnings,
+      throw new LedgerError(
+        FAULT_CODE.UNKNOWN_ACCOUNT,
+        `${event.eventId} names account ${event.accountId}, which was never opened.`,
       );
-      return;
     }
 
     switch (event.type) {
