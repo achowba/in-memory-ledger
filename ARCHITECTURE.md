@@ -8,50 +8,51 @@ Decisions, trade offs and production considerations arising from the ledger core
 
 ### What breaks first is the balance query, and it breaks quadratically
 
-`Ledger.balanceMinor` in [`src/modules/ledger/ledger.ts`](src/modules/ledger/ledger.ts) has no cache and no running total. It filters the account's entire history and sums it, and every balance in the system comes from that one function.
+[`Ledger.balanceMinor`](src/modules/ledger/ledger.ts) has no cache and no running total: it filters the account's whole history and sums it. Every balance in the system comes from that one function.
 
-The cost is not the sum. It is who calls it, and how often. `assessOverdraftFees` walks every day in the window and calls `balanceMinor` once per day, at every day close:
+The cost is not the sum but who calls it, and how often. `assessOverdraftFees` calls it once per day across the whole window, at every day close:
 
 ```
 days_to_reassess  x  entries_in_account_history
 ```
 
-Both grow with time. The window is not six days in production. It is every day the account has been open, because a backdated entry can reach any of them. So the per close cost grows linearly in account age, and the entry count it scans grows linearly too. **Total cost is quadratic in account age.** Ten events over six days hides this completely; at 100 times the volume it is 10,000 times the work in a batch window that must finish before the business opens. Interest capitalization has the same shape, and so does a projection rebuild, which is the operation append only is supposed to make cheap.
+In production the window is not six days but every day the account has been open, since a backdated entry can reach any of them. So both terms grow linearly in account age, and **the day close is quadratic in it.** Ten events over six days hides that completely; at 100 times the volume it is 10,000 times the work, in a batch window that must finish before the business opens. Interest capitalization has the same shape, and so does a projection rebuild, the operation append only is supposed to make cheap.
 
-Storage is not the problem. Storage is the cheapest part of an append only design and the one people worry about first.
+Storage is not the problem. Storage is the cheapest part of an append only design, and the one people worry about first.
 
 ### Where the design accumulates unbounded state
 
-**The restatement window.** Nothing limits how far back a `valueDate` may reach, so no day is ever finished. This is the root cause of the quadratic cost above and of most of section 2.
+**The restatement window.** Nothing limits how far back a `valueDate` may reach, so no day is ever finished. This causes the quadratic cost above and most of section 2.
 
-**The hold register.** [`HoldRegister`](src/modules/authorizations/hold-register.ts) has no expiry, so an authorization never settled and never voided holds funds forever. This replay hides it: the only unsettled authorization was declined, so no hold survives the window.
+**The hold register.** [`HoldRegister`](src/modules/authorizations/hold-register.ts) has no expiry, so an authorization never settled and never voided holds funds forever. This replay hides it: its only unsettled authorization was declined.
 
-**The event log and the ledger.** Unbounded by design, and correctly so. These are history. The problem is not that they grow. It is that everything is recomputed from them.
+**The log and the ledger.** Unbounded by design, and correctly so. These are history. The problem is not that they grow but that everything is recomputed from them.
 
-**Derived state recomputed rather than stored.** Every closing balance is recalculated on demand. That is what makes a balance always correct and never stale, and it is the same property that makes it expensive.
+**Derived state.** Every closing balance is recalculated on demand. The property that makes a balance always correct and never stale is the one that makes it expensive.
 
 ### The cheapest structural change
 
 **A periodic balance snapshot, plus a sealed period flag.** One table and one job.
 
 ```
-snapshot(account_id, value_date) -> closing_balance, as_of_sequence
+snapshot(account_id, value_date)
+  -> closing_balance, as_of_sequence
 ```
 
-A nightly job writes a closing balance per account for the day just sealed. `balanceMinor` reads the nearest snapshot and applies only later entries, so the scan is bounded by entries since the snapshot rather than by the whole history. The sealed flag forbids a value date inside a closed period; anything reaching that far posts to the current open period as a prior period adjustment.
+A nightly job writes a closing balance per account for the day just sealed. `balanceMinor` reads the nearest snapshot and applies only later entries, bounding the scan by entries since the snapshot rather than by the whole history. The sealed flag forbids a value date inside a closed period; anything reaching further posts to the open period as a prior period adjustment.
 
-It is the highest leverage change available because one mechanism bounds four problems at once:
+It is the highest leverage change available because one mechanism bounds four problems:
 
-| Problem                 | How the snapshot bounds it                                           |
-| ----------------------- | -------------------------------------------------------------------- |
-| Balance query cost      | Scan from the snapshot, not from inception                           |
-| Fee reassessment loop   | Only days in the open period can move, so only those are reassessed  |
-| Interest recomputation  | Accruals in a sealed period are final and are read, not recalculated |
-| Projection rebuild time | Rebuild from the last snapshot, not from the first event             |
+| Problem                 | How the snapshot bounds it                                                   |
+| ----------------------- | ---------------------------------------------------------------------------- |
+| Balance query cost      | Scan from the snapshot, not from inception                                   |
+| Fee reassessment loop   | Only days in the open period can move, so only those are reassessed          |
+| Interest recomputation  | Accruals in a sealed period are final, and are read rather than recalculated |
+| Projection rebuild time | Rebuild from the last snapshot, not from the first event                     |
 
-It needs no change to the append only log. The log stays the source of truth and the snapshot stays a cache, so a snapshot can be discarded and rebuilt whenever it is doubted. That is what makes the change cheap: it cannot corrupt anything, so it can run alongside the existing path before anything depends on it. The second change, once the first is in, is a TTL on the hold register.
+It needs no change to the append only log. The log stays the source of truth and the snapshot stays a cache, so a snapshot can be discarded and rebuilt whenever it is doubted. That is what makes it cheap: it cannot corrupt anything, so it can run alongside the existing path before anything depends on it. The second change, once the first is in, is a TTL on the hold register.
 
-One property is worth naming. No rule in this model reads two accounts, so the log shards cleanly on `account_id` with no coordination, and `test/order-independence.e2e-spec.ts` demonstrates the property that makes that safe. It stops being true the moment double entry arrives, because a balanced transaction spans accounts. Worth knowing before choosing the sharding key, not after.
+One property is worth naming. No rule here reads two accounts, so the log shards cleanly on `account_id` with no coordination, and `test/order-independence.e2e-spec.ts` demonstrates the property that makes that safe. It stops being true the moment double entry arrives, because a balanced transaction spans accounts. Worth knowing before choosing the sharding key.
 
 ---
 
@@ -61,63 +62,41 @@ One property is worth naming. No rule in this model reads two accounts, so the l
 
 A back valued entry does not change one number. It changes every number derived from the days it reaches, and most of those have already been sent somewhere.
 
-**Statements already issued become wrong.** The bank must choose between reissuing, which invites the question of what else changed, and an adjustment line in the current period, which is harder to read but leaves the audit trail intact.
+**Statements already issued become wrong.** The bank chooses between reissuing, which invites the question of what else changed, and an adjustment line in the current period, which reads worse but leaves the audit trail intact.
 
-**Fees already charged may no longer be due, or may now be due.** The fee engine here reassesses closed days for exactly this reason. A customer can therefore be charged today for a day that closed a week ago, which needs an explanation the system cannot currently generate.
+**Fees already charged may no longer be due, or may now be due.** The fee engine reassesses closed days for this reason, so a customer can be charged today for a day that closed a week ago, and the system cannot yet generate that explanation.
 
-**Interest already credited is recomputed.** Silently, because interest is derived. Silent is fine inside a window nobody has reported. Across a reported period it is a restatement.
+**Interest already credited is recomputed,** silently, because interest is derived. Silent is fine inside a window nobody has reported. Across a reported period it is a restatement.
 
-**Downstream consumers have already consumed.** Transaction monitoring, credit decisioning, limit management and the warehouse feed have all read the old numbers, and each has its own idea of what a correction means.
+**Downstream consumers have already consumed.** Monitoring, credit decisioning, limit management and the warehouse feed all read the old numbers, and each has its own idea of what a correction means.
 
 ### The regulatory surface
 
-Seven surfaces a value date can move a transaction across. Each is named by the exposure rather
-than by the instrument that governs it, deliberately: instruments are amended and superseded,
-the shapes are not, and quoting circular numbers from memory asserts something the writer cannot
-check. Every one of these needs a compliance opinion before go live. None of this is one.
+Seven surfaces a value date can move a transaction across. Each is named by the exposure rather than by the instrument governing it, deliberately: instruments are amended and superseded, the shapes are not, and quoting circular numbers from memory asserts what the writer cannot check. Every one needs a compliance opinion before go live. None of this is one.
 
-**Consumer protection.** A fee charged retroactively for a day that already closed is a fee
-disclosure and an error correction question at once, and a licensed bank is held to specific
-rules on both. A fee that a later reversal shows to have been the bank's own error sits further
-into that surface again. This implementation cannot tell the two apart, which is the subject of
-its one failing test.
+**Consumer protection.** A fee charged retroactively is a fee disclosure and an error correction question at once. A fee a later reversal shows to have been the bank's own error sits further in again, and this implementation cannot tell the two apart, which is the subject of its one failing test.
 
-**AML and CFT.** Transaction monitoring is date sensitive. Back valuing moves a transaction into
-or out of a monitoring window, and can change whether a set of transactions constitutes
-structuring. Reporting clocks run from detection, so an alert raised today concerns activity
-dated weeks ago.
+**AML and CFT.** Monitoring is date sensitive. Back valuing moves a transaction into or out of a window, and can change whether a set of transactions constitutes structuring. Reporting clocks run from detection, so an alert raised today concerns activity dated weeks ago.
 
-**Regulatory reporting.** Returns are period based. A value date landing in a period already
-submitted changes a figure already filed, which is a resubmission and a conversation rather than
-a routine correction.
+**Regulatory reporting.** Returns are period based. A value date landing in a submitted period changes a filed figure, which is a resubmission and a conversation rather than a routine correction.
 
-**Accounting.** Interest recognition attaches to a period. An entry crossing a reporting boundary
-is a prior period adjustment if it is material, and materiality is assessed in aggregate rather
-than per account, so the exposure is the total volume of back valuing rather than any single
-entry.
+**Accounting.** Interest recognition attaches to a period. An entry crossing a reporting boundary is a prior period adjustment if material, and materiality is assessed in aggregate, so the exposure is the total volume of back valuing rather than any single entry.
 
-**VAT.** An explicit fee is a taxable supply with a tax point, unlike a margin based product.
-Back dating a fee assessment or reversing one moves that tax point, potentially across a return
-that has already been filed.
+**VAT.** An explicit fee is a taxable supply with a tax point, unlike a margin based product. Back dating or reversing one moves that tax point, potentially across a filed return.
 
-**Dormancy.** Dormancy keys off the date of last customer activity. A back valued entry changes
-that date retroactively, moving an account into or out of dormancy and, at the far end, into or
-out of unclaimed balance transfer.
+**Dormancy.** Dormancy keys off the date of last customer activity. A back valued entry changes that date retroactively, moving an account into or out of dormancy and, at the far end, unclaimed balance transfer.
 
-**Shari'ah compliance.** This model is conventional. Interest on a credit balance and a flat
-overdraft fee do not transfer to an Islamic product, where the equivalents are profit
-distribution and a cost recovery charge on a different basis. A bank running both needs the
-accrual engine to be product aware rather than one rate applied to a balance.
+**Shari'ah compliance.** This model is conventional. Interest on a credit balance and a flat overdraft fee do not transfer to an Islamic product, where the equivalents are profit distribution and a cost recovery charge on a different basis. A bank running both needs a product aware accrual engine.
 
 ### The one control I would add before going live
 
 **A closed period lock, with back valuing beyond it requiring dual authorization and a reason code.**
 
-Value dates may not fall inside a sealed accounting period. Inside the open period, back valuing beyond T plus two business days requires maker checker approval, a reason from a closed list, and an immutable record of who approved it. Anything reaching further posts as a prior period adjustment in the current period, never as a silent rewrite of a closed one.
+Value dates may not fall inside a sealed accounting period. Inside the open period, back valuing beyond T plus two business days requires maker checker approval, a reason from a closed list, and an immutable record of who approved it. Anything reaching further posts as a prior period adjustment, never as a silent rewrite of a closed period.
 
-I would choose this over tamper evident hash chaining or a full bitemporal audit trail for three reasons.
+I would choose this over tamper evident hash chaining or a full bitemporal audit trail, for three reasons.
 
-**It bounds how far a correction can reach, rather than recording where it reached.** Every problem in this section follows from a correction reaching something already reported. A lock stops it reaching. An audit trail tells you afterwards, which is useful and is not the same thing.
+**It bounds how far a correction can reach, rather than recording where it reached.** Every problem in this section follows from a correction reaching something already reported. A lock stops it reaching; an audit trail tells you afterwards, which is useful and not the same thing.
 
 **It supplies the missing field.** The reason code is the concept whose absence produces the one failing test. Once a reversal says why, the system can distinguish a bank error, where consumer protection rules require the fees back, from a legitimate customer return, where the account really was overdrawn. Today it applies one rule to both and is wrong about one of them every time.
 
@@ -133,11 +112,11 @@ Runners up, in order: a TTL on the hold register, hash chaining the log, and a c
 
 An authorization in [`authorization.types.ts`](src/modules/authorizations/authorization.types.ts) has three states: approved, settled, declined. Reading the paths in [`event-handlers.ts`](src/modules/replay/event-handlers.ts) rather than the state list, there are **three** ways one ends other than a settlement for the amount held, and a fourth where it never ends at all.
 
-**1. Declined at creation.** The hold would take available balance below zero, so no hold is created and the state is terminal. _Scenario:_ the ordinary one, a customer at a point of sale without the funds, or with funds already committed to an earlier hold. _Mandated, and implemented:_ record the decline with the balances that produced it. It is an output an operator needs to see, not an error to swallow, and storing it lets a later settlement distinguish an authorization that was refused from one never requested.
+**1. Declined at creation.** The hold would take available balance below zero, so no hold is created and the state is terminal. _Scenario:_ the ordinary one, a customer without the funds, or with funds already committed to an earlier hold. _Mandated, and implemented:_ record the decline with the balances that produced it. It is an output an operator needs, not an error to swallow, and storing it lets a later settlement tell an authorization that was refused from one never requested.
 
-**2. Refused as a duplicate identifier.** A second authorization under an identifier already in the register is refused and never becomes an authorization. _Scenario:_ a retry. The acquirer did not receive the response, or a queue redelivered the message. _Mandated, and implemented:_ refuse, and leave the existing authorization untouched. Treating the retry as new creates a second hold for the same purchase and locks twice the money. Note what this is not: refusal, not idempotency. A genuine idempotent path would return the original outcome so the retry succeeds.
+**2. Refused as a duplicate identifier.** A second authorization under an identifier already in the register never becomes one. _Scenario:_ a retry. The acquirer did not receive the response, or a queue redelivered the message. _Mandated, and implemented:_ refuse, and leave the existing authorization untouched, since treating the retry as new creates a second hold for one purchase and locks twice the money. Note this is refusal, not idempotency: an idempotent path would return the original outcome so the retry succeeds.
 
-**3. Settled for an amount other than the amount held.** The authorization terminates and the whole hold is released, whatever the difference. _Scenario:_ routine, and what happens in this replay. A restaurant bill before a tip, a fuel pre authorization, a basket that changed before capture. _Mandated:_ the implemented behaviour is only conditionally right. Releasing the entire hold is correct for a single presentment product and wrong for a multi presentment one, where a hotel folio or a split shipment presents again and the residual should stay held. Set the release policy per product, and treat a global choice as a defect whichever way it is set.
+**3. Settled for an amount other than the amount held.** The authorization terminates and the whole hold is released, whatever the difference. _Scenario:_ routine, and what happens in this replay. A restaurant bill before a tip, a fuel pre authorization, a basket that changed before capture. _Mandated:_ the implemented behaviour is only conditionally right. Releasing the whole hold suits a single presentment product and is wrong for a multi presentment one, where a hotel folio or split shipment presents again and the residual should stay held. Set the policy per product, and treat a global choice as a defect whichever way it is set.
 
 **4. It never ends.** An approved authorization never presented holds funds indefinitely. No expiry, no acquirer void, no sweep. _Scenario:_ the merchant abandons the sale, the terminal drops after approval, or a pre authorization is never captured. _Mandated:_ this path should not exist, so the mandate is the expiry below. The gap is invisible here because the only unsettled authorization was declined.
 
@@ -147,17 +126,17 @@ One guard keeps a terminated authorization terminated: a settlement against an a
 
 Four endings this model has no path for, plus one case that is their mirror.
 
-**Expiry.** The merchant never presents. Mandate a TTL per product, not one global value: card present retail commonly around seven days, hotel and vehicle rental thirty, fuel at an automated pump much shorter. On expiry append a release event and free the hold, never mutating the authorization in place. A settlement after expiry is then a force post and goes down that path rather than reviving a dead hold.
+**Expiry.** The merchant never presents. Mandate a TTL per product, not one global value: card present retail around seven days, hotel and vehicle rental thirty, fuel at a pump much shorter. On expiry, append a release event and free the hold, never mutating the authorization. A settlement after expiry is then a force post rather than a revived dead hold.
 
-**Acquirer initiated void or reversal.** The merchant cancels at the terminal, or an estimated authorization is replaced by a final one. Mandate immediate release, full or partial, on receipt, and no further settlement against that identifier. This is the cheapest hold to release and the one customers notice most when it is not, because they are standing at the counter.
+**Acquirer initiated void or reversal.** The merchant cancels at the terminal, or a final authorization replaces an estimated one. Mandate immediate release, full or partial, on receipt, and no further settlement against that identifier. The cheapest hold to release, and the one customers notice most when it is not, because they are standing at the counter.
 
-**Over settlement beyond tolerance.** The presentment exceeds the hold. Restaurant tips, fuel dispensed after the pre authorization and currency movement all do this legitimately. Mandate a tolerance per merchant category, commonly fifteen to twenty percent for restaurants and fuel and zero for most others. Within tolerance, post and release. Outside it, post anyway, because the issuer is generally obliged to honour the presentment, and raise an exception so the excess is investigated rather than absorbed.
+**Over settlement beyond tolerance.** Tips, fuel dispensed after the pre authorization and currency movement all exceed the hold legitimately. Mandate a tolerance per merchant category, commonly fifteen to twenty percent for restaurants and fuel, zero for most others. Within tolerance, post and release. Outside it, post anyway, since the issuer is generally obliged to honour the presentment, and raise an exception so the excess is investigated rather than absorbed.
 
-**Settlement with no authorization at all.** Not an ending, because there is nothing to end. Included because it mirrors every ending above, and because this model has a path for it and takes the wrong one. Offline and floor limit transactions, chip fallback, stand in processing during an issuer outage, late presentment after expiry. This implementation refuses these, because the brief requires it, and no real issuer could. Mandate posting to a suspense account with an exception raised, then pursue chargeback rights if the authorization is genuinely absent. Never silently decline: the acquirer is unpaid and the customer has the goods.
+**Settlement with no authorization.** Not an ending, since there is nothing to end, but the mirror of every ending above, and the one path this model has and gets wrong. Offline and floor limit transactions, chip fallback, stand in processing during an outage, late presentment. This implementation refuses these because the brief requires it, and no real issuer could. Mandate a suspense account posting with an exception raised, then chargeback rights if the authorization is genuinely absent. Never silently decline: the acquirer is unpaid and the customer has the goods.
 
-**Account state change between authorization and settlement.** A freeze, a sanctions match, a court order, a closure, or the death of the customer. Mandate that the existing hold survives, because those funds are already committed, while new authorizations are declined. A settlement against a frozen account still posts, with the freeze enforced at the balance level rather than by dropping the posting, so the bank does not create an unreconciled difference with the scheme. Escalate to compliance rather than resolving in the ledger.
+**Account state change between authorization and settlement.** A freeze, a sanctions match, a court order, a closure, or a death. Mandate that the existing hold survives, since those funds are already committed, while new authorizations are declined. A settlement against a frozen account still posts, with the freeze enforced at the balance level rather than by dropping the posting, so the bank creates no unreconciled difference with the scheme. Escalate to compliance rather than resolving in the ledger.
 
-One more sits outside the lifecycle but ends the economics: a **chargeback** after settlement, which reverses the posting under scheme timelines entirely separate from anything in this model.
+One more sits outside the lifecycle but ends the economics: a **chargeback** after settlement, which reverses the posting under scheme timelines entirely separate from anything here.
 
 ---
 

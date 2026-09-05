@@ -33,7 +33,17 @@ general markdown implementation and is not meant to become one: a converter that
 what this repository writes is small enough to read in one sitting.
 
 Chrome renders it, because a browser is the only print engine on this machine and pulling in a
-LaTeX toolchain to typeset four pages would cost more than the document.
+LaTeX toolchain to typeset three pages would cost more than the document.
+
+## The layout
+
+Two columns, because measure governs how verbose a document feels far more than word count does.
+At A4 width with these margins a single column runs past 100 characters a line, where comfortable
+reading is 45 to 75. Two columns land near 55 without cutting a word.
+
+Headings, the document subtitle and tables span both columns. Code blocks do not, so they are
+written to fit an 85mm column. A table breaks between rows rather than moving whole to the next
+page, which had been stranding a third of one, and `thead` repeats after the break.
 
 ## After editing the document
 
