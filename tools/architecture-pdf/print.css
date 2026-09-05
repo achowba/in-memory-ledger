@@ -119,3 +119,15 @@ td {
 tbody tr + tr td {
   border-top: 0.4pt solid #dde2ea;
 }
+
+/* A three column table is the cuts list, whose first column holds a short label. Give it room
+   so the label wraps less than the prose beside it. */
+table:has(th:nth-child(3)) th:first-child,
+table:has(th:nth-child(3)) td:first-child {
+  width: 21%;
+}
+
+table:has(th:nth-child(3)) th:nth-child(2),
+table:has(th:nth-child(3)) td:nth-child(2) {
+  width: 29%;
+}
