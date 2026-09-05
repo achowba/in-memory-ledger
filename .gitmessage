@@ -1,0 +1,17 @@
+# <type>(<scope>): <subject>
+#
+# Conventional Commits. A scope is required (house rule); never omit it.
+# Allowed types:
+#   feat, fix, docs, style, refactor, test, chore, perf, ci, build, revert
+# Scope: the module or area touched. For this repo:
+#   money, events, ledger, auth, fees, interest, replay, report
+# For cross-cutting work use: repo, deps, docs, config.
+#
+# Examples:
+#   feat(fees): assess one overdraft fee per account per day
+#   fix(interest): sum the rounded daily accruals rather than rounding the sum
+#   docs(readme): explain why the suite reports one failure
+#
+# Subject: imperative mood, lowercase, no trailing period; header under 100 chars.
+# Body (optional): leave a blank line, then explain what changed and why; wrap at 100.
+# Footer (optional): BREAKING CHANGE: <description>, or Refs: <id>.
