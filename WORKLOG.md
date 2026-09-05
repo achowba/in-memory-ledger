@@ -243,7 +243,7 @@ parent's branch is deleted, and I merged without deleting, so eleven of the twel
 their parent branch instead. Rebuilt `main` from the twelve branch heads and checked the result
 by tree hash rather than by reading it.
 
-**15:00 to 15:15** Closed the review of the series. Copilot raised twenty six findings across
+**15:00 to 15:16** Closed the review of the series. Copilot raised twenty six findings across
 the twelve pull requests. Thirteen were already answered: real at the commit they were raised
 against, and fixed by a later commit in the same series, which is what reviewing a stack in
 slices produces. Two were wrong and were rejected with the evidence rather than accepted to be
@@ -266,7 +266,7 @@ The stale numbers were mine. Both READMEs quoted 229 tests against a suite that 
 some hours and is 279 now. That is exactly the failure the `Numbers?` section of the pull request
 template exists to catch, in the repository that wrote the template.
 
-**15:16 to 15:35** The Part 2 deliverable is a PDF of two to four pages, and I had written
+**15:16 to 15:19** The Part 2 deliverable is a PDF of two to four pages, and I had written
 markdown of 3,494 words, which is seven pages of anything readable. Two ways out: typeset it
 smaller, or write less. Took the second, because the brief asks for a concise document and
 9 point type is not concision.
@@ -282,6 +282,21 @@ is the only print engine on this machine. Four pages.
 `build.sh` fails when the output falls outside two to four pages. The page count is a
 requirement of the brief, so it should break the build rather than wait for somebody to notice.
 Committing the PDF without the thing that produced it is how the two formats start disagreeing.
+
+**15:20 to 15:25** Copilot reviewed the two new pull requests and found seven more, all of them
+real, all of them in code I had written in the previous forty minutes.
+
+The one worth recording is recursive. The exhaustiveness guard I had just added to satisfy a
+review finding was itself broken: its error message ran the unhandled event through
+JSON.stringify, and a LedgerEvent carries bigint amounts, which JSON.stringify throws on. So the
+RangeError would have been replaced by a TypeError with no message. A fix for a review finding,
+reviewed, and wrong in a new way.
+
+Also: the currency guard had no test, which is how a throw quietly becomes a default again. And
+the markdown converter accepted an unclosed code fence by running to the end of the file, so
+malformed markdown would have produced a plausible looking four page PDF that passed the page
+count check. Both are the same mistake, which is trusting a change because it was made for a
+good reason.
 
 **15:31** Turned the cuts list in the architecture document into a table, on a reader's
 suggestion, and the change immediately paid for itself.
