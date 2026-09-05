@@ -26,11 +26,11 @@ Fees run after the day's events rather than before, so a backdated entry arrivin
 
 ### Only an authorization is gated on available balance
 
-| Event | Gated | Why |
-|---|---|---|
-| `AUTHORIZATION` | Yes | The brief states the rule, and it is the only place it states it. |
-| `DEBIT` | No | A direct debit posts and may overdraw. That is the reason an overdraft fee exists. Gating it would decline E7 and make acceptance criterion 1 unreachable. |
-| `SETTLEMENT` | No | The hold already reserved the funds and the bank is committed to the payment. |
+| Event           | Gated | Why                                                                                                                                                        |
+| --------------- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AUTHORIZATION` | Yes   | The brief states the rule, and it is the only place it states it.                                                                                          |
+| `DEBIT`         | No    | A direct debit posts and may overdraw. That is the reason an overdraft fee exists. Gating it would decline E7 and make acceptance criterion 1 unreachable. |
+| `SETTLEMENT`    | No    | The hold already reserved the funds and the bank is committed to the payment.                                                                              |
 
 ### A reversal never edits the original
 

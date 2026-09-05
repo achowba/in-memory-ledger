@@ -6,13 +6,13 @@ Runs the event stream of the brief end to end and asserts what comes out. Unit t
 
 ## The files
 
-| File | Covers |
-|---|---|
-| `replay.e2e-spec.ts` | Every day: closing balances, restatements, fees, authorization states, refusals, interest, final balances, and reproducibility. |
-| `accepted-criteria.e2e-spec.ts` | The three acceptance criteria that survive scrutiny: 1, 3 and 4. |
-| `rejected-criteria.e2e-spec.ts` | The four that do not: 2, 6, 7 and 8, plus criterion 5, which is untestable rather than false. |
-| `order-independence.e2e-spec.ts` | That the E9 and E10 ordering ambiguity changes nothing, and that the warning is raised anyway. |
-| `known-gap.e2e-spec.ts` | The one intentional failure. |
+| File                             | Covers                                                                                                                          |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `replay.e2e-spec.ts`             | Every day: closing balances, restatements, fees, authorization states, refusals, interest, final balances, and reproducibility. |
+| `accepted-criteria.e2e-spec.ts`  | The three acceptance criteria that survive scrutiny: 1, 3 and 4.                                                                |
+| `rejected-criteria.e2e-spec.ts`  | The four that do not: 2, 6, 7 and 8, plus criterion 5, which is untestable rather than false.                                   |
+| `order-independence.e2e-spec.ts` | That the E9 and E10 ordering ambiguity changes nothing, and that the warning is raised anyway.                                  |
+| `known-gap.e2e-spec.ts`          | The one intentional failure.                                                                                                    |
 
 ## How to read a passing test in `rejected-criteria.e2e-spec.ts`
 

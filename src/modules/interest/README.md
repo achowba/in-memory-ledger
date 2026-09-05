@@ -20,15 +20,15 @@ Works out one accrual per day on the closing balance, and books the whole window
 
 This is the consequential choice in the module, and the brief does not make it for you.
 
-This is the consequential choice in the module, and the brief does not make it for you.  By day
+This is the consequential choice in the module, and the brief does not make it for you. By day
 six, four of the six days have two possible closing balances. One is the balance visible at the
 time. The other is the balance you get after E7 arrives backdated and E9 reverses it. Which one
 do you accrue on?
 
-| Reading | ACC-001 total |
-|---|---|
-| Restated, recomputed at capitalization with everything known | 0.93 |
-| As known at each day's own close, never revisited | 0.81 |
+| Reading                                                      | ACC-001 total |
+| ------------------------------------------------------------ | ------------- |
+| Restated, recomputed at capitalization with everything known | 0.93          |
+| As known at each day's own close, never revisited            | 0.81          |
 
 Restatement is chosen because acceptance criterion 1 already restates. It asks for the day two closing balance "evaluated at end of Day 5", which is the same operation applied to the fee engine. Restating a balance in order to charge a customer, and refusing to restate it in order to pay one, would be difficult to defend.
 

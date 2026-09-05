@@ -132,8 +132,9 @@ describe('criterion 6 is wrong: nothing returns to its pre-E7 value after E9', (
   it('leaves the account short on interest as well as on fees', () => {
     const hadE7NeverHappened = [25000n, 25000n, 65000n, 46500n, 46500n, 46500n];
     const counterfactualMinor = sumMinor(hadE7NeverHappened.map(dailyAccrualMinor));
-    const actualMinor = result.interest.find((account) => account.accountId === 'ACC-001')
-      ?.totalMinor;
+    const actualMinor = result.interest.find(
+      (account) => account.accountId === 'ACC-001',
+    )?.totalMinor;
 
     assert.equal(counterfactualMinor, 103n);
     assert.equal(actualMinor, 93n);
@@ -166,7 +167,10 @@ describe('criterion 7 is wrong: three BHD instalments of 3.334 create money', ()
   it('cannot make the parts equal without inventing money', () => {
     const parts = splitEvenly(10000n, 3);
 
-    assert.equal(parts.every((part) => part === parts[0]), false);
+    assert.equal(
+      parts.every((part) => part === parts[0]),
+      false,
+    );
     assert.equal(sumMinor(parts), 10000n);
   });
 });

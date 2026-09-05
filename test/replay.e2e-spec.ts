@@ -138,8 +138,8 @@ describe('the six day replay, what a backdated entry restates', () => {
 
 describe('the six day replay, overdraft fees', () => {
   const feesOf = (day: ReplayDay): readonly bigint[] =>
-    (result.days.find((candidate) => candidate.day === day)?.feesBooked ?? []).map(
-      (fee) => BigInt(fee.valueDate),
+    (result.days.find((candidate) => candidate.day === day)?.feesBooked ?? []).map((fee) =>
+      BigInt(fee.valueDate),
     );
 
   it('assesses no fee on days one to four', () => {
@@ -304,7 +304,10 @@ describe('the six day replay, final balances', () => {
       .map((entry) => entry.amountMinor);
 
     assert.deepEqual(instalments, [3334n, 3333n, 3333n]);
-    assert.equal(instalments.reduce((sum, part) => sum + part, 0n), 10000n);
+    assert.equal(
+      instalments.reduce((sum, part) => sum + part, 0n),
+      10000n,
+    );
   });
 });
 

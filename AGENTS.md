@@ -22,36 +22,36 @@ Non-negotiable. Each line links to the convention that holds the detail.
 
 ## Conventions
 
-| Convention | Covers |
-|---|---|
-| [artifacts](.agents/conventions/artifacts.convention.md) | Where working output is written, and why it is not committed. |
-| [code-standards](.agents/conventions/code-standards.convention.md) | Typing, naming, constants, module boundaries, file size. |
-| [commits](.agents/conventions/commits.convention.md) | Conventional Commits, the scope list, and the history rule. |
-| [documentation](.agents/conventions/documentation.convention.md) | The module README contract, and comments in the body. |
-| [error-handling](.agents/conventions/error-handling.convention.md) | Rejection versus exception, error codes, what the log records. |
-| [language-and-style](.agents/conventions/language-and-style.convention.md) | How prose in this repository is written. |
-| [ledger-domain](.agents/conventions/ledger-domain.convention.md) | Money, the two clocks, append only, rounding, and the fee cascade. |
-| [testing](.agents/conventions/testing.convention.md) | Layout, naming, the three cases every test covers, determinism. |
-| [tsdoc](.agents/conventions/tsdoc.convention.md) | Where a doc block goes, which tags exist, what it must say. |
+| Convention                                                                 | Covers                                                             |
+| -------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| [artifacts](.agents/conventions/artifacts.convention.md)                   | Where working output is written, and why it is not committed.      |
+| [code-standards](.agents/conventions/code-standards.convention.md)         | Typing, naming, constants, module boundaries, file size.           |
+| [commits](.agents/conventions/commits.convention.md)                       | Conventional Commits, the scope list, and the history rule.        |
+| [documentation](.agents/conventions/documentation.convention.md)           | The module README contract, and comments in the body.              |
+| [error-handling](.agents/conventions/error-handling.convention.md)         | Rejection versus exception, error codes, what the log records.     |
+| [language-and-style](.agents/conventions/language-and-style.convention.md) | How prose in this repository is written.                           |
+| [ledger-domain](.agents/conventions/ledger-domain.convention.md)           | Money, the two clocks, append only, rounding, and the fee cascade. |
+| [testing](.agents/conventions/testing.convention.md)                       | Layout, naming, the three cases every test covers, determinism.    |
+| [tsdoc](.agents/conventions/tsdoc.convention.md)                           | Where a doc block goes, which tags exist, what it must say.        |
 
 ## Layout
 
-| Path | Holds |
-|---|---|
-| `src/common/` | Primitives with no knowledge of the ledger domain: money, rounding, allocation, errors. |
-| `src/modules/` | One folder per concern, each owning its types, its logic, its tests, and its README. |
-| `src/main.ts` | The entry point. Runs the replay and prints the report. |
-| `test/` | Full replay specs, named `*.e2e-spec.ts`. |
-| `.agents/conventions/` | The standards above. |
-| `artifacts/` | Workflow output. Not committed. See the artifacts convention. |
+| Path                   | Holds                                                                                   |
+| ---------------------- | --------------------------------------------------------------------------------------- |
+| `src/common/`          | Primitives with no knowledge of the ledger domain: money, rounding, allocation, errors. |
+| `src/modules/`         | One folder per concern, each owning its types, its logic, its tests, and its README.    |
+| `src/main.ts`          | The entry point. Runs the replay and prints the report.                                 |
+| `test/`                | Full replay specs, named `*.e2e-spec.ts`.                                               |
+| `.agents/conventions/` | The standards above.                                                                    |
+| `artifacts/`           | Workflow output. Not committed. See the artifacts convention.                           |
 
 ## The deliverable documents
 
-| File | Holds |
-|---|---|
-| [README](README.md) | How to run the suite, and how to read the output. |
-| [NUMBERS](NUMBERS.md) | Every constant, why that value, and what changes if it moves. |
-| [AMBIGUITIES](AMBIGUITIES.md) | Every ambiguity found in the brief, and how it was resolved. |
-| [REJECTED](REJECTED.md) | Acceptance criteria refused, and approaches abandoned mid build. |
-| [ARCHITECTURE](ARCHITECTURE.md) | Production considerations arising from the implementation. |
-| [WORKLOG](WORKLOG.md) | What was done, when. |
+| File                            | Holds                                                            |
+| ------------------------------- | ---------------------------------------------------------------- |
+| [README](README.md)             | How to run the suite, and how to read the output.                |
+| [NUMBERS](NUMBERS.md)           | Every constant, why that value, and what changes if it moves.    |
+| [AMBIGUITIES](AMBIGUITIES.md)   | Every ambiguity found in the brief, and how it was resolved.     |
+| [REJECTED](REJECTED.md)         | Acceptance criteria refused, and approaches abandoned mid build. |
+| [ARCHITECTURE](ARCHITECTURE.md) | Production considerations arising from the implementation.       |
+| [WORKLOG](WORKLOG.md)           | What was done, when.                                             |

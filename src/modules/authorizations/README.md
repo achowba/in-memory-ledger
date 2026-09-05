@@ -23,10 +23,10 @@ The brief says the available balance must remain "at or above zero". Written as 
 
 Applied to the two authorizations in the stream:
 
-| Event | Ledger balance | Live holds | Available | After the hold | Result |
-|---|---|---|---|---|---|
-| E3, Auth-A, 200.00 | 250.00 | 0.00 | 250.00 | 50.00 | Approved |
-| E8, Auth-B, 90.00 | (155.00) | 0.00 | (155.00) | (245.00) | Declined |
+| Event              | Ledger balance | Live holds | Available | After the hold | Result   |
+| ------------------ | -------------- | ---------- | --------- | -------------- | -------- |
+| E3, Auth-A, 200.00 | 250.00         | 0.00       | 250.00    | 50.00          | Approved |
+| E8, Auth-B, 90.00  | (155.00)       | 0.00       | (155.00)  | (245.00)       | Declined |
 
 Auth-B is declined because available was already below zero before the hold was applied. No hold size would have been approved, which is why acceptance criterion 5 describes a state this replay never reaches.
 

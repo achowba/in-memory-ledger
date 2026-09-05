@@ -1,9 +1,6 @@
 import { sumMinor, type MinorUnits } from '../../common/money/money.js';
 import type { ReplayDay } from '../../common/day/day.js';
-import {
-  AUTHORIZATION_STATE,
-  type IAuthorization,
-} from './authorization.types.js';
+import { AUTHORIZATION_STATE, type IAuthorization } from './authorization.types.js';
 
 /**
  * The state of every authorization, and the total currently held against each account.

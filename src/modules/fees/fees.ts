@@ -6,10 +6,7 @@ import { FAULT_CODE } from '../../common/errors/error-codes.js';
 import { LedgerError } from '../../common/errors/ledger-error.js';
 import { ENTRY_ORIGIN, type ILedgerEntry } from '../ledger/ledger-entry.types.js';
 import type { Ledger } from '../ledger/ledger.js';
-import {
-  OVERDRAFT_FEE_MINOR_BY_CURRENCY,
-  OVERDRAFT_THRESHOLD_MINOR,
-} from './fees.constants.js';
+import { OVERDRAFT_FEE_MINOR_BY_CURRENCY, OVERDRAFT_THRESHOLD_MINOR } from './fees.constants.js';
 
 /**
  * What one assessment run needs to know.

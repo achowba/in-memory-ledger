@@ -110,10 +110,7 @@ export function formatAmount(currency: CurrencyCode, amountMinor: MinorUnits): s
   const whole = (magnitude / scale).toString();
   const fraction = (magnitude % scale).toString().padStart(exponent, '0');
 
-  const grouped = whole.replace(
-    new RegExp(`\\B(?=(\\d{${DIGIT_GROUP_SIZE}})+(?!\\d))`, 'g'),
-    ',',
-  );
+  const grouped = whole.replace(new RegExp(`\\B(?=(\\d{${DIGIT_GROUP_SIZE}})+(?!\\d))`, 'g'), ',');
   const rendered = exponent === 0 ? grouped : `${grouped}.${fraction}`;
 
   return isNegative ? `(${rendered})` : rendered;

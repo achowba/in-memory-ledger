@@ -17,10 +17,10 @@ There is no floating point anywhere, and there is no third party decimal type. T
 
 Every entry carries two independent times.
 
-| Clock | Field | Answers |
-|---|---|---|
-| Value date | `valueDate` | On which day does this entry change the balance? |
-| Arrival | `sequence` | In what order did the system learn of this entry? |
+| Clock      | Field       | Answers                                           |
+| ---------- | ----------- | ------------------------------------------------- |
+| Value date | `valueDate` | On which day does this entry change the balance?  |
+| Arrival    | `sequence`  | In what order did the system learn of this entry? |
 
 The two clocks normally agree. When an entry is backdated, the two clocks disagree, and a day's closing balance stops being a single number. The Day 2 closing balance is one number when asked on Day 2, and a different number when asked on Day 5.
 
@@ -43,10 +43,10 @@ Never add a balance helper that takes only one clock. A one-clock helper is a co
 
 Two collections, with different jobs:
 
-| Collection | Holds | Affects a balance |
-|---|---|---|
-| Event log | Every input, accepted or rejected, plus every entry the system generates | No |
-| Ledger | The balance-affecting entries only | Yes |
+| Collection | Holds                                                                    | Affects a balance |
+| ---------- | ------------------------------------------------------------------------ | ----------------- |
+| Event log  | Every input, accepted or rejected, plus every entry the system generates | No                |
+| Ledger     | The balance-affecting entries only                                       | Yes               |
 
 An authorization never produces a ledger entry. A hold reduces the available balance and never touches the ledger balance.
 

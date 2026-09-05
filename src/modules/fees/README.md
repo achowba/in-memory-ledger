@@ -43,12 +43,12 @@ Written as `<= 0n` this would charge an account that owes nothing, which is both
 
 AED 25.00 sits just under a cliff. Day three of ACC-001 closes at 30.00 once E7 has posted, and the day two fee lowers it to 5.00.
 
-| Fee | Day 3 closing | Fees charged |
-|---|---|---|
-| 12.50 | 17.50 | 3 |
-| 25.00 | 5.00 | 3 |
-| 30.00 | 0.00 | 3 |
-| 30.01 | (0.01) | 4 |
+| Fee   | Day 3 closing | Fees charged |
+| ----- | ------------- | ------------ |
+| 12.50 | 17.50         | 3            |
+| 25.00 | 5.00          | 3            |
+| 30.00 | 0.00          | 3            |
+| 30.01 | (0.01)        | 4            |
 
 So halving the fee changes nothing, and the count moves only above AED 30.00, where the cascade reaches day three. See `NUMBERS.md`.
 

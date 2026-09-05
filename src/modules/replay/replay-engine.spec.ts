@@ -46,7 +46,8 @@ describe('replay, an amount that carries its own direction', () => {
   // 500.00 posts as a credit of plus 500.00, with no refusal and no warning.
   it('refuses a debit carrying a negative amount', () => {
     assert.throws(
-      () => replay(ACCOUNTS, [event({ type: 'DEBIT', amountMinor: parseAmount('AED', '-500.00') })]),
+      () =>
+        replay(ACCOUNTS, [event({ type: 'DEBIT', amountMinor: parseAmount('AED', '-500.00') })]),
       throwsCode(FAULT_CODE.NON_POSITIVE_AMOUNT),
     );
   });
@@ -71,17 +72,14 @@ describe('replay, an amount that carries its own direction', () => {
   it('refuses an authorization carrying a negative hold', () => {
     assert.throws(
       () =>
-        replay(ACCOUNTS, [
-          event({ type: 'AUTHORIZATION', authId: 'Auth-X', amountMinor: -1n }),
-        ]),
+        replay(ACCOUNTS, [event({ type: 'AUTHORIZATION', authId: 'Auth-X', amountMinor: -1n })]),
       throwsCode(FAULT_CODE.NON_POSITIVE_AMOUNT),
     );
   });
 
   it('refuses a settlement carrying a negative amount', () => {
     assert.throws(
-      () =>
-        replay(ACCOUNTS, [event({ type: 'SETTLEMENT', authId: 'Auth-X', amountMinor: -1n })]),
+      () => replay(ACCOUNTS, [event({ type: 'SETTLEMENT', authId: 'Auth-X', amountMinor: -1n })]),
       throwsCode(FAULT_CODE.NON_POSITIVE_AMOUNT),
     );
   });

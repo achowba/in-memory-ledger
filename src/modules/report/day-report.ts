@@ -38,7 +38,9 @@ function renderEvent(
   const { event } = record;
   const currency = currencyOf(event.accountId);
   const amount =
-    'amountMinor' in event ? formatAmount(currency, event.amountMinor).padStart(12) : ''.padStart(12);
+    'amountMinor' in event
+      ? formatAmount(currency, event.amountMinor).padStart(12)
+      : ''.padStart(12);
   const reference =
     'authId' in event
       ? event.authId
@@ -85,10 +87,7 @@ function renderBalance(snapshot: IAccountDaySnapshot): string {
  * @param currencyOf - Resolves an account to its currency.
  * @returns The rendered block.
  */
-function renderDay(
-  result: IDayResult,
-  currencyOf: (accountId: string) => 'AED' | 'BHD',
-): string {
+function renderDay(result: IDayResult, currencyOf: (accountId: string) => 'AED' | 'BHD'): string {
   const lines: string[] = [LIGHT_RULE, `DAY ${result.day}`, LIGHT_RULE, ''];
 
   lines.push('  EVENTS');
@@ -150,9 +149,12 @@ function renderDay(
   const problems = result.events.flatMap((record) => [
     ...(record.refusal === null
       ? []
-      : [`    ${record.event.eventId.padEnd(4)} ERROR  ${record.refusal.code}: ${record.refusal.detail}`]),
+      : [
+          `    ${record.event.eventId.padEnd(4)} ERROR  ${record.refusal.code}: ${record.refusal.detail}`,
+        ]),
     ...record.warnings.map(
-      (warning) => `    ${record.event.eventId.padEnd(4)} WARN   ${warning.code}: ${warning.detail}`,
+      (warning) =>
+        `    ${record.event.eventId.padEnd(4)} WARN   ${warning.code}: ${warning.detail}`,
     ),
   ]);
 
@@ -203,7 +205,8 @@ export function renderReport(result: IReplayResult): string {
 
     for (const accrual of account.accruals) {
       lines.push(
-        (`     ${accrual.day}    ` +
+        (
+          `     ${accrual.day}    ` +
           formatAmount(account.currency, accrual.closingBalanceMinor).padStart(14)
         ).padEnd(ACCRUAL_COLUMN) +
           formatAmount(account.currency, accrual.accrualMinor).padStart(ACCRUAL_WIDTH),

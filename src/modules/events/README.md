@@ -10,10 +10,10 @@ Defines every kind of event that can arrive, and holds the append only record of
 
 The two collections have different jobs, and keeping them apart is deliberate.
 
-| Collection | Holds | Affects a balance |
-|---|---|---|
-| Event log | Every input, accepted or refused, with its reason | No |
-| Ledger | The balance-affecting entries only | Yes |
+| Collection | Holds                                             | Affects a balance |
+| ---------- | ------------------------------------------------- | ----------------- |
+| Event log  | Every input, accepted or refused, with its reason | No                |
+| Ledger     | The balance-affecting entries only                | Yes               |
 
 ## The decisions it owns
 

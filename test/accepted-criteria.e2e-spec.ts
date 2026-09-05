@@ -85,9 +85,7 @@ describe('criterion 4: a settlement naming an unknown authorization is refused',
   // ARCHITECTURE.md. A real card issuer must honour a force post or a late presentment under
   // scheme rules. It would post the settlement to a suspense account rather than drop it.
   it('refuses E6, which names Auth-Z', () => {
-    const record = result.eventLog
-      .all()
-      .find((candidate) => candidate.event.eventId === 'E6');
+    const record = result.eventLog.all().find((candidate) => candidate.event.eventId === 'E6');
 
     assert.ok(record !== undefined);
     assert.equal(record.outcome, 'REFUSED');
@@ -102,9 +100,7 @@ describe('criterion 4: a settlement naming an unknown authorization is refused',
 
   // The refusal is recorded rather than discarded, so it appears in the printed report.
   it('records the refusal in the log with a reason', () => {
-    const record = result.eventLog
-      .all()
-      .find((candidate) => candidate.event.eventId === 'E6');
+    const record = result.eventLog.all().find((candidate) => candidate.event.eventId === 'E6');
 
     assert.ok(record?.refusal !== null && record?.refusal !== undefined);
     assert.match(record.refusal.detail, /never authorized/);

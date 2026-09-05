@@ -99,3 +99,22 @@ Generated the twenty two entries from the headings rather than typing them, so t
 disagree with the document it describes.
 
 ## 2026-09-05
+
+**09:55** Closed the two review sweep blockers and the prettier violation.
+
+The shallow freeze was the more serious of the two. Recorded history could be rewritten
+through the nested objects a record holds, and there is no second copy to reconcile against,
+so the change would have been undetectable. Verified closed with the same probe that found it.
+
+The negative amount guard was already specified in a doc block and enforced nowhere. A debit
+of minus 500.00 posted as a credit of plus 500.00. Any upstream producing a signed amount,
+which most payment message formats do, would have inverted every posting it sent.
+
+Two of the new tests failed on the first run and the code was right, for the second time in
+this project. An account below zero draws an overdraft fee, so a test about the amount guard
+should assert the posted entry rather than the balance. The balance answers a question about a
+different module.
+
+Prettier had a config and no check, so 34 files had drifted from a house style nobody ran.
+Added a .prettierignore, formatted once, and put `prettier --check` first in lint. Confirmed
+the gate catches a regression by introducing one deliberately.

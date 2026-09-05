@@ -12,11 +12,11 @@ Every module imports codes from here. Nothing here imports anything else, so thi
 
 **A refusal is not an exception.** The codes are split into three sets, and the split decides the handling.
 
-| Set | Meaning | Handling |
-|---|---|---|
+| Set            | Meaning                                                               | Handling                                                        |
+| -------------- | --------------------------------------------------------------------- | --------------------------------------------------------------- |
 | `REFUSAL_CODE` | The system is working correctly and is declining an input on purpose. | Append a rejected record to the event log. Continue the replay. |
-| `FAULT_CODE` | The model was handed something it cannot represent. | Throw `LedgerError`. Stop the replay. |
-| `WARNING_CODE` | Nothing is refused, but a reader must be told. | Attach to the day's report. Change no balance. |
+| `FAULT_CODE`   | The model was handed something it cannot represent.                   | Throw `LedgerError`. Stop the replay.                           |
+| `WARNING_CODE` | Nothing is refused, but a reader must be told.                        | Attach to the day's report. Change no balance.                  |
 
 The reason for the split is that the brief requires refusals to be printed. A settlement against
 an unknown authorization is an expected output of a correct replay. So is a declined

@@ -55,7 +55,11 @@ describe('EventLog, arrival order', () => {
     const log = new EventLog();
     log.accept(debit('E7', 5, 2));
 
-    const refused = log.refuse(debit('E8', 5, 2), REFUSAL_CODE.SETTLEMENT_WITHOUT_AUTHORIZATION, 'no such authorization');
+    const refused = log.refuse(
+      debit('E8', 5, 2),
+      REFUSAL_CODE.SETTLEMENT_WITHOUT_AUTHORIZATION,
+      'no such authorization',
+    );
 
     assert.equal(refused.sequence, 2);
     assert.equal(log.all().length, 2);

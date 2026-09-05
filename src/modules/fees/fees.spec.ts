@@ -228,7 +228,10 @@ describe('assessOverdraftFees, why the walk is ascending and covers the whole wi
     const ledger = ledgerAtDayFiveClose();
     const days = assess(ledger, 5);
 
-    assert.deepEqual([...days], [...days].sort((a, b) => a - b));
+    assert.deepEqual(
+      [...days],
+      [...days].sort((a, b) => a - b),
+    );
   });
 });
 

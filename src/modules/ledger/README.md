@@ -21,11 +21,11 @@ balanceMinor(accountId, { valueDateOnOrBefore, knownAsOfSequence });
 
 A day's closing balance is not one number. The Day 2 closing balance of ACC-001 in this replay is:
 
-| Asked | Balance | Why |
-|---|---|---|
-| On day 2 | 250.00 | Only E1 and E2 exist |
-| On day 5 | (370.00) | E7 has arrived, backdated to day two |
-| On day 6 | 225.00 | E9 has reversed E7, and the fee remains |
+| Asked    | Balance  | Why                                     |
+| -------- | -------- | --------------------------------------- |
+| On day 2 | 250.00   | Only E1 and E2 exist                    |
+| On day 5 | (370.00) | E7 has arrived, backdated to day two    |
+| On day 6 | 225.00   | E9 has reversed E7, and the fee remains |
 
 All three are correct. Acceptance criterion 1 asks for the middle one. The phrase it uses,
 "evaluated at end of Day 5", only means something if the other two exist.

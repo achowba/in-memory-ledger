@@ -45,21 +45,21 @@ This README explains the reasoning behind each decision, so it is long. If you w
 
 It means a day's closing balance is not one number:
 
-| The Day 2 closing balance of ACC-001 | Value | Why |
-|---|---|---|
-| Asked on Day 2 | 250.00 | Only E1 and E2 exist |
-| Asked on Day 5 | (370.00) | E7 has arrived, backdated to Day 2 |
-| Asked on Day 6 | 225.00 | E9 has reversed E7, and the fee remains |
+| The Day 2 closing balance of ACC-001 | Value    | Why                                     |
+| ------------------------------------ | -------- | --------------------------------------- |
+| Asked on Day 2                       | 250.00   | Only E1 and E2 exist                    |
+| Asked on Day 5                       | (370.00) | E7 has arrived, backdated to Day 2      |
+| Asked on Day 6                       | 225.00   | E9 has reversed E7, and the fee remains |
 
 All three are correct. So every balance query names both clocks, and there is deliberately no convenience helper that takes a day alone.
 
 ### The three files worth reading
 
-| File | Why |
-|---|---|
-| [`src/modules/ledger/ledger.ts`](src/modules/ledger/ledger.ts) | The two clock balance query, in about ten lines. Everything else in the project is downstream of this one function. |
-| [`src/modules/fees/fees.ts`](src/modules/fees/fees.ts) | Why three overdraft fees are charged and not one. A fee is itself value dated, so fees cascade, which is why the walk is ascending and why it covers the whole window rather than today. |
-| [`src/common/allocation/allocation.ts`](src/common/allocation/allocation.ts) | Ten lines that decide what a ledger is. BHD 10.000 does not divide by three, so equality and conservation cannot both hold, and only one of them is negotiable. |
+| File                                                                         | Why                                                                                                                                                                                      |
+| ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`src/modules/ledger/ledger.ts`](src/modules/ledger/ledger.ts)               | The two clock balance query, in about ten lines. Everything else in the project is downstream of this one function.                                                                      |
+| [`src/modules/fees/fees.ts`](src/modules/fees/fees.ts)                       | Why three overdraft fees are charged and not one. A fee is itself value dated, so fees cascade, which is why the walk is ascending and why it covers the whole window rather than today. |
+| [`src/common/allocation/allocation.ts`](src/common/allocation/allocation.ts) | Ten lines that decide what a ledger is. BHD 10.000 does not divide by three, so equality and conservation cannot both hold, and only one of them is negotiable.                          |
 
 ### The three decisions most worth disagreeing with
 
@@ -95,26 +95,26 @@ Two accounts. ACC-001 in AED at two decimal places, ACC-002 in BHD at three. Bot
 
 ### Closing balance, as reported at each day close
 
-| Day | ACC-001 | ACC-002 | What happened |
-|---|---|---|---|
-| 1 | 250.00 | 0.000 | Credit 1,200.00, debit 950.00 |
-| 2 | 250.00 | 0.000 | Auth-A approved, 200.00 held, available 50.00 |
-| 3 | 650.00 | 0.000 | Credit 400.00 |
-| 4 | 465.00 | 0.000 | Auth-A settles 185.00. **E6 refused**, its 180.00 stays put |
-| 5 | (230.00) | 10.000 | **E7 lands backdated. Three fees. Auth-B declined** |
-| 6 | 390.00 | 10.000 | E9 reverses E7. No new fee |
+| Day | ACC-001  | ACC-002 | What happened                                               |
+| --- | -------- | ------- | ----------------------------------------------------------- |
+| 1   | 250.00   | 0.000   | Credit 1,200.00, debit 950.00                               |
+| 2   | 250.00   | 0.000   | Auth-A approved, 200.00 held, available 50.00               |
+| 3   | 650.00   | 0.000   | Credit 400.00                                               |
+| 4   | 465.00   | 0.000   | Auth-A settles 185.00. **E6 refused**, its 180.00 stays put |
+| 5   | (230.00) | 10.000  | **E7 lands backdated. Three fees. Auth-B declined**         |
+| 6   | 390.00   | 10.000  | E9 reverses E7. No new fee                                  |
 
 ### The headline figures
 
-| Figure | Value |
-|---|---|
-| Day 2 closing, at end of Day 5, before fees | **(370.00)** |
-| Overdraft fees charged | **3**, on Days 2, 4 and 5, totalling **75.00** |
-| Auth-B | **Declined** |
-| ACC-001 capitalized interest | **0.93** |
-| ACC-002 capitalized interest | **0.008** |
-| ACC-001 final | **390.93** |
-| ACC-002 final | **10.008** |
+| Figure                                      | Value                                          |
+| ------------------------------------------- | ---------------------------------------------- |
+| Day 2 closing, at end of Day 5, before fees | **(370.00)**                                   |
+| Overdraft fees charged                      | **3**, on Days 2, 4 and 5, totalling **75.00** |
+| Auth-B                                      | **Declined**                                   |
+| ACC-001 capitalized interest                | **0.93**                                       |
+| ACC-002 capitalized interest                | **0.008**                                      |
+| ACC-001 final                               | **390.93**                                     |
+| ACC-002 final                               | **10.008**                                     |
 
 Every one of these is derived in [`NUMBERS.md`](NUMBERS.md) and asserted in [`test/replay.e2e-spec.ts`](test/replay.e2e-spec.ts).
 
@@ -137,16 +137,16 @@ Day 3 escapes by 5.00, and only because the fee is AED 25.00. At any fee above A
 
 The brief states that some are wrong. Four are, one is untestable, and three hold.
 
-| # | Criterion, in short | Verdict |
-|---|---|---|
-| 1 | Day 2 closing at end of Day 5, before fees, is (370.00) | Accepted |
-| 2 | E7 causes exactly one fee, on Day 2 | **Refused.** Three fees |
-| 3 | The Day 4 settlement of Auth-A must be accepted | Accepted |
-| 4 | A settlement naming an unknown authorization is rejected | Accepted, with a caveat |
-| 5 | If Auth-B is approved, its hold cuts available but not ledger | **Refused as a criterion.** Auth-B is declined |
-| 6 | After E9, all balances and fees return to pre-E7 values | **Refused.** The fees stand |
-| 7 | The three BHD instalments must each be 3.334 | **Refused.** That totals 10.002 |
-| 8 | An interest remainder that does not sum is discarded | **Refused.** It destroys a fils |
+| #   | Criterion, in short                                           | Verdict                                        |
+| --- | ------------------------------------------------------------- | ---------------------------------------------- |
+| 1   | Day 2 closing at end of Day 5, before fees, is (370.00)       | Accepted                                       |
+| 2   | E7 causes exactly one fee, on Day 2                           | **Refused.** Three fees                        |
+| 3   | The Day 4 settlement of Auth-A must be accepted               | Accepted                                       |
+| 4   | A settlement naming an unknown authorization is rejected      | Accepted, with a caveat                        |
+| 5   | If Auth-B is approved, its hold cuts available but not ledger | **Refused as a criterion.** Auth-B is declined |
+| 6   | After E9, all balances and fees return to pre-E7 values       | **Refused.** The fees stand                    |
+| 7   | The three BHD instalments must each be 3.334                  | **Refused.** That totals 10.002                |
+| 8   | An interest remainder that does not sum is discarded          | **Refused.** It destroys a fils                |
 
 Each refusal is argued in [`REJECTED.md`](REJECTED.md) and executed in [`test/rejected-criteria.e2e-spec.ts`](test/rejected-criteria.e2e-spec.ts). **A passing test in that file means the criterion is refuted, not satisfied.**
 
@@ -156,14 +156,14 @@ Each refusal is argued in [`REJECTED.md`](REJECTED.md) and executed in [`test/re
 
 Each day prints six sections, in this order.
 
-| Section | Holds |
-|---|---|
-| `EVENTS` | What arrived, its value date, and whether it was accepted or refused |
-| `CLOSING LEDGER BALANCE` | Closing, held, and available, per account |
-| `RESTATED EARLIER DAYS` | Earlier days whose closing balance moved today. Appears only when something moved |
-| `FEE ASSESSMENTS` | Fees booked at this day's close, with both clocks on each |
-| `AUTHORIZATION STATES` | Every authorization known so far, whatever its state |
-| `ERRORS AND WARNINGS` | Refusals, and notes that did not prevent acceptance |
+| Section                  | Holds                                                                             |
+| ------------------------ | --------------------------------------------------------------------------------- |
+| `EVENTS`                 | What arrived, its value date, and whether it was accepted or refused              |
+| `CLOSING LEDGER BALANCE` | Closing, held, and available, per account                                         |
+| `RESTATED EARLIER DAYS`  | Earlier days whose closing balance moved today. Appears only when something moved |
+| `FEE ASSESSMENTS`        | Fees booked at this day's close, with both clocks on each                         |
+| `AUTHORIZATION STATES`   | Every authorization known so far, whatever its state                              |
+| `ERRORS AND WARNINGS`    | Refusals, and notes that did not prevent acceptance                               |
 
 Two conventions worth knowing.
 
@@ -189,10 +189,10 @@ The result is a claim you can check in one pass: **the only rounding in the syst
 
 The brief never says which version of a day's closing balance to accrue on, and by Day 6 four of the six days have two.
 
-| Reading | ACC-001 total |
-|---|---|
-| Restated, recomputed with everything known | **0.93** |
-| As known at each day's own close | 0.81 |
+| Reading                                    | ACC-001 total |
+| ------------------------------------------ | ------------- |
+| Restated, recomputed with everything known | **0.93**      |
+| As known at each day's own close           | 0.81          |
 
 Restatement is chosen because criterion 1 already restates. It asks for the Day 2 balance "evaluated at end of Day 5", which is the same operation applied to the fee engine. Restating a balance in order to charge a customer, then refusing to restate it in order to pay one, is difficult to defend.
 
@@ -256,14 +256,14 @@ Every folder under `src/` carries a `README.md` covering what it does, how it re
 
 ## Commands
 
-| Command | Does |
-|---|---|
-| `npm start` | Compiles and prints the six day report |
-| `npm test` | The full suite. **Exactly one failure, on purpose** |
-| `npm run test:green` | The suite without the known gap. Clean |
-| `npm run verify` | Build, lint and the green suite. The gate before a commit |
-| `npm run build` | Compiles to `dist/`. A type error stops the pipeline |
-| `npm run lint` | prettier and eslint |
+| Command              | Does                                                      |
+| -------------------- | --------------------------------------------------------- |
+| `npm start`          | Compiles and prints the six day report                    |
+| `npm test`           | The full suite. **Exactly one failure, on purpose**       |
+| `npm run test:green` | The suite without the known gap. Clean                    |
+| `npm run verify`     | Build, lint and the green suite. The gate before a commit |
+| `npm run build`      | Compiles to `dist/`. A type error stops the pipeline      |
+| `npm run lint`       | prettier and eslint                                       |
 
 ### What the tooling enforces
 
@@ -275,13 +275,13 @@ Every folder under `src/` carries a `README.md` covering what it does, how it re
 
 ## The documents
 
-| File | Holds |
-|---|---|
-| [`NUMBERS.md`](NUMBERS.md) | Every constant, why that value, and what changes if it moves. Includes the fee sensitivity table and the rate plausibility check |
-| [`AMBIGUITIES.md`](AMBIGUITIES.md) | Twenty two places the brief admits more than one reading, with the number each alternative produces |
-| [`REJECTED.md`](REJECTED.md) | The four refused criteria with their arithmetic, criterion 5 under its own heading, and eight approaches abandoned during the build |
-| [`ARCHITECTURE.md`](ARCHITECTURE.md) | Append only at scale, value dating in a UAE licensed bank, the authorization lifecycle, and what was cut |
-| [`WORKLOG.md`](WORKLOG.md) | What was done, when |
+| File                                 | Holds                                                                                                                               |
+| ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| [`NUMBERS.md`](NUMBERS.md)           | Every constant, why that value, and what changes if it moves. Includes the fee sensitivity table and the rate plausibility check    |
+| [`AMBIGUITIES.md`](AMBIGUITIES.md)   | Twenty two places the brief admits more than one reading, with the number each alternative produces                                 |
+| [`REJECTED.md`](REJECTED.md)         | The four refused criteria with their arithmetic, criterion 5 under its own heading, and eight approaches abandoned during the build |
+| [`ARCHITECTURE.md`](ARCHITECTURE.md) | Append only at scale, value dating in a UAE licensed bank, the authorization lifecycle, and what was cut                            |
+| [`WORKLOG.md`](WORKLOG.md)           | What was done, when                                                                                                                 |
 
 ---
 

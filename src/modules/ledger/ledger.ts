@@ -107,9 +107,7 @@ export class Ledger {
   public hasEntry(accountId: string, origin: EntryOrigin, valueDate: Day): boolean {
     return this.entries.some(
       (entry) =>
-        entry.accountId === accountId &&
-        entry.origin === origin &&
-        entry.valueDate === valueDate,
+        entry.accountId === accountId && entry.origin === origin && entry.valueDate === valueDate,
     );
   }
 

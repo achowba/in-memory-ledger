@@ -20,13 +20,13 @@ Halving it changes nothing, and that is worth knowing, because it means the fee 
 
 The fee is load bearing in one place only. Once E7 posts, Day 3 closes at 30.00 before any fee lands. The Day 2 fee is value dated Day 2, so it lowers Day 3 as well. Day 3 goes below zero, and a fourth fee is charged, only when the fee exceeds 30.00.
 
-| Fee | Day 3 closing | Fees charged | Total charged |
-|---|---|---|---|
-| 12.50 | 17.50 | 3 | 37.50 |
-| **25.00** | **5.00** | **3** | **75.00** |
-| 30.00 | 0.00 | 3 | 90.00 |
-| 30.01 | (0.01) | 4 | 120.04 |
-| 50.00 | (20.00) | 4 | 200.00 |
+| Fee       | Day 3 closing | Fees charged | Total charged |
+| --------- | ------------- | ------------ | ------------- |
+| 12.50     | 17.50         | 3            | 37.50         |
+| **25.00** | **5.00**      | **3**        | **75.00**     |
+| 30.00     | 0.00          | 3            | 90.00         |
+| 30.01     | (0.01)        | 4            | 120.04        |
+| 50.00     | (20.00)       | 4            | 200.00        |
 
 So AED 25.00 sits AED 5.01 below a cliff. That margin of 5.00 on Day 3 is the single most fragile number in the replay, and it is the reason the answer to criterion 2 is three rather than four.
 
@@ -60,15 +60,15 @@ Halving the rate to 0.02 percent is where the rounding mode stops being free.
 
 At 0.04 percent no daily accrual lands on an exact tie, so `HALF_UP` and `HALF_EVEN` give identical answers and the mode changes nothing. At 0.02 percent, two of the six accruals land exactly on a tie:
 
-| Day | Balance | At 0.02 percent | HALF_UP | HALF_EVEN |
-|---|---|---|---|---|
-| 1 | 250.00 | 0.050 | 0.05 | 0.05 |
-| 2 | 225.00 | **0.045** | 0.05 | 0.04 |
-| 3 | 625.00 | **0.125** | 0.13 | 0.12 |
-| 4 | 415.00 | 0.083 | 0.08 | 0.08 |
-| 5 | 390.00 | 0.078 | 0.08 | 0.08 |
-| 6 | 390.00 | 0.078 | 0.08 | 0.08 |
-| | | | **0.47** | **0.45** |
+| Day | Balance | At 0.02 percent | HALF_UP  | HALF_EVEN |
+| --- | ------- | --------------- | -------- | --------- |
+| 1   | 250.00  | 0.050           | 0.05     | 0.05      |
+| 2   | 225.00  | **0.045**       | 0.05     | 0.04      |
+| 3   | 625.00  | **0.125**       | 0.13     | 0.12      |
+| 4   | 415.00  | 0.083           | 0.08     | 0.08      |
+| 5   | 390.00  | 0.078           | 0.08     | 0.08      |
+| 6   | 390.00  | 0.078           | 0.08     | 0.08      |
+|     |         |                 | **0.47** | **0.45**  |
 
 A 0.02 difference on a total of about 0.46, which is over four percent, decided entirely by a constant that does not affect this replay at all. That is the argument for fixing the mode explicitly rather than discovering it at the first tie. Both cases are asserted in `src/common/rounding/rounding.spec.ts`.
 
@@ -177,13 +177,13 @@ The alternative convention puts the residual on the last part, which is how an a
 
 In `src/common/money/money.constants.ts` and `src/modules/report/day-report.ts`.
 
-| Constant | Value | Why |
-|---|---|---|
-| `DIGIT_GROUP_SIZE` | 3 | The brief writes `AED 1,200.00`. Grouping never touches a stored value. |
-| `RULE_WIDTH` | 78 | Fits an 80 column terminal with room for a margin. |
-| `ACCRUAL_COLUMN` | 31 | Where the accrual column starts, so the rule and the total align under it and a reader can add the column up by eye. |
-| `ACCRUAL_WIDTH` | 10 | Wide enough for `(1,200.000)` at three decimal places. |
-| Balance column width | 13 | One width for every currency. AED prints two decimals and BHD three, so a width derived from the currency leaves the two accounts misaligned in the same column. |
+| Constant             | Value | Why                                                                                                                                                              |
+| -------------------- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `DIGIT_GROUP_SIZE`   | 3     | The brief writes `AED 1,200.00`. Grouping never touches a stored value.                                                                                          |
+| `RULE_WIDTH`         | 78    | Fits an 80 column terminal with room for a margin.                                                                                                               |
+| `ACCRUAL_COLUMN`     | 31    | Where the accrual column starts, so the rule and the total align under it and a reader can add the column up by eye.                                             |
+| `ACCRUAL_WIDTH`      | 10    | Wide enough for `(1,200.000)` at three decimal places.                                                                                                           |
+| Balance column width | 13    | One width for every currency. AED prints two decimals and BHD three, so a width derived from the currency leaves the two accounts misaligned in the same column. |
 
 None of these can change a number. `src/modules/report/` reads and never writes.
 
@@ -193,23 +193,23 @@ None of these can change a number. `src/modules/report/` reads and never writes.
 
 Not constants. Derived, and reproducible by running `npm start`.
 
-| Figure | Value | Where it comes from |
-|---|---|---|
-| Day 2 closing, at end of Day 5, before fees | (370.00) | 1200.00 minus 950.00 minus 620.00 |
-| Overdraft fees charged | 3, totalling 75.00 | Days 2, 4 and 5 close below zero once E7 posts |
-| Day 3 margin | 5.00 | 650.00 minus 620.00 minus the Day 2 fee of 25.00 |
-| ACC-001 daily accruals | 0.10, 0.09, 0.25, 0.17, 0.16, 0.16 | 0.04 percent of each restated closing balance |
-| ACC-001 capitalized interest | 0.93 | The sum of those six |
-| ACC-002 capitalized interest | 0.008 | 0.004 on Day 5 and Day 6, nothing before |
-| ACC-001 final | 390.93 | 390.00 plus 0.93 |
-| ACC-002 final | 10.008 | 10.000 plus 0.008 |
+| Figure                                      | Value                              | Where it comes from                              |
+| ------------------------------------------- | ---------------------------------- | ------------------------------------------------ |
+| Day 2 closing, at end of Day 5, before fees | (370.00)                           | 1200.00 minus 950.00 minus 620.00                |
+| Overdraft fees charged                      | 3, totalling 75.00                 | Days 2, 4 and 5 close below zero once E7 posts   |
+| Day 3 margin                                | 5.00                               | 650.00 minus 620.00 minus the Day 2 fee of 25.00 |
+| ACC-001 daily accruals                      | 0.10, 0.09, 0.25, 0.17, 0.16, 0.16 | 0.04 percent of each restated closing balance    |
+| ACC-001 capitalized interest                | 0.93                               | The sum of those six                             |
+| ACC-002 capitalized interest                | 0.008                              | 0.004 on Day 5 and Day 6, nothing before         |
+| ACC-001 final                               | 390.93                             | 390.00 plus 0.93                                 |
+| ACC-002 final                               | 10.008                             | 10.000 plus 0.008                                |
 
 ### Three comparison figures worth holding on to
 
-| Figure | Value | What it is |
-|---|---|---|
-| 0.92 | The rate applied to the summed balances | `0.0004 x 2295.00 = 0.918`. One fils below the sum of the parts. This is the remainder criterion 8 wants discarded. |
-| 0.81 | Accruing on the balance known at each day's own close | The reading not taken. 0.12 below the restated answer. See `AMBIGUITIES.md` A6. |
-| 1.03 | What the window would have earned had E7 never posted | 0.10 above the actual. That 0.10 is interest the three fees cost by holding every later balance down. |
+| Figure | Value                                                 | What it is                                                                                                          |
+| ------ | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| 0.92   | The rate applied to the summed balances               | `0.0004 x 2295.00 = 0.918`. One fils below the sum of the parts. This is the remainder criterion 8 wants discarded. |
+| 0.81   | Accruing on the balance known at each day's own close | The reading not taken. 0.12 below the restated answer. See `AMBIGUITIES.md` A6.                                     |
+| 1.03   | What the window would have earned had E7 never posted | 0.10 above the actual. That 0.10 is interest the three fees cost by holding every later balance down.               |
 
 The account ends AED 75.10 short of the counterfactual: 75.00 of fees, plus 0.10 of foregone interest. That is the subject of the one failing test.

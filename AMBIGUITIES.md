@@ -6,13 +6,13 @@ An entry is here when a competent reader could have gone the other way. Where th
 
 ## The ones that change a headline figure
 
-| # | Ambiguity | Chosen | Alternative |
-|---|---|---|---|
-| A2 | Is an already closed day restated when a backdated entry arrives | Yes | Three fees become one, dated Day 5 |
-| A6 | Which closing balance does interest accrue on | Restated, 0.93 | As known at each close, 0.81 |
-| A10 | Where does interest round | Per day, then sum, 0.93 | Round the total, allocate back, 0.92 |
-| A13 | What value date does a reversal carry | The original's, Day 2 | Current date, interest falls to 0.26 |
-| A20 | How many accrual days are in the window | Six, 0.93 | Five, 0.77 |
+| #   | Ambiguity                                                        | Chosen                  | Alternative                          |
+| --- | ---------------------------------------------------------------- | ----------------------- | ------------------------------------ |
+| A2  | Is an already closed day restated when a backdated entry arrives | Yes                     | Three fees become one, dated Day 5   |
+| A6  | Which closing balance does interest accrue on                    | Restated, 0.93          | As known at each close, 0.81         |
+| A10 | Where does interest round                                        | Per day, then sum, 0.93 | Round the total, allocate back, 0.92 |
+| A13 | What value date does a reversal carry                            | The original's, Day 2   | Current date, interest falls to 0.26 |
+| A20 | How many accrual days are in the window                          | Six, 0.93               | Five, 0.77                           |
 
 Everything else changes behaviour, an error message, or nothing at all.
 
@@ -76,15 +76,15 @@ The rule says "0.04 percent per day on the closing ledger balance". Given A2, fo
 
 **Alternative:** Accrue each night on the balance visible at that night's close, never revisited. **AED 0.81.**
 
-| Day | Restated | Accrual | As known then | Accrual |
-|---|---|---|---|---|
-| 1 | 250.00 | 0.10 | 250.00 | 0.10 |
-| 2 | 225.00 | 0.09 | 250.00 | 0.10 |
-| 3 | 625.00 | 0.25 | 650.00 | 0.26 |
-| 4 | 415.00 | 0.17 | 465.00 | 0.19 |
-| 5 | 390.00 | 0.16 | (230.00) | 0.00 |
-| 6 | 390.00 | 0.16 | 390.00 | 0.16 |
-| | | **0.93** | | **0.81** |
+| Day | Restated | Accrual  | As known then | Accrual  |
+| --- | -------- | -------- | ------------- | -------- |
+| 1   | 250.00   | 0.10     | 250.00        | 0.10     |
+| 2   | 225.00   | 0.09     | 250.00        | 0.10     |
+| 3   | 625.00   | 0.25     | 650.00        | 0.26     |
+| 4   | 415.00   | 0.17     | 465.00        | 0.19     |
+| 5   | 390.00   | 0.16     | (230.00)      | 0.00     |
+| 6   | 390.00   | 0.16     | 390.00        | 0.16     |
+|     |          | **0.93** |               | **0.81** |
 
 **Why restated:** Consistency with A2. Criterion 1 restates a balance in order to charge a fee. Restating to charge and refusing to restate to pay would be difficult to defend to a customer or a regulator.
 

@@ -1,0 +1,15 @@
+# Build output. Formatting generated JavaScript is noise, and it is not committed.
+dist/
+
+# Dependencies.
+node_modules/
+
+# Workflow output, not committed. See .agents/conventions/artifacts.convention.md.
+artifacts/
+
+# Generated, and reformatting it produces a diff nobody can review.
+package-lock.json
+
+# Session tooling, not part of this project.
+.remember/
+.claude/

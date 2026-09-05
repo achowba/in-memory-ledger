@@ -45,10 +45,10 @@ Standard TSDoc: `@remarks`, `@param`, `@returns`, `@throws`, `@typeParam`, `@exa
 
 Two custom block tags are declared in `tsdoc.json`, which is the only place a new tag may be introduced:
 
-| Tag | Use |
-|---|---|
-| `@property` | One per member of an interface, a type alias, or a const object. Repeatable. |
-| `@steps` | The ordered steps a function takes, where the sequence is the thing worth knowing. |
+| Tag         | Use                                                                                |
+| ----------- | ---------------------------------------------------------------------------------- |
+| `@property` | One per member of an interface, a type alias, or a const object. Repeatable.       |
+| `@steps`    | The ordered steps a function takes, where the sequence is the thing worth knowing. |
 
 Using a tag that is neither standard nor declared in `tsdoc.json` is a lint error.
 
