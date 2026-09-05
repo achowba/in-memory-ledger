@@ -1,17 +1,15 @@
-import { splitEvenly } from '../../common/allocation/allocation.js';
 import { OPENING_DAY, REPLAY_DAYS } from '../../common/day/day.constants.js';
 import { replayDaysThrough, type ReplayDay } from '../../common/day/day.js';
-import { FAULT_CODE, REFUSAL_CODE, WARNING_CODE } from '../../common/errors/error-codes.js';
+import { FAULT_CODE, WARNING_CODE } from '../../common/errors/error-codes.js';
 import { LedgerError } from '../../common/errors/ledger-error.js';
 import type { MinorUnits } from '../../common/money/money.js';
-import { formatAmount } from '../../common/money/money.js';
-import { isApprovable } from '../authorizations/authorization.types.js';
 import { HoldRegister } from '../authorizations/hold-register.js';
 import { EventLog } from '../events/event-log.js';
 import type { IEventWarning, LedgerEvent } from '../events/event.types.js';
 import { assessOverdraftFees } from '../fees/fees.js';
 import { capitalizeInterest } from '../interest/interest.js';
 import { ENTRY_ORIGIN, type ILedgerEntry } from '../ledger/ledger-entry.types.js';
+import { applyEvent } from './event-handlers.js';
 import { Ledger } from '../ledger/ledger.js';
 import type {
   IAccount,
@@ -149,9 +147,17 @@ export function replay(
   };
 
   /**
-   * Applies one event, appending any entries it produces and recording the outcome.
+   * Validates one event, then hands it to the handler for its type.
+   *
+   * @remarks
+   * The two guards here are the ones that are the same whatever the event is: an amount must
+   * be a magnitude, and the account must exist. Both are faults rather than refusals, because
+   * either means the model was handed something it cannot represent.
+   *
+   * Everything past that point is in `event-handlers.ts`, one function per event type.
    *
    * @param event - The event to apply.
+   * @throws LedgerError With `NON_POSITIVE_AMOUNT` or `UNKNOWN_ACCOUNT`.
    */
   const apply = (event: LedgerEvent): void => {
     // Direction is carried by the event type, never by the sign of the input. The engine
@@ -182,194 +188,7 @@ export function replay(
       );
     }
 
-    switch (event.type) {
-      case 'OPENING_BALANCE': {
-        eventLog.accept(event, warnings);
-        return;
-      }
-
-      case 'CREDIT': {
-        const parts = splitEvenly(event.amountMinor, event.instalmentCount);
-        if (parts.length > 1 && parts.some((part) => part !== parts[0])) {
-          warnings.push({
-            code: WARNING_CODE.UNEVEN_SPLIT,
-            detail:
-              `${formatAmount(account.currency, event.amountMinor)} does not divide into ` +
-              `${event.instalmentCount} equal parts at this precision; the residual went to ` +
-              `the earliest instalment`,
-          });
-        }
-
-        for (const part of parts) {
-          ledger.append({
-            accountId: event.accountId,
-            valueDate: event.valueDate,
-            bookedOnDay: event.bookingDay,
-            amountMinor: part,
-            origin: ENTRY_ORIGIN.CREDIT,
-            sourceEventId: event.eventId,
-            reversesEntryId: null,
-          });
-        }
-        eventLog.accept(event, warnings);
-        return;
-      }
-
-      case 'DEBIT': {
-        // Not gated on available balance. Only an authorization is. A direct debit posts and
-        // may overdraw the account, which is the reason an overdraft fee exists.
-        ledger.append({
-          accountId: event.accountId,
-          valueDate: event.valueDate,
-          bookedOnDay: event.bookingDay,
-          amountMinor: -event.amountMinor,
-          origin: ENTRY_ORIGIN.DEBIT,
-          sourceEventId: event.eventId,
-          reversesEntryId: null,
-        });
-        eventLog.accept(event, warnings);
-        return;
-      }
-
-      case 'AUTHORIZATION': {
-        if (holds.find(event.authId) !== undefined) {
-          eventLog.refuse(
-            event,
-            REFUSAL_CODE.AUTHORIZATION_ALREADY_EXISTS,
-            `${event.authId} has already been requested`,
-            warnings,
-          );
-          return;
-        }
-
-        const balanceMinor = ledger.balanceMinor(event.accountId, {
-          valueDateOnOrBefore: event.bookingDay,
-        });
-        const heldMinor = holds.activeHoldsMinor(event.accountId);
-        const availableMinor = balanceMinor - heldMinor;
-
-        if (!isApprovable(availableMinor, event.amountMinor)) {
-          holds.decline(
-            event.authId,
-            event.accountId,
-            event.amountMinor,
-            event.bookingDay,
-            `available ${formatAmount(account.currency, availableMinor)} would fall to ` +
-              `${formatAmount(account.currency, availableMinor - event.amountMinor)}`,
-          );
-          eventLog.refuse(
-            event,
-            REFUSAL_CODE.AUTHORIZATION_DECLINED_INSUFFICIENT_AVAILABLE,
-            `available ${formatAmount(account.currency, availableMinor)} minus a hold of ` +
-              `${formatAmount(account.currency, event.amountMinor)} is below zero`,
-            warnings,
-          );
-          return;
-        }
-
-        holds.approve(event.authId, event.accountId, event.amountMinor, event.bookingDay);
-        eventLog.accept(event, warnings);
-        return;
-      }
-
-      case 'SETTLEMENT': {
-        const authorization = holds.find(event.authId);
-
-        if (authorization === undefined) {
-          eventLog.refuse(
-            event,
-            REFUSAL_CODE.SETTLEMENT_WITHOUT_AUTHORIZATION,
-            `${event.authId} was never authorized, so the funds stay in the account`,
-            warnings,
-          );
-          return;
-        }
-
-        if (authorization.state !== 'APPROVED') {
-          eventLog.refuse(
-            event,
-            REFUSAL_CODE.SETTLEMENT_AGAINST_CLOSED_AUTHORIZATION,
-            `${event.authId} is ${authorization.state.toLowerCase()} and cannot settle again`,
-            warnings,
-          );
-          return;
-        }
-
-        // Not gated on available balance. The hold already reserved the funds and the bank
-        // is committed to the payment.
-        ledger.append({
-          accountId: event.accountId,
-          valueDate: event.valueDate,
-          bookedOnDay: event.bookingDay,
-          amountMinor: -event.amountMinor,
-          origin: ENTRY_ORIGIN.SETTLEMENT,
-          sourceEventId: event.eventId,
-          reversesEntryId: null,
-        });
-        holds.settle(event.authId, event.bookingDay, event.amountMinor);
-        eventLog.accept(event, warnings);
-        return;
-      }
-
-      case 'REVERSAL': {
-        const target = eventLog.findAccepted(event.reversesEventId);
-
-        if (target === undefined) {
-          eventLog.refuse(
-            event,
-            REFUSAL_CODE.REVERSAL_TARGET_NOT_FOUND,
-            `${event.reversesEventId} was never accepted, so there is nothing to reverse`,
-            warnings,
-          );
-          return;
-        }
-
-        if (eventLog.hasReversalFor(event.reversesEventId)) {
-          eventLog.refuse(
-            event,
-            REFUSAL_CODE.REVERSAL_TARGET_ALREADY_REVERSED,
-            `${event.reversesEventId} has already been reversed`,
-            warnings,
-          );
-          return;
-        }
-
-        const originals = ledger
-          .entriesFor(event.accountId)
-          .filter((entry) => entry.sourceEventId === event.reversesEventId);
-
-        if (originals.length === 0) {
-          eventLog.refuse(
-            event,
-            REFUSAL_CODE.REVERSAL_TARGET_NOT_REVERSIBLE,
-            `${event.reversesEventId} posted no ledger entry`,
-            warnings,
-          );
-          return;
-        }
-
-        // The original is never edited. Each reversal is a new opposite entry that inherits the
-        // original value date. So the correction lands on the day the money was supposed to
-        // have moved, not on the day the mistake was noticed.
-        for (const original of originals) {
-          ledger.append({
-            accountId: original.accountId,
-            valueDate: original.valueDate,
-            bookedOnDay: event.bookingDay,
-            amountMinor: -original.amountMinor,
-            origin: ENTRY_ORIGIN.REVERSAL,
-            sourceEventId: event.eventId,
-            reversesEntryId: original.entryId,
-          });
-        }
-        eventLog.accept(event, warnings);
-        return;
-      }
-
-      default: {
-        return;
-      }
-    }
+    applyEvent({ ledger, eventLog, holds, account, warnings }, event);
   };
 
   const days: IDayResult[] = [];

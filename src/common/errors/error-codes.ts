@@ -47,11 +47,9 @@ export type RefusalCode = (typeof REFUSAL_CODE)[keyof typeof REFUSAL_CODE];
  * Every one of these would require the system to guess. A guessed answer in a ledger is
  * worse than no answer, because a guess is silent and a stop is not.
  *
- * @property UNKNOWN_CURRENCY - No exponent is registered for the currency.
  * @property MALFORMED_AMOUNT - The text is not a decimal amount.
  * @property PRECISION_EXCEEDS_CURRENCY - The amount carries more decimal places than the
  *   currency has. Rounding an input silently would destroy the caller's intent.
- * @property CURRENCY_MISMATCH - An operation combined two different currencies.
  * @property NON_POSITIVE_AMOUNT - A credit or a debit was given a zero or negative amount.
  *   Direction is carried by the entry type, never by the sign of the input.
  * @property UNKNOWN_ACCOUNT - An event names an account that was never opened.
@@ -60,10 +58,8 @@ export type RefusalCode = (typeof REFUSAL_CODE)[keyof typeof REFUSAL_CODE];
  * @property SPLIT_COUNT_INVALID - A split was asked for fewer than one part.
  */
 export const FAULT_CODE = {
-  UNKNOWN_CURRENCY: 'UNKNOWN_CURRENCY',
   MALFORMED_AMOUNT: 'MALFORMED_AMOUNT',
   PRECISION_EXCEEDS_CURRENCY: 'PRECISION_EXCEEDS_CURRENCY',
-  CURRENCY_MISMATCH: 'CURRENCY_MISMATCH',
   NON_POSITIVE_AMOUNT: 'NON_POSITIVE_AMOUNT',
   UNKNOWN_ACCOUNT: 'UNKNOWN_ACCOUNT',
   FEE_NOT_PRICED_FOR_CURRENCY: 'FEE_NOT_PRICED_FOR_CURRENCY',
