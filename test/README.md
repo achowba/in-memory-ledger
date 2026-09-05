@@ -25,10 +25,14 @@ one. Three parts of 3.334 total 10.002. Discarding the interest remainder loses 
 
 `npm test` reports exactly one failure, in `known-gap.e2e-spec.ts`. That is required by the brief and is not a defect.
 
+<!-- test-counts:start -->
+
 ```
 npm test             279 tests, 278 pass, 1 fail
 npm run test:green   278 tests, 278 pass
 ```
+
+<!-- test-counts:end -->
 
 `test:green` excludes it with `--test-skip-pattern="known gap"`. Only the failing test carries that prefix. The other test in the file passes and is named without it, so the skip removes the one test and keeps the rest.
 

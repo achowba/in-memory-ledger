@@ -1,11 +1,12 @@
 # Worklog
 
-Real times, in CEST, recorded as the work happened. Newest entry at the bottom.
+Real times, recorded as the work happened, in the zone named on each day. Newest entry at the
+bottom.
 
 The brief asks for an intact history. `git log` is the authoritative record of what changed.
 This file records why, and records the time spent on thinking that produced no commit.
 
-## 2026-09-04
+## 2026-09-04, CEST
 
 **11:56** Brief received. Started reading rather than coding. The event stream is small, so the
 risk is not implementation effort. The risk is misreading the temporal semantics and then
@@ -134,7 +135,7 @@ reader recognises by shape before they read it.
 Generated the twenty two entries from the headings rather than typing them, so the list cannot
 disagree with the document it describes.
 
-## 2026-09-05
+## 2026-09-05, CEST
 
 **09:55** Closed the two review sweep blockers and the prettier violation.
 
@@ -263,8 +264,8 @@ assertion searched the whole report and passed. A test that cannot fail for the 
 is worse than no test.
 
 The stale numbers were mine. Both READMEs quoted 229 tests against a suite that had been 273 for
-some hours and is 279 now. That is exactly the failure the `Numbers?` section of the pull request
-template exists to catch, in the repository that wrote the template.
+some hours. That is exactly the failure the `Numbers?` section of the pull request template
+exists to catch, in the repository that wrote the template.
 
 **15:16 to 15:19** The Part 2 deliverable is a PDF of two to four pages, and I had written
 markdown of 3,494 words, which is seven pages of anything readable. Two ways out: typeset it
@@ -327,3 +328,34 @@ Considered cutting the section outright, which was the objection as first put. R
 brief asks explicitly for the operational and regulatory surface in a UAE licensed bank,
 so removing the regulatory half answers half a question. The citations were the liability, not
 the subject.
+
+## 2026-09-06, WEST
+
+The machine moved a zone between yesterday and today, which is why these times sit before
+yesterday's. The dates are right and the clock is not lying.
+
+**00:15** Made the suite counts generated rather than typed, on a reader's instruction, and the
+instruction was right for a reason worth recording: this exact pair of numbers went stale twice
+in one day, the second time within minutes of my correcting it.
+
+A typed number drifts in silence, because nothing fails when it is wrong. Worse, the reader who
+eventually spots it cannot tell whether the document is wrong or the suite regressed, and those
+want opposite responses.
+
+`tools/test-counts` runs both suites, reads the counts out of the TAP summary, and rewrites the
+region between two markers. `npm run verify` checks it, so a stale count now breaks the gate
+instead of waiting for somebody to notice.
+
+The check passed on its first run against the files as they stood, which is the result I wanted:
+the generator reproduced the hand written block exactly, so nothing a reader sees changed and
+only the mechanism did. A generator whose first run produces a diff is one you have to review
+before you can trust it.
+
+Three details that would each have gone wrong quietly. The exit code has to be ignored, because
+the full suite exits non-zero by design. A missing marker has to throw, or a file drifts while
+the check reports success. And the counts come from the TAP summary rather than from counting
+`it(` calls in the source, which would miss tests generated in a loop and count ones inside a
+comment.
+
+Also took a drifting count out of the worklog entry that complains about drifting counts. It
+said the suite "is 279 now".
