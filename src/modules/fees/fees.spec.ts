@@ -32,11 +32,9 @@ function post(ledger: Ledger, valueDate: Day, amountMinor: bigint): void {
 /**
  * Builds ACC-001 exactly as it stands at the day five close, before any fee is assessed.
  *
- * @remarks
- * Every entry of the brief that is value dated on or before day five and accepted:
- * E1 credits 1,200.00, E2 debits 950.00, E4 credits 400.00, E5 settles 185.00, and E7
- * debits 620.00 backdated to day two. E3 and E8 are authorizations and post nothing. E6 is
- * refused.
+ * Every entry of the brief that is value dated on or before day five and accepted. E1 credits
+ * 1,200.00. E2 debits 950.00. E4 credits 400.00. E5 settles 185.00. E7 debits 620.00, backdated
+ * to day two. E3 and E8 are authorizations and post nothing. E6 is refused.
  *
  * @returns The ledger.
  */
@@ -110,8 +108,8 @@ describe('assessOverdraftFees, the cascade E7 sets off', () => {
     assert.notEqual(assess(ledger, 5).length, 1);
   });
 
-  // Day three is the near miss the brief designed in. 650.00 minus 620.00 is 30.00, and the
-  // day two fee is value dated day two so it lowers day three as well, leaving 5.00.
+  // Day three is the near miss the brief designed in. 650.00 minus 620.00 is 30.00. The day two
+  // fee is value dated day two, so it lowers day three as well. Day three is left at 5.00.
   it('skips day three, which escapes by exactly 5.00', () => {
     const ledger = ledgerAtDayFiveClose();
     assess(ledger, 5);
@@ -129,7 +127,7 @@ describe('assessOverdraftFees, the cascade E7 sets off', () => {
     assert.equal(ledger.hasEntry(ACCOUNT, ENTRY_ORIGIN.OVERDRAFT_FEE, 3), false);
   });
 
-  // A fee lands on the day it covers but is booked on the day the run happens, so the two
+  // A fee lands on the day it covers. A fee is booked on the day the run happens. So the two
   // clocks stay honest even for a fee against an already closed day.
   it('books a backdated fee on the run day and value dates it to the day it covers', () => {
     const ledger = ledgerAtDayFiveClose();
@@ -178,10 +176,10 @@ describe('assessOverdraftFees, at most one fee per account per day', () => {
     assert.equal(ledger.balanceMinor(ACCOUNT, { valueDateOnOrBefore: 5 }), afterFirst);
   });
 
-  // "Once per day" is not "once ever". An account that stays overdrawn is charged again for
-  // each new day it stays overdrawn, which is what the rule says and what a customer would
-  // experience. In the real replay E9 arrives on day six and cures the balance before the
-  // day six close runs, so this sixth fee never happens. This fixture has no E9.
+  // Once per day is not once ever. An account that stays overdrawn is charged again for each
+  // new day it stays overdrawn. That is what the rule says, and what a customer would
+  // experience. In the real replay E9 arrives on day six and cures the balance before the day
+  // six close runs. So this sixth fee never happens. This fixture has no E9.
   it('charges each new day the account is still overdrawn', () => {
     const ledger = ledgerAtDayFiveClose();
     assess(ledger, 5);

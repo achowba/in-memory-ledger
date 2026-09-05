@@ -20,7 +20,10 @@ Works out one accrual per day on the closing balance, and books the whole window
 
 This is the consequential choice in the module, and the brief does not make it for you.
 
-By day six, four of the six days have two possible closing balances: the one visible at the time, and the one you get after E7 arrives backdated and E9 reverses it. Which one do you accrue on?
+This is the consequential choice in the module, and the brief does not make it for you.  By day
+six, four of the six days have two possible closing balances. One is the balance visible at the
+time. The other is the balance you get after E7 arrives backdated and E9 reverses it. Which one
+do you accrue on?
 
 | Reading | ACC-001 total |
 |---|---|
@@ -59,7 +62,8 @@ A day closing at exactly zero accrues nothing, which is why ACC-002 earns nothin
 
 0.04 percent per day is about 14.6 percent a year simple, and about 15.7 percent compounded. That is a lending rate, not a deposit rate.
 
-The brief supplies it, so the implementation uses it. Transcribing a number that implausible without comment would be the wrong kind of quiet. See `NUMBERS.md`.
+The brief supplies it, so the implementation uses it. Transcribing a number that implausible
+without comment would be a failure to say something worth saying. See `NUMBERS.md`.
 
 ## Its dependencies on other modules
 

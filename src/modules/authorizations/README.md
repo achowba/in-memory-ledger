@@ -2,7 +2,8 @@
 
 ## What it does
 
-Holds the state of every authorization, tracks how much is reserved against each account, and owns the one comparison that decides whether a new authorization is approved.
+Holds the state of every authorization. Tracks how much is reserved against each account. Owns
+the one comparison that decides whether a new authorization is approved.
 
 ## How it relates to the rest of the project
 
@@ -39,7 +40,10 @@ Storing it also lets a later settlement tell two different situations apart: an 
 
 E5 settles 185.00 against a hold of 200.00, and the remaining 15.00 is freed rather than kept.
 
-That is the single presentment reading. A product that can present more than once against one authorization, such as a hotel folio or a split shipment, would keep the residual held until a final authorization or an expiry. Neither exists in this model. See `AMBIGUITIES.md`.
+That is the single presentment reading. A product that can present more than once against one
+authorization would keep the residual held. A hotel folio and a split shipment both do this.
+They hold until a final authorization arrives, or until an expiry. Neither exists in this model.
+See `AMBIGUITIES.md`.
 
 ### This register is a projection, not history
 

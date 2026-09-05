@@ -14,13 +14,9 @@ import {
 /**
  * What one assessment run needs to know.
  *
- * @property ledger - The ledger to read balances from and append fees to.
- * @property accountId - The account under assessment.
- * @property currency - The account's currency, which decides what a fee costs.
- * @property throughDay - The last day to assess, normally the day being closed.
- * @property bookedOnDay - The day the run is happening. A fee booked now carries this as its
- *   booking day and the day it covers as its value date, so the two clocks stay honest even
- *   for a fee that lands on an already closed day.
+ * The day the run is happening. A fee booked now carries this as its booking day. It carries
+ * the day it covers as its value date. So the two clocks stay honest even for a fee that lands
+ * on an already closed day.
  */
 export interface IAssessmentRequest {
   readonly ledger: Ledger;
@@ -58,7 +54,7 @@ export function overdraftFeeMinor(currency: CurrencyCode): MinorUnits {
  * A fee is itself a value dated ledger entry, so a fee booked against an earlier day lowers
  * the closing balance of every later day. Two rules follow, and both are load bearing.
  *
- * Ascending order. A fee for day `d` can only affect days at or after `d`, so walking the
+ * Ascending order. A fee for day `d` can only affect days at or after `d`. So walking the
  * window from the start reaches a fixed point in a single pass. Any other order would need
  * iterating until nothing changes.
  *

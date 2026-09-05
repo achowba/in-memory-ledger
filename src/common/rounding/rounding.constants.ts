@@ -29,8 +29,8 @@ export type RoundingMode = (typeof ROUNDING_MODES)[number];
  * replay. It is still fixed here rather than left implicit, because a mode that is only
  * decided when a tie first appears is decided by accident.
  *
- * The choice stops being free if the rate moves. At 0.02 percent per day, two of the six
- * daily accruals land exactly on a tie, and the capitalized total differs by 0.02 between
- * the two modes. See NUMBERS.md.
+ * The choice stops being free if the rate moves. At 0.02 percent per day, two of the six daily
+ * accruals land exactly on a tie. The capitalized total then differs by 0.02 between the two
+ * modes. See NUMBERS.md.
  */
 export const ROUNDING_MODE: RoundingMode = 'HALF_UP';

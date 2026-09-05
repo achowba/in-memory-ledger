@@ -16,7 +16,9 @@ Together with `common/allocation`, this is one of only two places in the ledger 
 
 Placing a quotient against the halfway point is done by comparing `remainder * 2n` against the divisor. Both sides are integers, so the comparison is exact for any magnitude.
 
-Computing a fraction and comparing it against one half would reintroduce the floating point that the whole money design exists to avoid, and it would do so in the one function where precision matters most.
+Computing a fraction and comparing it against one half would reintroduce the floating point that
+the whole money design exists to avoid. It would do so in the one function where precision
+matters most.
 
 ### HALF_UP means away from zero
 
@@ -26,7 +28,8 @@ The alternative, rounding a tie always upward on the number line, would round `-
 
 ### The mode is fixed even though it changes nothing here
 
-No tie occurs anywhere in the six day window at 0.04 percent per day, so `HALF_UP` and `HALF_EVEN` produce identical output. The mode is still named in `rounding.constants.ts` rather than left to whatever the first tie happens to hit, because a mode decided by accident is a mode nobody can defend.
+The mode is still named in `rounding.constants.ts` rather than left to whatever the first tie
+happens to hit. A mode decided by accident is a mode nobody can defend.
 
 The choice stops being free if the rate moves. At 0.02 percent, two of the six daily accruals land exactly on a tie, and the capitalized total differs by 0.02 between the modes. Both cases are in the spec.
 

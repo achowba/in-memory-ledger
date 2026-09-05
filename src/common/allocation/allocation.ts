@@ -4,14 +4,13 @@ import { LedgerError } from '../errors/ledger-error.js';
 /**
  * Splits a total into a fixed number of parts that sum exactly back to the total.
  *
- * @remarks
- * The parts are as equal as the currency allows. When the total does not divide evenly, the
- * residual is spread one unit at a time over the earliest parts, which is the largest
- * remainder method with the index as the tie break.
+ * The parts are as equal as the currency allows. When the total does not divide evenly, a
+ * residual is left over. The residual is spread one unit at a time over the earliest parts.
+ * That is the largest remainder method, with the index as the tie break.
  *
- * BHD 10.000 into three parts is the case the brief supplies. 10000 fils divided by 3 is
- * 3333 with a remainder of 1, so the parts are 3334, 3333 and 3333, and they sum to exactly
- * 10000. Three genuinely equal parts do not exist at three decimal places.
+ * BHD 10.000 into three parts is the case the brief supplies. 10000 fils divided by 3 is 3333,
+ * with a remainder of 1. So the parts are 3334, 3333 and 3333. They sum to exactly 10000. Three
+ * genuinely equal parts do not exist at three decimal places.
  *
  * Acceptance criterion 7 asks for three parts of 3.334, which sum to 10.002. That criterion
  * is refused. When equality and conservation conflict, conservation wins, because a ledger

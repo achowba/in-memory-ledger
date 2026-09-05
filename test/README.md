@@ -16,7 +16,8 @@ Runs the event stream of the brief end to end and asserts what comes out. Unit t
 
 ## How to read a passing test in `rejected-criteria.e2e-spec.ts`
 
-A passing test there means the criterion is **refuted**, not satisfied. Each one runs the arithmetic that makes the criterion false: that three fees are charged rather than one, that three parts of 3.334 total 10.002, that discarding the interest remainder loses a fils.
+Each one runs the arithmetic that makes the criterion false. Three fees are charged rather than
+one. Three parts of 3.334 total 10.002. Discarding the interest remainder loses a fils.
 
 `REJECTED.md` argues those refusals in prose. This directory is what makes the argument checkable.
 
@@ -31,4 +32,7 @@ npm run test:green   228 tests, 228 pass
 
 `test:green` excludes it with `--test-skip-pattern="known gap"`, which is why every test in that file is named with that prefix.
 
-Do not fix the failure by weakening its assertion. It reveals that this design cannot tell a bank error from a legitimate customer return, because a reversal carries no reason code, and so it applies one fee rule to both and is wrong about one of them every time. The full reasoning is in the block comment at the top of that file.
+Do not fix the failure by weakening its assertion. It reveals that this design cannot tell a
+bank error from a legitimate customer return. A reversal carries no reason code. So the design
+applies one fee rule to both, and is wrong about one of them every time. The full reasoning is
+in the block comment at the top of that file.

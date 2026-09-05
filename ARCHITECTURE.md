@@ -111,7 +111,7 @@ Concretely: value dates may not fall inside a sealed accounting period. Inside t
 
 I would choose this over the alternatives, including tamper evident hash chaining and a full bitemporal audit trail, for three reasons.
 
-**It bounds the blast radius rather than recording it.** Every problem in this section is a consequence of a correction reaching somewhere that has already been reported. A lock stops it reaching. An audit trail tells you afterwards where it reached, which is useful and is not the same thing.
+**It bounds how far a correction can reach, rather than recording where it reached.** Every problem in this section is a consequence of a correction reaching somewhere that has already been reported. A lock stops it reaching. An audit trail tells you afterwards where it reached, which is useful and is not the same thing.
 
 **It supplies the missing field.** The reason code is the concept whose absence produces this implementation's one failing test. Once a reversal says why, the system can distinguish a bank error, where consumer protection rules require the fees to be refunded, from a legitimate customer return, where the account really was overdrawn. Today it cannot, so it applies one rule to both and is wrong about one of them every time.
 
@@ -159,7 +159,7 @@ One guard is worth naming because it is what keeps a terminated authorization te
 
 Four endings this model has no path for at all, plus one case that is their mirror image.
 
-**Expiry.** The merchant never presents. A restaurant pre authorizes and the table walks out, or an online order is abandoned after authorization. Mandate a TTL per product, not one global value: card present retail is commonly around seven days, hotel and vehicle rental thirty, and fuel at an automated pump much shorter. On expiry, append a release event and free the hold. Never mutate the authorization in place. A settlement arriving after expiry is then a force post and goes down that path rather than silently reviving a dead hold.
+**Expiry.** The merchant never presents. A restaurant pre authorizes and the customers leave without paying. An online order is abandoned after authorization. Mandate a TTL per product, not one global value: card present retail is commonly around seven days, hotel and vehicle rental thirty, and fuel at an automated pump much shorter. On expiry, append a release event and free the hold. Never mutate the authorization in place. A settlement arriving after expiry is then a force post and goes down that path rather than silently reviving a dead hold.
 
 **Acquirer initiated void or reversal.** The merchant cancels at the terminal, or an estimated authorization is replaced by a final one. Mandate immediate release, full or partial, on receipt of the reversal message, and no further settlement against that identifier. This is the cheapest hold to release and the one customers notice most when it is not, because they are standing at the counter.
 
@@ -177,13 +177,13 @@ One more sits just outside the lifecycle but ends the economics: a **chargeback*
 
 Ordered by the size of the risk, not by the size of the change.
 
-**Double entry.** This is single entry per customer account. There are no contra accounts for fee income, interest expense, settlement clearing or suspense. *Defers:* no trial balance, no way to prove value is conserved across the book rather than within one account, and finance cannot see fee income or interest expense at all. A ledger that cannot be balanced is a record, not a ledger. This is the largest cut by some distance.
+**Double entry.** This is single entry per customer account. There are no contra accounts for fee income, interest expense, settlement clearing or suspense. *Defers:* no trial balance, no way to prove value is conserved across the book rather than within one account, and finance cannot see fee income or interest expense at all. A ledger that cannot be balanced is a record, not a ledger. This is the largest cut here.
 
 **Closed periods and a back value limit.** *Defers:* everything in section 2. Every statement and every regulatory return stays permanently provisional.
 
 **Snapshots.** *Defers:* the quadratic day close from section 1, and a projection rebuild that goes from seconds to hours.
 
-**Idempotency.** No event carries a key and nothing deduplicates. *Defers:* a retried delivery double posts. In a system fed by a message queue with at least once delivery, this is not an edge case, it is Tuesday.
+**Idempotency.** No event carries a key and nothing deduplicates. *Defers:* a retried delivery double posts. In a system fed by a message queue with at least once delivery, this is not an edge case. It is routine.
 
 **Concurrency control.** The replay is single threaded with no locking or optimistic versioning. *Defers:* two authorizations arriving together both read the same available balance and both approve, and the account goes overdrawn past a limit that was supposed to prevent exactly that.
 

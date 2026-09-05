@@ -20,8 +20,8 @@ before(() => {
 
 describe('criterion 1: the day two closing balance at the end of day five is (370.00)', () => {
   // ACCEPTED. The criterion is also the brief telling you to build a two clock ledger. The
-  // phrase "evaluated at end of Day 5" only means something if a day's closing balance can
-  // hold more than one value, and here it holds three.
+  // phrase "evaluated at end of Day 5" only means something if a day closing balance can hold
+  // more than one value. Here it holds three.
   it('is (370.00) when asked at the end of day five, before any fee', () => {
     const afterE7 = result.ledger
       .all()
@@ -81,9 +81,9 @@ describe('criterion 3: the day four settlement of Auth-A is accepted', () => {
 });
 
 describe('criterion 4: a settlement naming an unknown authorization is refused', () => {
-  // ACCEPTED as an implementable rule, with a production caveat recorded in REJECTED.md and
-  // in ARCHITECTURE.md. A real card issuer must honour a force post or a late presentment
-  // under scheme rules, and would post it to a suspense account rather than drop it.
+  // ACCEPTED as an implementable rule, with a production caveat recorded in REJECTED.md and in
+  // ARCHITECTURE.md. A real card issuer must honour a force post or a late presentment under
+  // scheme rules. It would post the settlement to a suspense account rather than drop it.
   it('refuses E6, which names Auth-Z', () => {
     const record = result.eventLog
       .all()

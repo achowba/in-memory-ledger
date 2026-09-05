@@ -8,16 +8,16 @@ import type { IEventWarning, IRecordedEvent, LedgerEvent } from './event.types.j
  * @remarks
  * Two properties make this a log rather than a list.
  *
- * Nothing is ever removed or edited. There is no `delete`, no `update`, and every record is
- * frozen on the way in, so an accidental mutation throws in strict mode rather than
- * corrupting history quietly.
+ * Nothing is ever removed or edited. There is no `delete` and no `update`. Every record is
+ * frozen on the way in. So an accidental mutation throws in strict mode rather than corrupting
+ * history quietly.
  *
- * A refusal is recorded, not discarded. The brief requires the day four rejection of E6 and
- * the day five decline of Auth-B to appear in the printed output, so a refusal is an outcome
- * the log carries rather than an error that escapes. See the error handling convention.
+ * A refusal is recorded, not discarded. The brief requires the day four rejection of E6 in the
+ * printed output. It requires the day five decline of Auth-B too. So a refusal is an outcome
+ * the log carries, rather than an error that escapes. See the error handling convention.
  *
  * The sequence number this class hands out is the second of the two clocks. A ledger balance
- * query uses it to ask what the system knew at a chosen point in the replay, which is how
+ * query uses it to ask what the system knew at a chosen point in the replay. That is how
  * acceptance criterion 1 gets its answer of (370.00) at the end of day five.
  */
 export class EventLog {
@@ -131,9 +131,8 @@ export class EventLog {
   /**
    * Returns the sequence number the next record will be given.
    *
-   * @remarks
-   * A balance query takes a sequence bound, and a caller often needs the bound that means
-   * "everything the system knew just before this event was processed".
+   * A balance query takes a sequence bound. A caller often needs the bound that means
+   * everything the system knew just before this event was processed.
    *
    * @returns The next sequence number.
    */
@@ -142,12 +141,30 @@ export class EventLog {
   }
 
   /**
-   * Freezes a record and adds it to the log.
+   * Freezes a record and everything it holds. Adds it to the log.
+   *
+   * `Object.freeze` is shallow. A record holds three nested objects: the event, the refusal,
+   * and the list of warnings. Freezing only the wrapper leaves all three writable. Anybody
+   * holding a record could then change the amount, the account or the refusal reason of an
+   * event already in the log. Every later read would return the changed value. There is no
+   * second copy to reconcile against, so the change would be undetectable.
+   *
+   * `readonly` blocks that at compile time. It is not the guarantee being claimed here.
+   * Invariant 2 says no record is changed after it is appended. An append only log whose
+   * history can be rewritten at runtime is not one.
+   *
+   * The nested objects are frozen in place rather than copied. The caller has no business
+   * mutating them either, and a copy would break the identity a test asserts on.
    *
    * @param record - The record to store.
-   * @returns The same record, frozen.
+   * @returns The same record, frozen all the way down.
    */
   private append(record: IRecordedEvent): IRecordedEvent {
+    Object.freeze(record.event);
+    if (record.refusal !== null) Object.freeze(record.refusal);
+    for (const warning of record.warnings) Object.freeze(warning);
+    Object.freeze(record.warnings);
+
     const frozen = Object.freeze(record);
     this.records.push(frozen);
     return frozen;

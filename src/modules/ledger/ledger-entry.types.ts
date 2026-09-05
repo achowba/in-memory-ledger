@@ -33,10 +33,9 @@ export type EntryOrigin = (typeof ENTRY_ORIGIN)[keyof typeof ENTRY_ORIGIN];
 /**
  * One balance-affecting posting. Immutable once appended.
  *
- * @remarks
- * The amount is signed, so a balance is the plain sum of the amounts and nothing has to
- * consult the origin to know which way to add. Direction on the way in is carried by the
- * event type, and it is converted to a sign exactly once, at the point of posting.
+ * The amount is signed, so a balance is the plain sum of the amounts. Nothing has to consult
+ * the origin to know which way to add. Direction on the way in is carried by the event type. It
+ * becomes a sign exactly once, at the point of posting.
  *
  * @property entryId - Stable identifier, assigned by the ledger. Deterministic, so a rerun
  *   produces identical output.

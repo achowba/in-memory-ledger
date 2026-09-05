@@ -19,7 +19,7 @@ npm ci && npm start
 - [What the replay produces](#what-the-replay-produces)
   - [Closing balance, as reported at each day close](#closing-balance-as-reported-at-each-day-close)
   - [The headline figures](#the-headline-figures)
-  - [Three fees, and the one that got away](#three-fees-and-the-one-that-got-away)
+  - [Three fees, and why day three escapes](#three-fees-and-why-day-three-escapes)
 - [The eight acceptance criteria](#the-eight-acceptance-criteria)
 - [How to read the output](#how-to-read-the-output)
 - [Design](#design)
@@ -118,7 +118,7 @@ Two accounts. ACC-001 in AED at two decimal places, ACC-002 in BHD at three. Bot
 
 Every one of these is derived in [`NUMBERS.md`](NUMBERS.md) and asserted in [`test/replay.e2e-spec.ts`](test/replay.e2e-spec.ts).
 
-### Three fees, and the one that got away
+### Three fees, and why day three escapes
 
 E7 is value dated Day 2, so it lowers every day from Day 2 onward. Three close below zero.
 
@@ -289,7 +289,7 @@ Every folder under `src/` carries a `README.md` covering what it does, how it re
 
 The full list with the risk each one defers is in [`ARCHITECTURE.md`](ARCHITECTURE.md). The four that matter most:
 
-**Double entry.** This is single entry per customer account. There are no contra accounts for fee income or interest expense, no trial balance, and no way to prove value is conserved across the book rather than within one account. The largest cut by some distance.
+**Double entry.** This is single entry per customer account. There are no contra accounts for fee income or interest expense, no trial balance, and no way to prove value is conserved across the book rather than within one account. The largest cut here.
 
 **A closed period.** Nothing limits how far back a value date may reach. E7 reaches back three days; nothing would stop it reaching back three years. Every statement and every regulatory return is therefore permanently provisional.
 

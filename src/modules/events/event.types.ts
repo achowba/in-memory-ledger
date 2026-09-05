@@ -33,11 +33,10 @@ export interface IOpeningBalanceEvent extends IEventBase {
 /**
  * Money into the account.
  *
- * @remarks
- * `instalmentCount` exists because E10 credits BHD 10.000 "as three equal instalments". One
- * event therefore produces three ledger entries. Modelling that as three separate events
- * would lose the fact that they are one instruction, and the residual allocation only makes
- * sense across a known set of parts.
+ * `instalmentCount` exists because E10 credits BHD 10.000 as three equal instalments. One event
+ * therefore produces three ledger entries. Modelling that as three separate events would lose
+ * the fact that they are one instruction. It would also break the residual allocation, which
+ * only makes sense across a known set of parts.
  *
  * @property type - Discriminant.
  * @property amountMinor - The total credited, always positive.
@@ -107,14 +106,13 @@ export interface ISettlementEvent extends IEventBase {
 /**
  * An instruction to undo an earlier posting.
  *
- * @remarks
- * A reversal never edits the original. A reversal appends an opposite entry that inherits
- * the original's value date, so the correction lands on the day the money was supposed to
- * have moved rather than on the day the mistake was noticed.
+ * A reversal never edits the original. A reversal appends an opposite entry that inherits the
+ * original value date. So the correction lands on the day the money was supposed to have moved,
+ * not on the day the mistake was noticed.
  *
  * A reversal carries no reason code, which is the gap behind the annotated failing test. The
- * system cannot tell an error by the bank from a legitimate return by the customer, and only
- * the first should refund the fees that the original posting triggered.
+ * system cannot tell an error by the bank from a legitimate return by the customer. Only the
+ * first should refund the fees that the original posting triggered.
  *
  * @property type - Discriminant.
  * @property reversesEventId - The event being reversed. E9 names E7.
@@ -147,10 +145,9 @@ export interface IEventWarning {
 /**
  * One event as the log holds it, together with what the system decided about it.
  *
- * @remarks
  * A refusal is recorded here rather than thrown away. The log records what happened, and a
- * refusal happened. This is what lets the report print the day four rejection of E6 and the
- * day five decline of Auth-B, both of which the brief requires as output.
+ * refusal happened. This is what lets the report print the day four rejection of E6 and the day
+ * five decline of Auth-B. The brief requires both as output.
  *
  * @property sequence - Arrival order, starting at one. This is the second clock, and a
  *   balance query uses it to ask what the system knew at a point in the replay.

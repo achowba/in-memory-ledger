@@ -70,10 +70,9 @@ function findOutOfOrderBookings(events: readonly LedgerEvent[]): ReadonlySet<str
 /**
  * Replays an event stream across the six day window.
  *
- * @remarks
- * The order within a day is the order the events arrived. The order of the days is fixed.
- * Each day runs the same three steps: apply the events booked that day, assess overdraft
- * fees across the whole window so far, then snapshot every account.
+ * The order within a day is the order the events arrived. The order of the days is fixed. Each
+ * day runs the same three steps. It applies the events booked that day. It assesses overdraft
+ * fees across the whole window so far. It then snapshots every account.
  *
  * Interest is capitalized once, after the last day's fees, because an accrual is worked out
  * from the balances as they finally stand.
@@ -332,9 +331,9 @@ export function replay(
           return;
         }
 
-        // The original is never edited. Each reversal is a new opposite entry that inherits
-        // the original value date, so the correction lands on the day the money was supposed
-        // to have moved rather than on the day the mistake was noticed.
+        // The original is never edited. Each reversal is a new opposite entry that inherits the
+        // original value date. So the correction lands on the day the money was supposed to
+        // have moved, not on the day the mistake was noticed.
         for (const original of originals) {
           ledger.append({
             accountId: original.accountId,

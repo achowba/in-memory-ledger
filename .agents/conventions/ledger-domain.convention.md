@@ -60,7 +60,7 @@ Nothing is created and nothing is discarded.
 
 ## The fee cascade
 
-An overdraft fee is itself a value-dated ledger entry. So a fee booked against an earlier day lowers the closing balance of every later day, and a fee can push a later day below zero.
+An overdraft fee is itself a value-dated ledger entry. So a fee booked against an earlier day lowers the closing balance of every later day. A fee can therefore push a later day below zero.
 
 Two rules follow, and both are load bearing:
 
@@ -85,4 +85,6 @@ This distinction decides what a reversal repairs.
 - **Interest is derived.** Interest is recomputed from the current entry set whenever it is needed. Reverse the cause and the interest corrects itself, with no extra event.
 - **A fee is assessed.** A fee records a decision the system made on a given day with the facts it had on that day. Reversing the cause does not retract the decision. Retracting a decision needs its own event, carrying its own reason.
 
-The consequence is deliberate and it is documented in `AMBIGUITIES.md`. A reversal restores the interest and leaves the fees standing. The system cannot do better, because a reversal carries no reason code and therefore cannot distinguish an error by the bank from a legitimate return by the customer. That gap is covered by the annotated failing test.
+The consequence is deliberate. `AMBIGUITIES.md` records it. A reversal restores the interest. A reversal leaves the fees standing.
+
+The system cannot do better. A reversal carries no reason code. So the system cannot tell an error by the bank from a legitimate return by the customer. The annotated failing test covers that gap.

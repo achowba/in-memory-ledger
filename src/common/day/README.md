@@ -20,7 +20,9 @@ This is only practical because the window is fixed and tiny. A real calendar wou
 
 The opening balance is a ledger entry value dated day zero, not a field on the account.
 
-Two reasons. A balance stays a pure function of the entry list, so no caller has to remember to add a starting figure. And day zero keeps two ideas apart: day one holds what happened on day one, day zero holds what was already true before the window opened.
+Two reasons. A balance stays a pure function of the entry list, so no caller has to remember to
+add a starting figure. And day zero keeps two ideas apart. Day one holds what happened on day
+one. Day zero holds what was already true before the window opened.
 
 Nothing is ever assessed against day zero. `replayDaysThrough(0)` returns an empty list, which is why no fee and no accrual can land there.
 

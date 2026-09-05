@@ -166,10 +166,9 @@ function renderDay(
 /**
  * Renders the whole replay as text.
  *
- * @remarks
- * The interest schedule is printed with its working rather than as a single figure, because
- * the brief requires the rounded daily accruals to sum exactly to the capitalized total and
- * a reader should be able to check that by adding up a column.
+ * The interest schedule is printed with its working rather than as a single figure. The brief
+ * requires the rounded daily accruals to sum exactly to the capitalized total. A reader should
+ * be able to check that by adding up a column.
  *
  * @param result - Everything the replay produced.
  * @returns The report, ready to print.

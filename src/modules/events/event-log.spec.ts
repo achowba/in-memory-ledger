@@ -3,7 +3,7 @@ import { describe, it } from 'node:test';
 
 import { REFUSAL_CODE, WARNING_CODE } from '../../common/errors/error-codes.js';
 import { EventLog } from './event-log.js';
-import type { LedgerEvent } from './event.types.js';
+import type { IEventWarning, LedgerEvent } from './event.types.js';
 
 /**
  * Builds a debit event with the fields a test cares about.
@@ -110,6 +110,61 @@ describe('EventLog, immutability', () => {
 
     assert.throws(() => {
       (record as { outcome: string }).outcome = 'REFUSED';
+    }, TypeError);
+  });
+
+  // Object.freeze is shallow. Freezing only the wrapper would leave the event, the refusal
+  // and the warnings writable, so history could be rewritten through them. Each nested path
+  // gets its own assertion, because each is a separate way in.
+  it('freezes the event, so a booked amount cannot be changed later', () => {
+    const log = new EventLog();
+    const record = log.accept(debit('E7', 5, 2));
+
+    assert.throws(() => {
+      (record.event as { amountMinor: bigint }).amountMinor = 999999n;
+    }, TypeError);
+    assert.equal(log.all()[0]?.event.eventId, 'E7');
+  });
+
+  it('freezes the refusal, so a recorded reason cannot be changed later', () => {
+    const log = new EventLog();
+    const record = log.refuse(
+      debit('E6', 4, 1),
+      REFUSAL_CODE.SETTLEMENT_WITHOUT_AUTHORIZATION,
+      'Auth-Z was never authorized.',
+    );
+
+    assert.ok(record.refusal !== null);
+    assert.throws(() => {
+      (record.refusal as { detail: string }).detail = 'something else';
+    }, TypeError);
+  });
+
+  it('freezes the warning list, so a warning cannot be injected later', () => {
+    const log = new EventLog();
+    const record = log.accept(debit('E7', 5, 2), [
+      { code: WARNING_CODE.BACK_VALUED_POSTING, detail: 'booked day 5, value dated day 2' },
+    ]);
+
+    assert.throws(() => {
+      (record.warnings as IEventWarning[]).push({
+        code: WARNING_CODE.UNEVEN_SPLIT,
+        detail: 'injected',
+      });
+    }, TypeError);
+    assert.equal(log.all()[0]?.warnings.length, 1);
+  });
+
+  it('freezes each warning, so a recorded warning cannot be reworded later', () => {
+    const log = new EventLog();
+    const record = log.accept(debit('E7', 5, 2), [
+      { code: WARNING_CODE.BACK_VALUED_POSTING, detail: 'booked day 5, value dated day 2' },
+    ]);
+    const [warning] = record.warnings;
+
+    assert.ok(warning !== undefined);
+    assert.throws(() => {
+      (warning as { detail: string }).detail = 'something else';
     }, TypeError);
   });
 });

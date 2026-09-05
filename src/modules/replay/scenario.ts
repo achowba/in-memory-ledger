@@ -5,9 +5,8 @@ import type { IAccount } from './replay.types.js';
 /**
  * The two accounts of the brief.
  *
- * @remarks
  * Both open at zero. The pairing of a two decimal currency with a three decimal one is the
- * point: a single global precision would pass every AED assertion and silently corrupt every
+ * point. A single global precision would pass every AED assertion and silently corrupt every
  * BHD amount.
  */
 export const ACCOUNTS: readonly IAccount[] = [
@@ -18,10 +17,9 @@ export const ACCOUNTS: readonly IAccount[] = [
 /**
  * The event stream of the brief, transcribed in the order the brief lists it.
  *
- * @remarks
- * Amounts are written as text in the same notation the brief uses, then parsed, so this file
- * can be compared against the brief line by line during review. Writing `120000n` here would
- * be faster to execute and impossible to check.
+ * Amounts are written as text in the same notation the brief uses, then parsed. So a reviewer
+ * can compare this file against the brief line by line. Writing `120000n` here would be faster
+ * to execute and impossible to check.
  *
  * Two entries in this list deserve a second look.
  *
