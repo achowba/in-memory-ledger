@@ -135,3 +135,20 @@ appears in up to five documents at once and a change that updates one leaves fou
 pr-patrol reviews against this project's ledger invariants rather than the reference
 project's product rules, and is told not to report the one intentional failing test as a
 finding, but to report its absence as a blocking one.
+
+**13:18** Added the label taxonomy.
+
+The vocabulary is the commit scope list. `module:` names match the scopes in the commits
+convention, which match the folders under `src/`. One vocabulary, not two. The GitHub default
+labels were deleted for the same reason: `bug`, `documentation` and `enhancement` duplicate
+three of the `type:` labels, and none had ever been applied.
+
+Three concern labels earn their own place. Each names a failure this project has already had.
+`rounding` marks a change touching a place a value can be created or lost. `append-only` marks
+a change touching history, which is what the shallow freeze blocker was. `numbers` marks a
+change that moves a figure the documents quote, and pairs with the Numbers section of the
+template.
+
+Adding labels made a line in `pr-doc-creator` false. The skill said this repository ships no
+label taxonomy. It does now, so the skill says so, and gained a labelling step. A skill that
+describes a project it no longer matches is worse than no skill.
