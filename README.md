@@ -258,14 +258,15 @@ Every folder under `src/` carries a `README.md` covering what it does, how it re
 
 ## Commands
 
-| Command              | Does                                                      |
-| -------------------- | --------------------------------------------------------- |
-| `npm start`          | Compiles and prints the six day report                    |
-| `npm test`           | The full suite. **Exactly one failure, on purpose**       |
-| `npm run test:green` | The suite without the known gap. Clean                    |
-| `npm run verify`     | Build, lint and the green suite. The gate before a commit |
-| `npm run build`      | Compiles to `dist/`. A type error stops the pipeline      |
-| `npm run lint`       | prettier and eslint                                       |
+| Command              | Does                                                         |
+| -------------------- | ------------------------------------------------------------ |
+| `npm start`          | Compiles and prints the six day report                       |
+| `npm test`           | The full suite. **Exactly one failure, on purpose**          |
+| `npm run test:green` | The suite without the known gap. Clean                       |
+| `npm run verify`     | Build, lint and the green suite. The gate before a commit    |
+| `npm run build`      | Compiles to `dist/`. A type error stops the pipeline         |
+| `npm run lint`       | prettier and eslint                                          |
+| `npm run docs:pdf`   | Rebuilds `ARCHITECTURE.pdf`. Fails outside two to four pages |
 
 ### What the tooling enforces
 
@@ -277,13 +278,14 @@ Every folder under `src/` carries a `README.md` covering what it does, how it re
 
 ## The documents
 
-| File                                 | Holds                                                                                                                               |
-| ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
-| [`NUMBERS.md`](NUMBERS.md)           | Every constant, why that value, and what changes if it moves. Includes the fee sensitivity table and the rate plausibility check    |
-| [`AMBIGUITIES.md`](AMBIGUITIES.md)   | Twenty two places the brief admits more than one reading, with the number each alternative produces                                 |
-| [`REJECTED.md`](REJECTED.md)         | The four refused criteria with their arithmetic, criterion 5 under its own heading, and eight approaches abandoned during the build |
-| [`ARCHITECTURE.md`](ARCHITECTURE.md) | Append only at scale, value dating in a UAE licensed bank, the authorization lifecycle, and what was cut                            |
-| [`WORKLOG.md`](WORKLOG.md)           | What was done, when                                                                                                                 |
+| File                                   | Holds                                                                                                                               |
+| -------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| [`NUMBERS.md`](NUMBERS.md)             | Every constant, why that value, and what changes if it moves. Includes the fee sensitivity table and the rate plausibility check    |
+| [`AMBIGUITIES.md`](AMBIGUITIES.md)     | Twenty two places the brief admits more than one reading, with the number each alternative produces                                 |
+| [`REJECTED.md`](REJECTED.md)           | The four refused criteria with their arithmetic, criterion 5 under its own heading, and eight approaches abandoned during the build |
+| [`ARCHITECTURE.md`](ARCHITECTURE.md)   | Append only at scale, value dating in a UAE licensed bank, the authorization lifecycle, and what was cut                            |
+| [`ARCHITECTURE.pdf`](ARCHITECTURE.pdf) | The same document as the Part 2 deliverable asks for it: a PDF of four pages. Built from the markdown by `npm run docs:pdf`         |
+| [`WORKLOG.md`](WORKLOG.md)             | What was done, when                                                                                                                 |
 
 ---
 
