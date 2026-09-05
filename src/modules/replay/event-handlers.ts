@@ -341,8 +341,11 @@ export function applyEvent(context: IHandlerContext, event: LedgerEvent): void {
     case 'REVERSAL':
       return applyReversal(context, event);
     default: {
+      // The narrowing to never is the enforcement. The throw only covers a type assertion
+      // somewhere upstream, and it reads the discriminant directly: every other field on a
+      // LedgerEvent may be a bigint, and JSON.stringify throws on those.
       const unhandled: never = event;
-      throw new RangeError(`No handler for event type ${JSON.stringify(unhandled)}.`);
+      throw new RangeError(`No handler for event type ${String((unhandled as LedgerEvent).type)}.`);
     }
   }
 }

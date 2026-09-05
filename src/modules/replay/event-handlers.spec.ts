@@ -105,7 +105,7 @@ describe('a settlement naming an authorization that belongs to another account',
   // The register is keyed on authId alone, and nothing else in the settlement path compares
   // the two accounts. Unreachable from the six day stream, which is why it survived review of
   // the behaviour and was found only by reading the guards.
-  it('refuses it rather than debiting one account and releasing another account`s hold', () => {
+  it('refuses it rather than debiting one account and releasing the hold of another', () => {
     const ctx = context();
     run(ctx, auth('E1', 'Auth-A'));
 

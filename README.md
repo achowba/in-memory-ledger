@@ -68,8 +68,8 @@ All three are correct. So every balance query names both clocks, and there is de
 ### The suite reports one failure, on purpose
 
 ```
-npm test             277 tests, 276 pass, 1 fail
-npm run test:green   276 tests, 276 pass
+npm test             279 tests, 278 pass, 1 fail
+npm run test:green   278 tests, 278 pass
 ```
 
 The failure is in [`test/known-gap.e2e-spec.ts`](test/known-gap.e2e-spec.ts) and it is required by the brief. It is annotated in place with what it reveals. Do not fix it by weakening the assertion.

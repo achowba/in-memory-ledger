@@ -114,6 +114,23 @@ describe('renderReport, the interest schedule shows its working', () => {
   });
 });
 
+describe('renderReport, a result it cannot read', () => {
+  // The old code defaulted the currency to AED. AED has two decimal places and BHD three, so a
+  // BHD amount rendered as AED is out by a factor of ten and still looks like a plausible
+  // balance. Without this test the guard can quietly become a fallback again.
+  it('stops rather than guessing a currency for an account the result does not hold', () => {
+    const broken = { ...replay(ACCOUNTS, EVENT_STREAM), accounts: [] };
+
+    assert.throws(() => renderReport(broken), RangeError);
+  });
+
+  it('names the account it could not resolve, so the message is actionable', () => {
+    const broken = { ...replay(ACCOUNTS, EVENT_STREAM), accounts: [] };
+
+    assert.throws(() => renderReport(broken), /ACC-001/);
+  });
+});
+
 describe('renderReport, reproducibility', () => {
   it('produces identical output on a second run', () => {
     assert.equal(renderReport(replay(ACCOUNTS, EVENT_STREAM)), report);

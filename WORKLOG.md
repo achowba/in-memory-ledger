@@ -263,5 +263,5 @@ assertion searched the whole report and passed. A test that cannot fail for the 
 is worse than no test.
 
 The stale numbers were mine. Both READMEs quoted 229 tests against a suite that had been 273 for
-some hours and is 277 now. That is exactly the failure the `Numbers?` section of the pull request
+some hours and is 279 now. That is exactly the failure the `Numbers?` section of the pull request
 template exists to catch, in the repository that wrote the template.
