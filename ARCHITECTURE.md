@@ -71,21 +71,43 @@ A back valued entry does not change one number. It changes every number derived 
 
 ### The regulatory surface
 
-Named because a value date can move a transaction across each one. Each needs verification against current CBUAE issuances before go live; the point is the shape of the exposure, not a compliance opinion.
+Seven surfaces a value date can move a transaction across. Each is named by the exposure rather
+than by the instrument that governs it, deliberately: instruments are amended and superseded,
+the shapes are not, and quoting circular numbers from memory asserts something the writer cannot
+check. Every one of these needs a compliance opinion before go live. None of this is one.
 
-**Consumer protection.** The CBUAE Consumer Protection Regulation (Circular 8/2020) governs fee disclosure, error correction and complaints. A fee charged retroactively sits directly in that surface, and a fee a later reversal shows to have been the bank's own error sits further into it. This implementation cannot tell those apart, which is the subject of its one failing test.
+**Consumer protection.** A fee charged retroactively for a day that already closed is a fee
+disclosure and an error correction question at once, and a licensed bank is held to specific
+rules on both. A fee that a later reversal shows to have been the bank's own error sits further
+into that surface again. This implementation cannot tell the two apart, which is the subject of
+its one failing test.
 
-**AML and CFT.** Federal Decree-Law No. 20 of 2018 and Cabinet Decision No. 10 of 2019 make monitoring date sensitive. Back valuing moves a transaction into or out of a window and can change whether a set of transactions constitutes structuring. Reporting clocks run from detection, so an alert raised today concerns activity dated weeks ago.
+**AML and CFT.** Transaction monitoring is date sensitive. Back valuing moves a transaction into
+or out of a monitoring window, and can change whether a set of transactions constitutes
+structuring. Reporting clocks run from detection, so an alert raised today concerns activity
+dated weeks ago.
 
-**Regulatory reporting.** Returns are period based. A value date landing in a submitted period changes a filed figure, which is a resubmission and a conversation rather than a routine correction.
+**Regulatory reporting.** Returns are period based. A value date landing in a period already
+submitted changes a figure already filed, which is a resubmission and a conversation rather than
+a routine correction.
 
-**Accounting.** Under IFRS, interest recognition attaches to a period. An entry crossing a reporting boundary is a prior period adjustment under IAS 8 if material, and materiality is assessed in aggregate, so the exposure is the total volume of back valuing rather than any single entry.
+**Accounting.** Interest recognition attaches to a period. An entry crossing a reporting boundary
+is a prior period adjustment if it is material, and materiality is assessed in aggregate rather
+than per account, so the exposure is the total volume of back valuing rather than any single
+entry.
 
-**VAT.** Under Federal Decree-Law No. 8 of 2017, explicit fee based financial services are generally standard rated at five percent, unlike margin based products. A fee is a taxable supply with a tax point, and back dating or reversing one moves that tax point, potentially across a filed return.
+**VAT.** An explicit fee is a taxable supply with a tax point, unlike a margin based product.
+Back dating a fee assessment or reversing one moves that tax point, potentially across a return
+that has already been filed.
 
-**Dormancy.** The CBUAE Dormant Accounts Regulation keys off the date of last customer activity. A back valued entry changes that date retroactively, moving an account into or out of dormancy and, at the far end, unclaimed balance transfer.
+**Dormancy.** Dormancy keys off the date of last customer activity. A back valued entry changes
+that date retroactively, moving an account into or out of dormancy and, at the far end, into or
+out of unclaimed balance transfer.
 
-**Shari'ah compliance.** This model is conventional. Interest on a credit balance and a flat overdraft fee do not transfer to an Islamic product, where the equivalents are profit distribution and a cost recovery charge on a different basis. A bank running both needs the accrual engine to be product aware.
+**Shari'ah compliance.** This model is conventional. Interest on a credit balance and a flat
+overdraft fee do not transfer to an Islamic product, where the equivalents are profit
+distribution and a cost recovery charge on a different basis. A bank running both needs the
+accrual engine to be product aware rather than one rate applied to a balance.
 
 ### The one control I would add before going live
 

@@ -34,7 +34,7 @@ The table is asserted in `src/modules/fees/fees.spec.ts`.
 
 ### Whether it is a plausible number
 
-AED 25.00 is within the range UAE retail banks charge for an overdraft or a returned item. Before go live it would have to be checked against the bank's approved Schedule of Charges and against the CBUAE Consumer Protection Standards, which govern fee disclosure and cap certain retail charges. That is a compliance check against a published schedule, not a modelling decision, and it is not one this exercise can make.
+AED 25.00 is within the range UAE retail banks charge for an overdraft or a returned item. Before go live it would have to be checked against the bank's approved Schedule of Charges and against the consumer protection rules a licensed bank operates under, which govern how a fee is disclosed and what may be charged for. That is a compliance check against a published schedule, not a modelling decision, and it is not one this exercise can make.
 
 ### What it does not cover
 
