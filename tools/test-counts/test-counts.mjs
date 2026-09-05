@@ -77,16 +77,49 @@ function render(full, green) {
  */
 function splice(text, block) {
   const from = text.indexOf(START);
-  const to = text.indexOf(END);
-  if (from === -1 || to === -1) {
-    throw new Error(`Missing ${START} or ${END}.`);
+  if (from === -1) {
+    throw new Error(`Missing ${START}.`);
+  }
+  // Searching from the start would find a stray closing marker that precedes the opening one,
+  // and splice out everything between them.
+  const to = text.indexOf(END, from + START.length);
+  if (to === -1) {
+    throw new Error(`Found ${START} with no ${END} after it.`);
   }
   return `${text.slice(0, from + START.length)}\n\n${block}\n\n${text.slice(to)}`;
+}
+
+/**
+ * Stops the run when the suite no longer matches what the documents say about it.
+ *
+ * @remarks
+ * Writing the counts without this check would replace one lie with another. If the known gap
+ * started passing, or a second test started failing, the tool would record "2 fail" beside prose
+ * saying there is exactly one intentional failure, and the gate would go green on it.
+ *
+ * @param full - Counts from the whole suite.
+ * @param green - Counts from the suite without the known gap.
+ * @throws Error When either invariant is broken, naming which.
+ */
+function assertInvariants(full, green) {
+  if (full.fail !== 1) {
+    throw new Error(
+      `The suite must report exactly one failure, the known gap. It reported ${full.fail}. ` +
+        'Fix the suite rather than the documents.',
+    );
+  }
+  if (green.fail !== 0) {
+    throw new Error(
+      `The green suite must report no failures. It reported ${green.fail}. ` +
+        'A failure outside the known gap is a defect, not a documentation problem.',
+    );
+  }
 }
 
 const write = process.argv.includes('--write');
 const full = countsFor([]);
 const green = countsFor(['--test-skip-pattern=known gap']);
+assertInvariants(full, green);
 const block = render(full, green);
 const stale = [];
 
