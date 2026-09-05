@@ -67,10 +67,14 @@ All three are correct. So every balance query names both clocks, and there is de
 
 ### The suite reports one failure, on purpose
 
+<!-- test-counts:start -->
+
 ```
 npm test             279 tests, 278 pass, 1 fail
 npm run test:green   278 tests, 278 pass
 ```
+
+<!-- test-counts:end -->
 
 The failure is in [`test/known-gap.e2e-spec.ts`](test/known-gap.e2e-spec.ts) and it is required by the brief. It is annotated in place with what it reveals. Do not fix it by weakening the assertion.
 
@@ -84,7 +88,7 @@ Node 22 or newer. There is one runtime dependency, which is none.
 npm ci        # installs TypeScript, eslint, prettier. Nothing at runtime.
 npm start     # compiles and prints the six day report
 npm test      # the full suite. Reports exactly one failure, on purpose.
-npm run verify   # build, lint and the green suite in one gate
+npm run verify   # build, lint, the green suite and the counts check, in one gate
 ```
 
 ---
@@ -258,15 +262,16 @@ Every folder under `src/` carries a `README.md` covering what it does, how it re
 
 ## Commands
 
-| Command              | Does                                                         |
-| -------------------- | ------------------------------------------------------------ |
-| `npm start`          | Compiles and prints the six day report                       |
-| `npm test`           | The full suite. **Exactly one failure, on purpose**          |
-| `npm run test:green` | The suite without the known gap. Clean                       |
-| `npm run verify`     | Build, lint and the green suite. The gate before a commit    |
-| `npm run build`      | Compiles to `dist/`. A type error stops the pipeline         |
-| `npm run lint`       | prettier and eslint                                          |
-| `npm run docs:pdf`   | Rebuilds `ARCHITECTURE.pdf`. Fails outside two to four pages |
+| Command               | Does                                                                        |
+| --------------------- | --------------------------------------------------------------------------- |
+| `npm start`           | Compiles and prints the six day report                                      |
+| `npm test`            | The full suite. **Exactly one failure, on purpose**                         |
+| `npm run test:green`  | The suite without the known gap. Clean                                      |
+| `npm run verify`      | Build, lint, the green suite and the counts check. The gate before a commit |
+| `npm run build`       | Compiles to `dist/`. A type error stops the pipeline                        |
+| `npm run lint`        | prettier and eslint                                                         |
+| `npm run docs:pdf`    | Rebuilds `ARCHITECTURE.pdf`. Fails outside two to four pages                |
+| `npm run docs:counts` | Rewrites the suite counts quoted above from the suite itself                |
 
 ### What the tooling enforces
 
