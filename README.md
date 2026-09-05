@@ -289,7 +289,7 @@ Every folder under `src/` carries a `README.md` covering what it does, how it re
 | [`AMBIGUITIES.md`](AMBIGUITIES.md)     | Twenty two places the brief admits more than one reading, with the number each alternative produces                                 |
 | [`REJECTED.md`](REJECTED.md)           | The four refused criteria with their arithmetic, criterion 5 under its own heading, and eight approaches abandoned during the build |
 | [`ARCHITECTURE.md`](ARCHITECTURE.md)   | Append only at scale, value dating in a UAE licensed bank, the authorization lifecycle, and what was cut                            |
-| [`ARCHITECTURE.pdf`](ARCHITECTURE.pdf) | The same document as the Part 2 deliverable asks for it: a PDF of four pages. Built from the markdown by `npm run docs:pdf`         |
+| [`ARCHITECTURE.pdf`](ARCHITECTURE.pdf) | The same document as the Part 2 deliverable asks for it: a PDF of three pages. Built from the markdown by `npm run docs:pdf`        |
 | [`WORKLOG.md`](WORKLOG.md)             | What was done, when                                                                                                                 |
 
 ---

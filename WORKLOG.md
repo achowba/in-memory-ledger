@@ -359,3 +359,32 @@ comment.
 
 Also took a drifting count out of the worklog entry that complains about drifting counts. It
 said the suite "is 279 now".
+
+**00:16** Condensed the architecture PDF, on a reader's note that it felt verbose, with the
+constraint that no information or explanation could go.
+
+Started by cutting words, which is the obvious move and was nearly useless. A careful pass over
+all four sections took 3,073 words to 2,899, about six percent, and the document stayed at four
+pages. The prose was already tight, and I could feel myself starting to cut points rather than
+words.
+
+Then tried turning sections 2 and 3 into tables, since that had worked so well for section 4.
+It made the document **longer**, five pages. The reason is obvious afterwards and was not
+beforehand: a table only compresses when its cells are short. A three column table gives a long
+paragraph about 45 percent of the page width, so it takes roughly twice the vertical space.
+Section 4 works as a table because its cells are short. Section 3's are paragraphs.
+
+The actual cause was measure. At A4 with 15mm margins and 9.4 point type a line ran past 100
+characters, where comfortable reading is 45 to 75. That reads as a wall whatever the word count,
+and no amount of cutting fixes it. Two columns put the line near 55 and the document became
+markedly easier to read without losing a sentence.
+
+Getting from four pages to three after that was typographic, not editorial. The table was set to
+`break-inside: avoid`, which is right for a small table and actively harmful for a long one: it
+could not fit the space left on page three, so it moved whole to page four and stranded a third
+of a page. Breaking between rows with the header repeating recovered that. The rest came from
+type that a two column measure can afford to shrink, and from leading, which a table tolerates
+tighter than running prose because the eye crosses a short cell rather than tracking a long line.
+
+Three pages, 2,899 words, every argument still there. The six percent I cut from the prose
+contributed almost none of it.
