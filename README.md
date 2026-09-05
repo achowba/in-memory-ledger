@@ -246,6 +246,8 @@ src/
   main.ts
 test/              the whole replay, the criteria, and the known gap
 .agents/conventions/  the standards this repository holds itself to
+.agents/skills/       pr-doc-creator writes the description, pr-patrol reviews the diff
+.github/              the pull request template, and its checklist
 ```
 
 Every folder under `src/` carries a `README.md` covering what it does, how it relates to the rest, and the decisions it owns. Unit tests sit beside their source as `*.spec.ts`; the replay specs live in `test/` as `*.e2e-spec.ts`.

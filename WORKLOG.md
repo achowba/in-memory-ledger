@@ -118,3 +118,20 @@ different module.
 Prettier had a config and no check, so 34 files had drifted from a house style nobody ran.
 Added a .prettierignore, formatted once, and put `prettier --check` first in lint. Confirmed
 the gate catches a regression by introducing one deliberately.
+
+**10:41** Added the pull request template and the two pull request skills, which the first
+pass had left out.
+
+The original reasoning was that this exercise has no pull requests. That was wrong. The
+deliverable is a repository, the reading of it is the assessment, and a template is the part
+of a repository that states what a change has to satisfy before it lands.
+
+The omission was also filed in the wrong place. It went into the implementation plan, which is
+not committed, rather than into REJECTED.md, which is. A deviation nobody can find is not
+documented. Both the reversal and the filing mistake are now recorded there.
+
+Adapted rather than copied. The template gains a Numbers section, because a figure here
+appears in up to five documents at once and a change that updates one leaves four lying.
+pr-patrol reviews against this project's ledger invariants rather than the reference
+project's product rules, and is told not to report the one intentional failing test as a
+finding, but to report its absence as a blocking one.
