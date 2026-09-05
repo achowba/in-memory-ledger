@@ -43,6 +43,8 @@ Non-negotiable. Each line links to the convention that holds the detail.
 | `src/main.ts`          | The entry point. Runs the replay and prints the report.                                 |
 | `test/`                | Full replay specs, named `*.e2e-spec.ts`.                                               |
 | `.agents/conventions/` | The standards above.                                                                    |
+| `.agents/skills/`      | Repeatable workflows: the pull request description, and the review.                     |
+| `.github/`             | The pull request template, and its checklist.                                           |
 | `artifacts/`           | Workflow output. Not committed. See the artifacts convention.                           |
 
 ## The deliverable documents

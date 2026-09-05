@@ -15,11 +15,15 @@ artifacts/<category>/<descriptor>_<YYYYMMDDHHMMSS>.<type>.md
 
 ## Categories
 
-| Path               | Holds                                                        |
-| ------------------ | ------------------------------------------------------------ |
-| `artifacts/plans/` | Implementation plans, written before the code they describe. |
-| `artifacts/notes/` | Research and working write ups, including the task analysis. |
-| `artifacts/refs/`  | Lookup documents reused across sessions.                     |
+| Path                    | Holds                                                             |
+| ----------------------- | ----------------------------------------------------------------- |
+| `artifacts/plans/`      | Implementation plans, written before the code they describe.      |
+| `artifacts/notes/`      | Research and working write ups, including the task analysis.      |
+| `artifacts/refs/`       | Lookup documents reused across sessions.                          |
+| `artifacts/pr/`         | Pull request descriptions, written by the `pr-doc-creator` skill. |
+| `artifacts/pr/reviews/` | Review output, written by the `pr-patrol` skill.                  |
+
+Create a new category when none of these fits. Follow the same pattern inside it.
 
 ## Not committed
 

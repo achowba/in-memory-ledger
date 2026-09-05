@@ -229,6 +229,24 @@ The report first sized its balance column from the currency exponent, twelve cha
 
 One width for every currency. A slightly wider column is easier to scan than a ragged one.
 
+### Omitting the pull request workflow, reversed
+
+The reference repository ships `.github/pull_request_template.md` and three skills under `.agents/skills/`. The first pass here left all of them out, on the reasoning that this exercise has no pull requests.
+
+That reasoning was wrong, and it is worth recording why rather than quietly adding the files.
+
+The deliverable is a repository. A repository gets read, and the reading is the assessment. A template and a review skill are not scaffolding for a workflow that does not exist here: they are the part of the repository that states what a change has to satisfy before it lands. Leaving them out removed the only artefact that says so in one place.
+
+The omission was also recorded in the wrong place. It went into the implementation plan, which is not committed, rather than into this document, which is. A deviation nobody can find is not documented.
+
+Now present, adapted rather than copied:
+
+- `.github/pull_request_template.md`, with a `Numbers?` section that has no equivalent in the reference. A figure here appears in up to five documents at once, so a change that moves one and updates one document leaves four documents lying.
+- `.agents/skills/pr-doc-creator/`, which fills the template and reports both suite results, since a description claiming "all tests pass" would be wrong in this repository.
+- `.agents/skills/pr-patrol/`, whose review dimensions are this project's ledger invariants rather than the reference project's product rules.
+
+Two pieces of that family are still absent, deliberately. The reference `tester` skill duplicates what `.agents/conventions/testing.convention.md` already states, and a second copy of a rule is what the index discipline exists to prevent. A CI workflow is not included because nothing is pushed anywhere yet, and a workflow that has never run is a claim rather than a check.
+
 ### Repeating an optional chain after an assertion
 
 This happened four times before the pattern was recognised, and it is worth recording because the cause is not obvious.
