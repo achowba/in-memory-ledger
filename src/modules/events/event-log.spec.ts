@@ -67,10 +67,10 @@ describe('EventLog, arrival order', () => {
 
   it('reports the sequence the next record will take', () => {
     const log = new EventLog();
-    assert.equal(log.nextSequence(), 1);
+    assert.equal(log.nextRecordSequence(), 1);
 
     log.accept(debit('E7', 5, 2));
-    assert.equal(log.nextSequence(), 2);
+    assert.equal(log.nextRecordSequence(), 2);
   });
 });
 

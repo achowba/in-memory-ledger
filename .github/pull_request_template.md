@@ -38,7 +38,7 @@ discussion. Say so here rather than leaving it for somebody to find. -->
 <!-- Run the `pr-patrol` skill against this diff before requesting review. It checks the
 change against the conventions and writes its findings to artifacts/pr/reviews/. -->
 
-- [ ] Follows the conventions in [AGENTS.md](../AGENTS.md).
+- [ ] Follows the conventions in [AGENTS.md](https://github.com/achowba/in-memory-ledger/blob/main/AGENTS.md).
 - [ ] Every exported declaration carries a TSDoc block, above the declaration.
 - [ ] Every README affected by this change is updated in this pull request.
 - [ ] Tests cover the happy path, the failure the code exists to reject, and the edge case.

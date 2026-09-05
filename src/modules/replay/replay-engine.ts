@@ -71,6 +71,7 @@ function findOutOfOrderBookings(events: readonly LedgerEvent[]): ReadonlySet<str
 /**
  * Replays an event stream across the six day window.
  *
+ * @remarks
  * The order within a day is the order the events arrived. The order of the days is fixed. Each
  * day runs the same three steps. It applies the events booked that day. It assesses overdraft
  * fees across the whole window so far. It then snapshots every account.
@@ -431,9 +432,8 @@ export function replay(
     });
   }
 
-  const lastDay = REPLAY_DAYS[REPLAY_DAYS.length - 1] ?? 6;
   const interest: IInterestResult[] = accounts.map((account) => {
-    const result = capitalizeInterest(ledger, account.accountId, lastDay);
+    const result = capitalizeInterest(ledger, account.accountId);
 
     return {
       accountId: account.accountId,

@@ -5,6 +5,7 @@ import { AUTHORIZATION_STATE, type IAuthorization } from './authorization.types.
 /**
  * The state of every authorization, and the total currently held against each account.
  *
+ * @remarks
  * This is a projection, not a source of truth. The event log is the source of truth, and this
  * register is what you get by replaying it. So a state transition here replaces a frozen record
  * rather than appending a new one. Rebuilding the register from the log produces exactly the

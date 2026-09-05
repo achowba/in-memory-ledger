@@ -32,7 +32,9 @@ Where the brief supplies an acceptance criterion that is wrong, the suite does n
 
 ## The one intentional failure
 
-`test/known-gap.e2e-spec.ts` fails on purpose. Every test in that file has a name beginning `known gap:`, which is how `npm run test:green` excludes them with `--test-skip-pattern`.
+`test/known-gap.e2e-spec.ts` fails on purpose. Every test in that file that is expected to fail has a name beginning `known gap:`. That is how `npm run test:green` excludes it, with `--test-skip-pattern`.
+
+The file also holds one passing test, showing the half of the asymmetry that does work. It carries no prefix on purpose. Prefixing it would skip a real assertion in the green run.
 
 - `npm test` runs everything and exits non-zero with exactly one failure.
 - `npm run test:green` skips the known gap and passes.

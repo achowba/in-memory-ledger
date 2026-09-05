@@ -24,6 +24,7 @@ export interface IBalanceQuery {
 /**
  * The append only store of balance-affecting entries, and the queries over it.
  *
+ * @remarks
  * A day closing balance is not one number. It depends on when you ask, because a backdated
  * entry changes the answer for a day that already closed.  The brief proves it expects this.
  * Acceptance criterion 1 asks for the day two closing balance "evaluated at end of Day 5". That
@@ -94,6 +95,7 @@ export class Ledger {
   /**
    * Reports whether an account already carries an entry of one origin on one value date.
    *
+   * @remarks
    * This is the guard behind one overdraft fee per account per day, ever. The guard is on the
    * pair of account and day, not on the assessment run. A later run revisits days that an
    * earlier run already charged. Without the guard, the day two fee would be charged again at

@@ -4,6 +4,7 @@ import { LedgerError } from '../errors/ledger-error.js';
 /**
  * Splits a total into a fixed number of parts that sum exactly back to the total.
  *
+ * @remarks
  * The parts are as equal as the currency allows. When the total does not divide evenly, a
  * residual is left over. The residual is spread one unit at a time over the earliest parts.
  * That is the largest remainder method, with the index as the tie break.

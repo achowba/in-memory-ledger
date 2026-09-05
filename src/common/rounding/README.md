@@ -28,6 +28,8 @@ The alternative, rounding a tie always upward on the number line, would round `-
 
 ### The mode is fixed even though it changes nothing here
 
+No accrual in the six day window lands on an exact tie at 0.04 percent per day. `HALF_UP` and `HALF_EVEN` therefore produce identical output, and the choice changes no number in the replay.
+
 The mode is still named in `rounding.constants.ts` rather than left to whatever the first tie
 happens to hit. A mode decided by accident is a mode nobody can defend.
 

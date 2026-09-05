@@ -1,10 +1,9 @@
-/**
- * The bounds of the replay window, and the reasoning behind each one.
- */
+// The bounds of the replay window, and the reasoning behind each one.
 
 /**
  * The value date carried by an opening balance.
  *
+ * @remarks
  * Zero, which sits outside the replay window on purpose. An opening balance is an ordinary
  * ledger entry rather than a field on the account. So a balance stays a pure function of the
  * entry list. Nothing has to remember to add a starting figure.

@@ -48,8 +48,25 @@ describe('parseAmount', () => {
     assert.equal(parseAmount('AED', '1200.5'), 120050n);
   });
 
-  it('ignores digit grouping so the brief can be transcribed verbatim', () => {
+  it('accepts digit grouping so the brief can be transcribed verbatim', () => {
     assert.equal(parseAmount('AED', '1,200.00'), 120000n);
+    assert.equal(parseAmount('AED', '1,200,000.00'), 120000000n);
+  });
+
+  // Stripping every comma before parsing turned a malformed input into a valid one. "1.2,3"
+  // became 1.23 and ",,5.00" became 5.00. A typo was silently reinterpreted as an amount
+  // rather than refused. Grouping is now validated, not removed.
+  it('refuses a comma inside the fraction', () => {
+    assert.throws(() => parseAmount('AED', '1.2,3'), throwsCode(FAULT_CODE.MALFORMED_AMOUNT));
+  });
+
+  it('refuses grouping that is not in threes', () => {
+    assert.throws(() => parseAmount('AED', '1,2,3.00'), throwsCode(FAULT_CODE.MALFORMED_AMOUNT));
+    assert.throws(() => parseAmount('AED', '12,00.00'), throwsCode(FAULT_CODE.MALFORMED_AMOUNT));
+  });
+
+  it('refuses a leading comma', () => {
+    assert.throws(() => parseAmount('AED', ',,5.00'), throwsCode(FAULT_CODE.MALFORMED_AMOUNT));
   });
 
   it('converts zero', () => {

@@ -35,14 +35,25 @@ A discriminated union makes the compiler reject that. Narrowing on `type` gives 
 
 E10 credits BHD 10.000 "as three equal instalments", so `ICreditEvent` carries an `instalmentCount`.
 
-It would also break the residual allocation. An allocation only means anything across a known
-set of parts. Three independent credits of 3.333 would total 9.999 and quietly lose a fils.
+Splitting E10 into three separate credit events would also break the residual allocation. An
+allocation only means anything across a known set of parts. Three independent credits of 3.333
+would total 9.999 and quietly lose a fils.
 
-### Sequence numbers are the second clock
+### The log sequence is not the ledger sequence
 
-The number this log hands out is what a balance query bounds with `knownAsOfSequence`. That is
-how the system answers one question. What did we think the day two balance was, at the end of
-day five? Acceptance criterion 1 asks exactly that.
+The number this log hands out orders the log. It counts records, so it does not correspond to a
+ledger entry sequence.
+
+A refused event takes a number and posts nothing. One credit event posts three entries when it
+is split into instalments. In this replay the log holds ten records and the ledger holds
+sixteen entries.
+
+The bound a balance query takes is `ILedgerEntry.sequence`, from `Ledger.nextSequence`. That
+bound answers what the system thought the day two balance was, at the end of day five.
+Acceptance criterion 1 asks exactly that.
+
+`nextRecordSequence` is named the way it is so the two counters cannot be confused at a call
+site.
 
 ## Its dependencies on other modules
 

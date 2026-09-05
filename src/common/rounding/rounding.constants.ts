@@ -1,6 +1,4 @@
-/**
- * The rounding vocabulary, and the mode this ledger uses.
- */
+// The rounding vocabulary, and the mode this ledger uses.
 
 /**
  * How a division that cannot be exact resolves a tie.

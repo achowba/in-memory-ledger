@@ -8,7 +8,7 @@ Every pull request carries labels. They exist so a reader can tell, from the lis
 | --------- | ------ | -------------------------------------------------------------- |
 | `type:`   | green  | Exactly one. It matches the type of the commits in the branch. |
 | `module:` | blue   | One per folder the change touches. More than one is normal.    |
-| `area:`   | teal   | For a cross cutting layer rather than a domain.                |
+| `area:`   | teal   | For a cross-cutting layer rather than a domain.                |
 | concern   | amber  | For the three dimensions this project is most often wrong in.  |
 
 ## The vocabulary is the commit scope list
