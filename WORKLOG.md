@@ -324,6 +324,6 @@ Naming the exposure instead of the instrument also ages better. Circulars are su
 value date can move a transaction across a monitoring window" does not change.
 
 Considered cutting the section outright, which was the objection as first put. Rejected it: the
-brief asks in as many words for the operational and regulatory surface in a UAE licensed bank,
+brief asks explicitly for the operational and regulatory surface in a UAE licensed bank,
 so removing the regulatory half answers half a question. The citations were the liability, not
 the subject.
