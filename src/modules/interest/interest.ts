@@ -27,6 +27,7 @@ export interface IDailyAccrual {
 /**
  * Calculates one day of interest on a closing balance.
  *
+ * @remarks
  * `balanceMinor * 4n / 10000n`, rounded once at the end. The multiplication happens before the
  * division, so no precision is lost in between. That is the whole reason the rate is a pair of
  * integers rather than a decimal.
@@ -51,8 +52,6 @@ export function dailyAccrualMinor(closingBalanceMinor: MinorUnits): MinorUnits {
  * Every closing balance is read at the moment this runs, with every event known. That is the
  * restatement reading, and it is the consequential choice in the whole interest calculation.
  *
- * Every closing balance is read at the moment this runs, with every event known. That is the
- * restatement reading, and it is the consequential choice in the whole interest calculation.
  * The brief never says which version of a day closing balance to accrue on. By day six there
  * are two answers for four of the six days. Restating gives AED 0.93 for ACC-001. Accruing on
  * the balance visible at each day close gives AED 0.81.
@@ -86,6 +85,7 @@ export function dailyAccruals(ledger: Ledger, accountId: string): readonly IDail
 /**
  * Books the whole window of interest as a single credit at the end of the last day.
  *
+ * @remarks
  * The capitalized total is defined as the sum of the rounded daily accruals. The brief requires
  * the two to agree exactly. Defining one as the other is the only way to make that true by
  * construction rather than by luck.
@@ -99,6 +99,10 @@ export function dailyAccruals(ledger: Ledger, accountId: string): readonly IDail
  * Day six accrues on the balance before this credit lands. Accruing on the balance after
  * would make the calculation depend on its own result.
  *
+ * The day is derived from the window rather than passed in. A parameter would let a caller
+ * capitalize mid window while `dailyAccruals` still covered all six days, which is a
+ * combination that has no meaning.
+ *
  * @steps
  * 1. Work out the six daily accruals from the restated closing balances.
  * 2. Add the rounded accruals together.
@@ -106,19 +110,18 @@ export function dailyAccruals(ledger: Ledger, accountId: string): readonly IDail
  *
  * @param ledger - The ledger to read from and append to.
  * @param accountId - The account to capitalize.
- * @param onDay - The day the credit is value dated and booked to, the last day of the window.
  * @returns The accrual schedule, the total, and the entry booked. The entry is null when the
  *   total is zero, because a ledger does not need a record of nothing happening.
  */
 export function capitalizeInterest(
   ledger: Ledger,
   accountId: string,
-  onDay: ReplayDay,
 ): {
   readonly accruals: readonly IDailyAccrual[];
   readonly totalMinor: MinorUnits;
   readonly entry: ILedgerEntry | null;
 } {
+  const onDay = REPLAY_DAYS[REPLAY_DAYS.length - 1] ?? 6;
   const accruals = dailyAccruals(ledger, accountId);
   const totalMinor = sumMinor(accruals.map((accrual) => accrual.accrualMinor));
 

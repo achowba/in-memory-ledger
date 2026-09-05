@@ -55,6 +55,42 @@ newer compiler. Recorded in REJECTED.md as an abandoned approach.
 **14:08** Commit 1, the scaffold. Verified the lint rules actually fire by writing a probe file
 that breaks five of them, then verified the two custom TSDoc tags are accepted.
 
+**14:13** Commit 2. Nine conventions under `.agents/conventions/`, the commit template, and the `AGENTS.md` index. The domain invariants that had no home in the reference repository's set (the two clocks, the fee cascade, conservation of value under a split) went into a new `ledger-domain.convention.md` rather than being restated in each module.
+
+**14:15 to 14:42** Built the domain in dependency order, committing each module with its
+README and its spec: errors, money, rounding, allocation, day, events, ledger,
+authorizations, fees, interest, replay, report.
+
+Two real bugs surfaced, both caught by tooling rather than by reading the code.
+
+The linter rejected the fee schedule lookup with "the types have no overlap". The
+`as keyof typeof` cast asserted that every currency has an entry, which made the
+`undefined` guard below it unreachable. The BHD gap the code carefully documented would have
+returned `undefined` at runtime with the guard skipped. A cast that lies about a lookup is
+worse than the missing entry it hides.
+
+Two fee tests failed and the code was right. The fixture has no E9, so day six is still
+overdrawn and a sixth fee is correctly due. Once per day is not once ever. Turned the wrong
+expectation into an explicit test rather than deleting it.
+
+**14:42** First full run of the replay. Every number matched the figures worked out by hand
+before any code existed: three fees on days two, four and five, day three surviving at 5.00,
+interest of 0.93 and 0.008, final balances of 390.93 and 10.008.
+
+That agreement is the only real check on this exercise. Had the code and the paper disagreed,
+the interesting question would have been which one was wrong, and the answer would not
+obviously have been the paper.
+
+**14:42 to 14:48** End to end specs. The known gap test first had three failing assertions,
+which read as three problems rather than one finding stated three ways. Consolidated to one.
+Two figures in its annotation were wrong and were corrected once recomputed: the
+counterfactual is 466.03, not 465.19, and the shortfall is 75.10, not 74.26.
+
+**14:48 to 15:08** The five documents. Every sensitivity claim in NUMBERS.md was computed
+rather than asserted: the fee cliff table, the five day accrual alternative at 0.77, the two
+rounding ties at half the rate, and the 0.26 that a reversal at the current value date would
+have produced.
+
 **15:08** Corrected the times above. A review of the published pull requests flagged one range
 running backwards, from 15:35 to 14:56. Checking the rest against `git log` showed the whole
 afternoon block had been estimated rather than read off the clock, and that one entry sat out
@@ -152,3 +188,25 @@ template.
 Adding labels made a line in `pr-doc-creator` false. The skill said this repository ships no
 label taxonomy. It does now, so the skill says so, and gained a labelling step. A skill that
 describes a project it no longer matches is worse than no skill.
+
+**13:34** A review pass over the whole tree, and it found one real bug plus one piece of self
+inflicted damage.
+
+`parseAmount` stripped every comma before parsing, so `1.2,3` parsed as 1.23 and `,,5.00` as
+5.00. A malformed input was being reinterpreted as a valid one rather than refused. Grouping is
+validated inside the pattern now, accepted only in threes in the whole part, with four refusal
+tests.
+
+The damage was mine. An earlier prose pass had deleted the whole `@property` list from
+`IAssessmentRequest`, and auditing for the same shape found thirty `@remarks` tags removed
+across the tree with none added back. The prose survived inside the blocks, so nothing failed,
+and `tsdoc/syntax` checks syntax rather than completeness. Restored all of them by diffing each
+doc block against the commit before that pass.
+
+The event log sequence was documented as a bound for a ledger balance query. It is not. The log
+counts records and the ledger counts entries: ten records against sixteen entries here, because
+a refused event posts nothing and one credit posts three. Renamed to `nextRecordSequence`.
+
+A backwards time range in this file led somewhere worse. Checking every entry against `git log`
+showed the whole afternoon block had been estimated rather than read off the clock. Corrected
+against the commit record, and noted in place.

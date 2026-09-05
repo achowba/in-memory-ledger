@@ -1,10 +1,8 @@
-/**
- * The currency registry, and the reasoning behind each exponent.
- *
- * This file is the only place a currency exponent is declared. Adding a currency anywhere else
- * would let two parts of the system disagree about how many fils are in a dirham. That
- * disagreement shows up as a rounding bug rather than as a type error.
- */
+// The currency registry, and the reasoning behind each exponent.
+//
+// This file is the only place a currency exponent is declared. Adding a currency anywhere else
+// would let two parts of the system disagree about how many fils are in a dirham. That
+// disagreement shows up as a rounding bug rather than as a type error.
 
 /**
  * How many decimal places each currency has, from the ISO 4217 minor unit.

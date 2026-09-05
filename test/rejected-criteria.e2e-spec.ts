@@ -75,7 +75,9 @@ describe('criterion 5 is untestable: Auth-B is never approved', () => {
   // balance and never touches the ledger balance, and that invariant holds here. What is
   // refused is the criterion, because its premise is never reached in this event stream.
   it('holds the invariant the criterion states, using Auth-A which was approved', () => {
-    const dayTwo = result.days.find((day) => day.day === 2)?.accounts[0];
+    const dayTwo = result.days
+      .find((day) => day.day === 2)
+      ?.accounts.find((account) => account.accountId === 'ACC-001');
 
     assert.ok(dayTwo !== undefined);
     assert.equal(dayTwo.closingBalanceMinor, 25000n, 'the hold did not touch the ledger');
@@ -178,7 +180,7 @@ describe('criterion 7 is wrong: three BHD instalments of 3.334 create money', ()
 describe('criterion 8 is wrong: an interest remainder is not discarded', () => {
   const RESTATED = [25000n, 22500n, 62500n, 41500n, 39000n, 39000n];
 
-  it('would discard one fils of a customer money', () => {
+  it('would discard one fils that belongs to the customer', () => {
     const sumOfRounded = sumMinor(RESTATED.map(dailyAccrualMinor));
     const roundedSum = divideRounded(sumMinor(RESTATED) * 4n, 10000n);
 

@@ -27,7 +27,7 @@ A run that looked at today alone would miss both, and would charge one fee inste
 
 ### At most one fee per account per day, ever
 
-The guard is `ledger.hasEntry(accountId, OVERDRAFT_FEE, day)`, keyed on the pair of account and day, not on the assessment run.
+The guard is `ledger.hasEntry(accountId, ENTRY_ORIGIN.OVERDRAFT_FEE, day)`, keyed on the pair of account and day, not on the assessment run.
 
 The distinction is what makes repeated runs safe. Every day close re-walks the window. Without
 the guard the day two fee would be charged again on day five, on day six, and at every close

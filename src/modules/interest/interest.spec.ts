@@ -4,6 +4,7 @@ import { describe, it } from 'node:test';
 import type { Day } from '../../common/day/day.js';
 import { sumMinor } from '../../common/money/money.js';
 import { divideRounded } from '../../common/rounding/rounding.js';
+import { DAILY_RATE_DENOMINATOR, DAILY_RATE_NUMERATOR } from './interest.constants.js';
 import { ENTRY_ORIGIN, type EntryOrigin } from '../ledger/ledger-entry.types.js';
 import { Ledger } from '../ledger/ledger.js';
 import { capitalizeInterest, dailyAccrualMinor, dailyAccruals } from './interest.js';
@@ -126,7 +127,7 @@ describe('dailyAccruals, restated across the whole window', () => {
 
 describe('capitalizeInterest, the single credit', () => {
   it('capitalizes AED 0.93 for ACC-001', () => {
-    const { totalMinor } = capitalizeInterest(ledgerAtEndOfWindow(), ACCOUNT, 6);
+    const { totalMinor } = capitalizeInterest(ledgerAtEndOfWindow(), ACCOUNT);
 
     assert.equal(totalMinor, 93n);
   });
@@ -134,14 +135,14 @@ describe('capitalizeInterest, the single credit', () => {
   // The brief requires the rounded daily accruals to sum exactly to the capitalized total.
   // Defining the total as the sum is what makes that true by construction.
   it('makes the total equal the sum of the rounded accruals, by construction', () => {
-    const { accruals, totalMinor } = capitalizeInterest(ledgerAtEndOfWindow(), ACCOUNT, 6);
+    const { accruals, totalMinor } = capitalizeInterest(ledgerAtEndOfWindow(), ACCOUNT);
 
     assert.equal(sumMinor(accruals.map((accrual) => accrual.accrualMinor)), totalMinor);
   });
 
   it('books one credit, value dated the last day', () => {
     const ledger = ledgerAtEndOfWindow();
-    const { entry } = capitalizeInterest(ledger, ACCOUNT, 6);
+    const { entry } = capitalizeInterest(ledger, ACCOUNT);
 
     assert.ok(entry !== null);
     assert.equal(entry.origin, ENTRY_ORIGIN.INTEREST_CAPITALIZATION);
@@ -151,7 +152,7 @@ describe('capitalizeInterest, the single credit', () => {
 
   it('leaves ACC-001 at 390.93', () => {
     const ledger = ledgerAtEndOfWindow();
-    capitalizeInterest(ledger, ACCOUNT, 6);
+    capitalizeInterest(ledger, ACCOUNT);
 
     assert.equal(ledger.balanceMinor(ACCOUNT, { valueDateOnOrBefore: 6 }), 39093n);
   });
@@ -160,7 +161,7 @@ describe('capitalizeInterest, the single credit', () => {
   // own result. Day six accrues on 390.00, not on 390.93.
   it('accrues day six before the credit lands, not after', () => {
     const ledger = ledgerAtEndOfWindow();
-    const { accruals } = capitalizeInterest(ledger, ACCOUNT, 6);
+    const { accruals } = capitalizeInterest(ledger, ACCOUNT);
     const daySix = accruals.find((accrual) => accrual.day === 6);
 
     assert.ok(daySix !== undefined);
@@ -172,7 +173,7 @@ describe('capitalizeInterest, the single credit', () => {
     const ledger = new Ledger();
     post(ledger, ACCOUNT, 1, 0n, ENTRY_ORIGIN.OPENING_BALANCE);
 
-    const { totalMinor, entry } = capitalizeInterest(ledger, ACCOUNT, 6);
+    const { totalMinor, entry } = capitalizeInterest(ledger, ACCOUNT);
 
     assert.equal(totalMinor, 0n);
     assert.equal(entry, null);
@@ -187,7 +188,7 @@ describe('capitalizeInterest, ACC-002 in BHD', () => {
     post(ledger, 'ACC-002', 5, 3333n);
     post(ledger, 'ACC-002', 5, 3333n);
 
-    const { accruals, totalMinor } = capitalizeInterest(ledger, 'ACC-002', 6);
+    const { accruals, totalMinor } = capitalizeInterest(ledger, 'ACC-002');
 
     assert.deepEqual(
       accruals.map((accrual) => accrual.accrualMinor),
@@ -217,7 +218,10 @@ describe('why the capitalized total is the sum of the parts', () => {
   // a customer's money. See REJECTED.md.
   it('differs by one fils from applying the rate to the summed balances', () => {
     const sumOfRounded = sumMinor(RESTATED.map(dailyAccrualMinor));
-    const roundedSum = divideRounded(sumMinor(RESTATED) * 4n, 10000n);
+    const roundedSum = divideRounded(
+      sumMinor(RESTATED) * DAILY_RATE_NUMERATOR,
+      DAILY_RATE_DENOMINATOR,
+    );
 
     assert.equal(sumOfRounded, 93n);
     assert.equal(roundedSum, 92n);
@@ -237,7 +241,7 @@ describe('the interest reading that was not taken', () => {
   });
 
   it('gives 0.93 under the restatement this ledger uses', () => {
-    const { totalMinor } = capitalizeInterest(ledgerAtEndOfWindow(), ACCOUNT, 6);
+    const { totalMinor } = capitalizeInterest(ledgerAtEndOfWindow(), ACCOUNT);
 
     assert.equal(totalMinor, 93n);
   });

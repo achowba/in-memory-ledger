@@ -32,6 +32,7 @@ function post(ledger: Ledger, valueDate: Day, amountMinor: bigint): void {
 /**
  * Builds ACC-001 exactly as it stands at the day five close, before any fee is assessed.
  *
+ * @remarks
  * Every entry of the brief that is value dated on or before day five and accepted. E1 credits
  * 1,200.00. E2 debits 950.00. E4 credits 400.00. E5 settles 185.00. E7 debits 620.00, backdated
  * to day two. E3 and E8 are authorizations and post nothing. E6 is refused.

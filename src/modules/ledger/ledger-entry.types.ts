@@ -33,6 +33,7 @@ export type EntryOrigin = (typeof ENTRY_ORIGIN)[keyof typeof ENTRY_ORIGIN];
 /**
  * One balance-affecting posting. Immutable once appended.
  *
+ * @remarks
  * The amount is signed, so a balance is the plain sum of the amounts. Nothing has to consult
  * the origin to know which way to add. Direction on the way in is carried by the event type. It
  * becomes a sign exactly once, at the point of posting.

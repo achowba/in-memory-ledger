@@ -7,9 +7,9 @@ import type { RefusalCode, WarningCode } from '../../common/errors/error-codes.j
  *
  * @property eventId - The identifier from the brief, such as `E7`. Stable, and used by a
  *   reversal to name what it reverses.
- * @property bookingDay - The day the system learns of the event. The first of the two clocks.
- * @property valueDate - The day the event changes a balance. The second of the two clocks.
- *   Equal to `bookingDay` for an ordinary event, and earlier for a backdated one.
+ * @property bookingDay - The day the system learns of the event.
+ * @property valueDate - The day the event changes a balance. Equal to `bookingDay` for an
+ *   ordinary event, and earlier for a backdated one.
  * @property accountId - The account the event belongs to.
  */
 interface IEventBase {
@@ -33,6 +33,7 @@ export interface IOpeningBalanceEvent extends IEventBase {
 /**
  * Money into the account.
  *
+ * @remarks
  * `instalmentCount` exists because E10 credits BHD 10.000 as three equal instalments. One event
  * therefore produces three ledger entries. Modelling that as three separate events would lose
  * the fact that they are one instruction. It would also break the residual allocation, which
@@ -106,6 +107,7 @@ export interface ISettlementEvent extends IEventBase {
 /**
  * An instruction to undo an earlier posting.
  *
+ * @remarks
  * A reversal never edits the original. A reversal appends an opposite entry that inherits the
  * original value date. So the correction lands on the day the money was supposed to have moved,
  * not on the day the mistake was noticed.
@@ -145,12 +147,20 @@ export interface IEventWarning {
 /**
  * One event as the log holds it, together with what the system decided about it.
  *
+ * @remarks
  * A refusal is recorded here rather than thrown away. The log records what happened, and a
  * refusal happened. This is what lets the report print the day four rejection of E6 and the day
  * five decline of Auth-B. The brief requires both as output.
  *
- * @property sequence - Arrival order, starting at one. This is the second clock, and a
- *   balance query uses it to ask what the system knew at a point in the replay.
+ * @property sequence - Arrival order in the log, starting at one.
+ *
+ *   This counts records, not ledger entries, and the two do not correspond. A refused event
+ *   takes a sequence number and posts nothing. One credit event posts three entries when it
+ *   is split into instalments. In this replay the log holds ten records and the ledger holds
+ *   sixteen entries.
+ *
+ *   So this number orders the log. It is not a bound for a ledger balance query. That bound
+ *   is `ILedgerEntry.sequence`, which `Ledger.nextSequence` hands out.
  * @property event - The event exactly as it arrived.
  * @property outcome - Whether the event was accepted or refused.
  * @property refusal - The code and reason, present only when the outcome is `REFUSED`.

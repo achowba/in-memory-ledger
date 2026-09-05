@@ -1,10 +1,9 @@
-/**
- * The interest rate, expressed so that it never becomes a decimal.
- */
+// The interest rate, expressed so that it never becomes a decimal.
 
 /**
  * The numerator of the daily interest rate.
  *
+ * @remarks
  * The rate is 0.04 percent per day, which is 4 parts in 10000. It is held as a pair of integers
  * rather than as 0.0004. 0.0004 is not representable in binary floating point. A rate that is
  * already wrong before it is applied cannot be rounded back into correctness.
@@ -22,6 +21,7 @@ export const DAILY_RATE_NUMERATOR = 4n;
 /**
  * The denominator of the daily interest rate.
  *
+ * @remarks
  * 10000, which puts the numerator in units of one hundredth of a percent. Chosen so the
  * numerator stays a whole number. Expressing 0.04 percent as 1n over 2500n would also be exact.
  * It would hide the rate a reader is checking against the brief.

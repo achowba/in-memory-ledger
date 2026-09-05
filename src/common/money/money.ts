@@ -5,6 +5,7 @@ import { CURRENCY_EXPONENT, DIGIT_GROUP_SIZE, type CurrencyCode } from './money.
 /**
  * An amount of money, as a whole count of the smallest unit of its currency.
  *
+ * @remarks
  * AED 415.00 is `41500n`. BHD 10.000 is `10000n`. There is no floating point in this ledger and
  * no third party decimal type. So the only rounding that happens is rounding somebody wrote on
  * purpose. Every such place is a named function in this folder.
@@ -16,8 +17,16 @@ import { CURRENCY_EXPONENT, DIGIT_GROUP_SIZE, type CurrencyCode } from './money.
  */
 export type MinorUnits = bigint;
 
-/** Matches an optionally signed decimal amount, capturing sign, whole part, and fraction. */
-const AMOUNT_PATTERN = /^(-?)(\d+)(?:\.(\d+))?$/;
+/**
+ * Matches an optionally signed decimal amount, capturing sign, whole part, and fraction.
+ *
+ * @remarks
+ * The whole part is either an ungrouped run of digits, or digits grouped in threes by commas.
+ * Grouping is validated here rather than stripped beforehand. Stripping every comma first
+ * makes `1.2,3` parse as `1.23`, and `,,5.00` parse as `5.00`. That reinterprets a malformed
+ * input as a valid one instead of refusing it.
+ */
+const AMOUNT_PATTERN = /^(-?)(\d{1,3}(?:,\d{3})*|\d+)(?:\.(\d+))?$/;
 
 /**
  * Returns how many decimal places a currency has.
@@ -46,6 +55,7 @@ export function scaleOf(currency: CurrencyCode): bigint {
 /**
  * Converts a decimal amount written as text into minor units.
  *
+ * @remarks
  * The precision check is the reason this function exists. An amount carrying more decimal
  * places than its currency has is refused rather than rounded. Rounding an input silently
  * discards what the caller meant. Nothing downstream could tell later that it happened. `1.005`
@@ -53,6 +63,9 @@ export function scaleOf(currency: CurrencyCode): bigint {
  *
  * Parsing text rather than accepting a raw bigint also lets the event stream use the same
  * notation as the brief. A reviewer can then compare the two line by line.
+ *
+ * Digit grouping is accepted only where a reader would write it, in threes in the whole part.
+ * Malformed grouping is refused rather than normalised away.
  *
  * @steps
  * 1. Match the text against the decimal pattern.
@@ -67,7 +80,7 @@ export function scaleOf(currency: CurrencyCode): bigint {
  * @throws LedgerError With `PRECISION_EXCEEDS_CURRENCY` when the fraction is too long.
  */
 export function parseAmount(currency: CurrencyCode, text: string): MinorUnits {
-  const match = AMOUNT_PATTERN.exec(text.trim().replace(/,/g, ''));
+  const match = AMOUNT_PATTERN.exec(text.trim());
   if (match === null) {
     throw new LedgerError(
       FAULT_CODE.MALFORMED_AMOUNT,
@@ -75,7 +88,8 @@ export function parseAmount(currency: CurrencyCode, text: string): MinorUnits {
     );
   }
 
-  const [, sign = '', whole = '0', fraction = ''] = match;
+  const [, sign = '', grouped = '0', fraction = ''] = match;
+  const whole = grouped.replace(/,/g, '');
   const exponent = exponentOf(currency);
 
   if (fraction.length > exponent) {
@@ -92,6 +106,7 @@ export function parseAmount(currency: CurrencyCode, text: string): MinorUnits {
 /**
  * Renders minor units as a decimal amount for a human to read.
  *
+ * @remarks
  * Presentation only. Nothing downstream of this function is a money value. A negative amount is
  * rendered in brackets, which is the accounting convention. Brackets also stop a leading minus
  * being mistaken for a list bullet in the printed report.

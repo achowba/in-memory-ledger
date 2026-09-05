@@ -16,9 +16,12 @@ import type { IEventWarning, IRecordedEvent, LedgerEvent } from './event.types.j
  * printed output. It requires the day five decline of Auth-B too. So a refusal is an outcome
  * the log carries, rather than an error that escapes. See the error handling convention.
  *
- * The sequence number this class hands out is the second of the two clocks. A ledger balance
- * query uses it to ask what the system knew at a chosen point in the replay. That is how
- * acceptance criterion 1 gets its answer of (370.00) at the end of day five.
+ * The sequence number this class hands out orders the log. It counts records, so it does not
+ * correspond to a ledger entry sequence. A refused event takes a number and posts nothing. One
+ * credit event posts three entries when it is split into instalments.
+ *
+ * The bound a balance query takes is `ILedgerEntry.sequence`, from `Ledger.nextSequence`. That
+ * is how acceptance criterion 1 gets its answer of (370.00) at the end of day five.
  */
 export class EventLog {
   private readonly records: IRecordedEvent[] = [];
@@ -129,14 +132,15 @@ export class EventLog {
   }
 
   /**
-   * Returns the sequence number the next record will be given.
+   * Returns the sequence number the next record in the log will be given.
    *
-   * A balance query takes a sequence bound. A caller often needs the bound that means
-   * everything the system knew just before this event was processed.
+   * @remarks
+   * Used to record where in the log something happened. It is not a ledger bound. See the
+   * class remarks above for why the two counters do not correspond.
    *
    * @returns The next sequence number.
    */
-  public nextSequence(): number {
+  public nextRecordSequence(): number {
     return this.records.length + 1;
   }
 

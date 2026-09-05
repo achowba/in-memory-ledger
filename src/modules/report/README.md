@@ -6,7 +6,9 @@ Renders a replay as text, one block per day, plus the interest schedule and the 
 
 ## How it relates to the rest of the project
 
-Reads `IReplayResult` and returns a string. `src/main.ts` prints it. Nothing here computes a balance or makes a decision, so a change to the report can never change a number.
+Reads `IReplayResult` and returns a string. `src/main.ts` prints it.
+
+It queries the ledger for the final balances, through `balanceMinor`. It never appends, never mutates and never decides. So a change here can change how a number is shown, and never what the number is.
 
 ## The decisions it owns
 

@@ -11,9 +11,13 @@ import { OVERDRAFT_FEE_MINOR_BY_CURRENCY, OVERDRAFT_THRESHOLD_MINOR } from './fe
 /**
  * What one assessment run needs to know.
  *
- * The day the run is happening. A fee booked now carries this as its booking day. It carries
- * the day it covers as its value date. So the two clocks stay honest even for a fee that lands
- * on an already closed day.
+ * @property ledger - The ledger to read balances from and append fees to.
+ * @property accountId - The account under assessment.
+ * @property currency - The currency of the account, which decides what a fee costs.
+ * @property throughDay - The last day to assess, normally the day being closed.
+ * @property bookedOnDay - The day the run is happening. A fee booked now carries this as its
+ *   booking day, and the day it covers as its value date. So the two clocks stay honest even
+ *   for a fee that lands on an already closed day.
  */
 export interface IAssessmentRequest {
   readonly ledger: Ledger;

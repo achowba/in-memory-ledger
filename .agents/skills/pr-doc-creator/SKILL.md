@@ -30,7 +30,7 @@ Turns a diff into a description a reviewer can act on. It fills every section of
 
 ```bash
 gh pr create --title "<a sentence, not a commit subject>" --body-file <path> --assignee @me --label "<labels>"
-gh pr edit <number> --body-file <path>
+gh pr edit <number> --body-file <path> --add-label "<labels>"
 ```
 
 ## The `Numbers?` section
