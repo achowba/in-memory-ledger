@@ -35,8 +35,8 @@ import { ACCOUNTS, EVENT_STREAM } from '../src/modules/replay/scenario.js';
  * A reversal carries no reason code. The event says only "E9 reverses E7". So the system
  * cannot tell these two situations apart:
  *
- *   The bank posted E7 in error. The fees are the bank's own fault, and under the CBUAE
- *   Consumer Protection Standards the bank must correct the error and refund them.
+ *   The bank posted E7 in error. The fees are the bank's own fault, and a bank correcting
+ *   its own error refunds them.
  *
  *   The customer's payment was legitimately returned. The account really was overdrawn on
  *   days two, four and five. The fees were correctly charged and should stand.
