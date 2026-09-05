@@ -177,8 +177,18 @@ function renderDay(result: IDayResult, currencyOf: (accountId: string) => 'AED' 
  * @returns The report, ready to print.
  */
 export function renderReport(result: IReplayResult): string {
-  const currencyOf = (accountId: string): 'AED' | 'BHD' =>
-    result.accounts.find((account) => account.accountId === accountId)?.currency ?? 'AED';
+  // Defaulting here would mis-format rather than stop. AED has two decimal places and BHD
+  // three, so a BHD amount rendered as AED is out by a factor of ten and still looks like a
+  // plausible balance. A report that cannot name a currency has been handed a broken result.
+  const currencyOf = (accountId: string): 'AED' | 'BHD' => {
+    const account = result.accounts.find((candidate) => candidate.accountId === accountId);
+    if (account === undefined) {
+      throw new RangeError(
+        `The replay result has no account ${accountId} to take a currency from.`,
+      );
+    }
+    return account.currency;
+  };
 
   const lines: string[] = [
     HEAVY_RULE,

@@ -16,6 +16,12 @@ const lines = report.split('\n');
  */
 function dayBlock(day: number): readonly string[] {
   const start = lines.findIndex((line) => line.trim() === `DAY ${day}`);
+  // findIndex returns -1 when the heading is gone, and slice(-1 + 1) is the whole report. Every
+  // assertion below would then search all six days and pass. A test that cannot fail for the
+  // reason it was written reports coverage it does not have.
+  if (start === -1) {
+    throw new RangeError(`The report has no DAY ${day} heading.`);
+  }
   const rest = lines.slice(start + 1);
   // A day block ends at the next day, or at the heavy rule that opens the interest schedule.
   // Without the second stop, day six swallows the schedule and the final balances.
