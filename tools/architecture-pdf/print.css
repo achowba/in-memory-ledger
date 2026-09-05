@@ -121,13 +121,17 @@ tbody tr + tr td {
 }
 
 /* A three column table is the cuts list, whose first column holds a short label. Give it room
-   so the label wraps less than the prose beside it. */
-table:has(th:nth-child(3)) th:first-child,
-table:has(th:nth-child(3)) td:first-child {
+   so the label wraps less than the prose beside it.
+
+   th:first-child:nth-last-child(3) matches a header cell that is both the first of its row and
+   the third from the end, which can only be true when the row has exactly three cells. It is
+   the quantity query that predates :has(), so it carries no minimum browser version, and the
+   two column table in section 1 does not match it. Setting the width on the header cell is
+   enough: an auto layout table takes its column widths from whichever cell declares one. */
+thead th:first-child:nth-last-child(3) {
   width: 21%;
 }
 
-table:has(th:nth-child(3)) th:nth-child(2),
-table:has(th:nth-child(3)) td:nth-child(2) {
+thead th:first-child:nth-last-child(3) + th {
   width: 29%;
 }
