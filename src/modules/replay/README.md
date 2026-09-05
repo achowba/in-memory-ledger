@@ -8,6 +8,16 @@ Holds the event stream of the brief as data, and runs it across the six day wind
 
 The only module that knows about all the others. It appends to `modules/ledger`, records in `modules/events`, asks `modules/authorizations` about holds, calls `modules/fees` at each day close and `modules/interest` once at the end. `modules/report` renders what it returns.
 
+## The two files
+
+`replay-engine.ts` drives the window: the day loop, the fee assessment, the snapshots and the
+restatement detection. It also holds the two guards that are the same whatever the event is,
+namely that an amount is a magnitude and that the account exists.
+
+`event-handlers.ts` holds one function per event type, plus the dispatch. Splitting them apart
+is what makes a refusal path reachable from a test. Every refusal code the engine can raise now
+has a test that reaches it, which was not true while all six branches sat inside one closure.
+
 ## The decisions it owns
 
 ### The scenario is data, written in the notation of the brief

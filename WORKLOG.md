@@ -210,3 +210,24 @@ a refused event posts nothing and one credit posts three. Renamed to `nextRecord
 A backwards time range in this file led somewhere worse. Checking every entry against `git log`
 showed the whole afternoon block had been estimated rather than read off the clock. Corrected
 against the commit record, and noted in place.
+
+**14:25** Closed the last three findings from the review pass, which turned out to be one
+finding wearing three hats.
+
+`replay-engine.ts` had grown to 448 lines against a 300 line rule, and four refusal paths had
+no test at all. Those were the same problem. Six branches sat inside one closure, so there was
+no seam to reach a single branch from a test, and the file kept absorbing every new guard.
+
+Lifting each branch into a named handler in `event-handlers.ts` fixed both. The engine is 267
+lines now, and holds only the day loop, the snapshots, and the two guards that apply to every
+event. Ten new tests reach the four paths that had never run, including the one the testing
+convention names by name: a second settlement against an authorization that already settled.
+
+Also deleted two fault codes that were declared, documented and raised nowhere.
+`UNKNOWN_CURRENCY` is unreachable because a currency is a literal union, so an unregistered one
+is a compile error. `CURRENCY_MISMATCH` is unreachable because balances are per account and
+nothing combines two currencies. A declared code nothing can raise is a promise the system does
+not make.
+
+Every code in the taxonomy is now both raised in the engine and reached by a test. That was not
+true of six of them an hour ago.
