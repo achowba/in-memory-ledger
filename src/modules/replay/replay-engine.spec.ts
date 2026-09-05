@@ -46,7 +46,7 @@ function event(overrides: Partial<LedgerEvent> & { type: LedgerEvent['type'] }):
 describe('replay, an amount that carries its own direction', () => {
   // The engine negates unconditionally when it posts. Without this guard a debit of minus
   // 500.00 posts as a credit of plus 500.00, with no refusal and no warning.
-  it('refuses a debit carrying a negative amount', () => {
+  it('stops the replay on a debit carrying a negative amount', () => {
     assert.throws(
       () =>
         replay(ACCOUNTS, [event({ type: 'DEBIT', amountMinor: parseAmount('AED', '-500.00') })]),
@@ -54,7 +54,7 @@ describe('replay, an amount that carries its own direction', () => {
     );
   });
 
-  it('refuses a credit carrying a negative amount', () => {
+  it('stops the replay on a credit carrying a negative amount', () => {
     assert.throws(
       () =>
         replay(ACCOUNTS, [
@@ -64,14 +64,14 @@ describe('replay, an amount that carries its own direction', () => {
     );
   });
 
-  it('refuses an amount of exactly zero, which moves nothing', () => {
+  it('stops the replay on an amount of exactly zero, which moves nothing', () => {
     assert.throws(
       () => replay(ACCOUNTS, [event({ type: 'DEBIT', amountMinor: 0n })]),
       throwsCode(FAULT_CODE.NON_POSITIVE_AMOUNT),
     );
   });
 
-  it('refuses an authorization carrying a negative hold', () => {
+  it('stops the replay on an authorization carrying a negative hold', () => {
     assert.throws(
       () =>
         replay(ACCOUNTS, [event({ type: 'AUTHORIZATION', authId: 'Auth-X', amountMinor: -1n })]),
@@ -79,7 +79,7 @@ describe('replay, an amount that carries its own direction', () => {
     );
   });
 
-  it('refuses a settlement carrying a negative amount', () => {
+  it('stops the replay on a settlement carrying a negative amount', () => {
     assert.throws(
       () => replay(ACCOUNTS, [event({ type: 'SETTLEMENT', authId: 'Auth-X', amountMinor: -1n })]),
       throwsCode(FAULT_CODE.NON_POSITIVE_AMOUNT),
@@ -126,7 +126,7 @@ describe('replay, an amount that carries its own direction', () => {
 describe('replay, an event naming an account that was never opened', () => {
   // A fault, not a refusal. Refusing it as SETTLEMENT_WITHOUT_AUTHORIZATION named the wrong
   // situation and left a misleading code in the log for a reader to branch on.
-  it('refuses the event as an unknown account', () => {
+  it('stops the replay rather than recording a refusal', () => {
     assert.throws(
       () => replay(ACCOUNTS, [event({ type: 'DEBIT', accountId: 'ACC-999' })]),
       throwsCode(FAULT_CODE.UNKNOWN_ACCOUNT),

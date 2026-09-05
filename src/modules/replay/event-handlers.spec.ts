@@ -101,6 +101,48 @@ const reverse = (eventId: string, target: string): LedgerEvent => ({
   reversesEventId: target,
 });
 
+describe('a settlement naming an authorization that belongs to another account', () => {
+  // The register is keyed on authId alone, and nothing else in the settlement path compares
+  // the two accounts. Unreachable from the six day stream, which is why it survived review of
+  // the behaviour and was found only by reading the guards.
+  it('refuses it rather than debiting one account and releasing another account`s hold', () => {
+    const ctx = context();
+    run(ctx, auth('E1', 'Auth-A'));
+
+    const foreign = { ...settle('E2', 'Auth-A'), accountId: 'ACC-002' };
+    run(ctx, foreign);
+
+    assert.equal(refusalFor(ctx, 'E2'), REFUSAL_CODE.SETTLEMENT_ACCOUNT_MISMATCH);
+  });
+
+  it('leaves the hold live, so the owning account keeps its funds reserved', () => {
+    const ctx = context();
+    run(ctx, auth('E1', 'Auth-A'));
+    run(ctx, { ...settle('E2', 'Auth-A'), accountId: 'ACC-002' });
+
+    assert.equal(ctx.holds.find('Auth-A')?.state, AUTHORIZATION_STATE.APPROVED);
+    assert.equal(ctx.holds.activeHoldsMinor(ACCOUNT.accountId), 20000n);
+  });
+
+  it('posts nothing, so neither account moves', () => {
+    const ctx = context();
+    run(ctx, auth('E1', 'Auth-A'));
+    run(ctx, { ...settle('E2', 'Auth-A'), accountId: 'ACC-002' });
+
+    assert.equal(ctx.ledger.balanceMinor(ACCOUNT.accountId, { valueDateOnOrBefore: 6 }), 100000n);
+    assert.equal(ctx.ledger.balanceMinor('ACC-002', { valueDateOnOrBefore: 6 }), 0n);
+  });
+
+  it('still settles when the account matches, so the guard is not simply refusing everything', () => {
+    const ctx = context();
+    run(ctx, auth('E1', 'Auth-A'));
+    run(ctx, settle('E2', 'Auth-A'));
+
+    assert.equal(refusalFor(ctx, 'E2'), undefined);
+    assert.equal(ctx.holds.find('Auth-A')?.state, AUTHORIZATION_STATE.SETTLED);
+  });
+});
+
 describe('an authorization identifier that is already in the register', () => {
   // Refusal, not idempotency. A genuine idempotent path would return the first outcome so the
   // retry succeeds. This refuses, because treating a retry as a new request creates a second

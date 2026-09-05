@@ -187,8 +187,9 @@ export function applyAuthorization(context: IHandlerContext, event: IAuthorizati
  *
  * @steps
  * 1. Refuse a settlement naming an authorization the register has never seen.
- * 2. Refuse a settlement against an authorization that is no longer open.
- * 3. Post the presented amount and release the hold in full.
+ * 2. Refuse a settlement against an authorization belonging to another account.
+ * 3. Refuse a settlement against an authorization that is no longer open.
+ * 4. Post the presented amount and release the hold in full.
  *
  * @param context - What the handler needs.
  * @param event - The settlement presented.
@@ -202,6 +203,19 @@ export function applySettlement(context: IHandlerContext, event: ISettlementEven
       event,
       REFUSAL_CODE.SETTLEMENT_WITHOUT_AUTHORIZATION,
       `${event.authId} was never authorized, so the funds stay in the account`,
+      warnings,
+    );
+    return;
+  }
+
+  // The register is keyed on authId alone, so nothing else in the path compares the two
+  // accounts. Without this guard a settlement naming account A with account B's authId would
+  // debit A and release B's hold, and both accounts would be wrong with nothing to report it.
+  if (authorization.accountId !== event.accountId) {
+    eventLog.refuse(
+      event,
+      REFUSAL_CODE.SETTLEMENT_ACCOUNT_MISMATCH,
+      `${event.authId} belongs to ${authorization.accountId}, not ${event.accountId}`,
       warnings,
     );
     return;
@@ -302,11 +316,15 @@ export function applyReversal(context: IHandlerContext, event: IReversalEvent): 
  * Sends one event to the handler for its type.
  *
  * @remarks
- * The switch is exhaustive over the event union, so adding a kind of event without a handler
- * is a compile error rather than an event the engine silently ignores.
+ * The `default` arm assigns the narrowed event to `never`, which is what makes the switch
+ * exhaustive. Without it a handler-less event type would compile and be silently ignored,
+ * because a switch that returns `void` gives the compiler no reason to object to a missing
+ * arm. The guard is the enforcement; listing every case is only the convention.
  *
  * @param context - What the handler needs.
  * @param event - The event to apply.
+ * @throws RangeError When an event type reaches this at run time with no handler, which the
+ *   type system has already made unreachable.
  */
 export function applyEvent(context: IHandlerContext, event: LedgerEvent): void {
   switch (event.type) {
@@ -322,5 +340,9 @@ export function applyEvent(context: IHandlerContext, event: LedgerEvent): void {
       return applySettlement(context, event);
     case 'REVERSAL':
       return applyReversal(context, event);
+    default: {
+      const unhandled: never = event;
+      throw new RangeError(`No handler for event type ${JSON.stringify(unhandled)}.`);
+    }
   }
 }

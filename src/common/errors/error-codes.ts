@@ -21,6 +21,8 @@
  * @property AUTHORIZATION_ALREADY_EXISTS - An authorization identifier was reused.
  * @property SETTLEMENT_AGAINST_CLOSED_AUTHORIZATION - The authorization exists but has
  *   already settled or been released, so it cannot settle again.
+ * @property SETTLEMENT_ACCOUNT_MISMATCH - The authorization exists but belongs to another
+ *   account. Honouring it would debit one account and release a hold on another.
  * @property REVERSAL_TARGET_NOT_FOUND - The reversal names an event that was never booked.
  * @property REVERSAL_TARGET_ALREADY_REVERSED - The target carries a reversal already. A
  *   second one would credit the account twice.
@@ -32,6 +34,7 @@ export const REFUSAL_CODE = {
   AUTHORIZATION_DECLINED_INSUFFICIENT_AVAILABLE: 'AUTHORIZATION_DECLINED_INSUFFICIENT_AVAILABLE',
   AUTHORIZATION_ALREADY_EXISTS: 'AUTHORIZATION_ALREADY_EXISTS',
   SETTLEMENT_AGAINST_CLOSED_AUTHORIZATION: 'SETTLEMENT_AGAINST_CLOSED_AUTHORIZATION',
+  SETTLEMENT_ACCOUNT_MISMATCH: 'SETTLEMENT_ACCOUNT_MISMATCH',
   REVERSAL_TARGET_NOT_FOUND: 'REVERSAL_TARGET_NOT_FOUND',
   REVERSAL_TARGET_ALREADY_REVERSED: 'REVERSAL_TARGET_ALREADY_REVERSED',
   REVERSAL_TARGET_NOT_REVERSIBLE: 'REVERSAL_TARGET_NOT_REVERSIBLE',
