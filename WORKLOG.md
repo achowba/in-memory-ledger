@@ -55,4 +55,47 @@ newer compiler. Recorded in REJECTED.md as an abandoned approach.
 **14:08** Commit 1, the scaffold. Verified the lint rules actually fire by writing a probe file
 that breaks five of them, then verified the two custom TSDoc tags are accepted.
 
+**15:08** Corrected the times above. A review of the published pull requests flagged one range
+running backwards, from 15:35 to 14:56. Checking the rest against `git log` showed the whole
+afternoon block had been estimated rather than read off the clock, and that one entry sat out
+of chronological order as a result. Every time from 14:13 onward now matches the commit it
+describes. The brief asks for a real worklog, and an estimated timestamp is not one.
+
+**15:08** Re-audited ARCHITECTURE.md against the literal wording of Part 2 rather than
+against my memory of it, and found one real gap.
+
+Section 3 is asked for "every way an authorization in your model can end". I had claimed
+exactly one, plus one way it fails to end. Reading the terminal paths in the engine rather
+than the state list, there are three endings and one non-ending. I had missed a duplicate
+authorization identifier, which is refused at creation and never becomes an authorization,
+and I had described settlement for an amount other than the amount held as something
+production must add, when the model already does it and releases the residual in full.
+
+That second one was the more useful mistake. It had been filed under work not done, when it
+is actually a decision already taken with a global policy where the policy should be per
+product.
+
+Fixing it also exposed a contradiction in the next subsection, which claimed six further
+endings "none of which this model has". Two of the six were already handled here, one of
+them wrongly. Corrected to four endings plus one mirror case, with the duplicate removed
+rather than left in both lists.
+
+**18:50** Restructured the README so the contents list is the first section rather than the
+third, and expanded it from nine flat links to every heading with a one line gloss on each.
+
+Twenty five anchors written by hand is where a contents list rots. A comma in a heading is the
+usual reason: GitHub drops punctuation from a slug, so `### Three fees, and the one that got
+away` becomes `#three-fees-and-the-one-that-got-away`, and an anchor keeping the comma renders
+as a normal link that goes nowhere. Generated the anchors from the headings rather than typing
+them.
+
+**19:11** Reworked the contents list to match the shape used in the reference repository:
+heading of "Table of contents", plain nested bullets, two levels, no glosses. The previous
+version had bold top level entries and a sentence on each, which was more informative and
+did not look like the rest of the family of repositories. Consistency wins for something a
+reader recognises by shape before they read it.
+
+Generated the twenty two entries from the headings rather than typing them, so the list cannot
+disagree with the document it describes.
+
 ## 2026-09-05
