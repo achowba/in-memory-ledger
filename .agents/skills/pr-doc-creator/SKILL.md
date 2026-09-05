@@ -25,10 +25,11 @@ Turns a diff into a description a reviewer can act on. It fills every section of
 4. **Fill or delete the `Numbers?` section.** This is the step that matters most here, and it has no equivalent in an ordinary repository. See below.
 5. **Tick the checklist honestly.** Tick only what is true. An unticked box is information. A falsely ticked one is a defect.
 6. **Run the gates and quote the real output.** Never claim a command passed without running it.
-7. **Write the file, then create or update the pull request.**
+7. **Apply the labels.** Exactly one `type:`, every `module:` the change touches, any `area:`, and a concern label where it applies. See [labels](../../conventions/labels.convention.md). A change that moves a published figure takes `numbers`, and its `Numbers?` section must then be filled rather than deleted.
+8. **Write the file, then create or update the pull request.**
 
 ```bash
-gh pr create --title "<type(scope): description>" --body-file <path> --assignee @me
+gh pr create --title "<a sentence, not a commit subject>" --body-file <path> --assignee @me --label "<labels>"
 gh pr edit <number> --body-file <path>
 ```
 
@@ -67,4 +68,4 @@ npm test           1 failure, the known gap, as required by the brief
 - No filler, no marketing words, no praise of the code.
 - Describe what the change does and what it costs. Do not claim a benefit the diff does not deliver.
 - Never invent a test that was not run.
-- There is no label cache. This repository ships no label taxonomy, and inventing one in a skill would make the skill lie about the project it documents.
+- Read the label set with `gh label list` before applying. There is no local cache: twenty labels fetch instantly, and a cache is one more thing that can disagree with GitHub.

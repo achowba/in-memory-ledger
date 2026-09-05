@@ -22,17 +22,18 @@ Non-negotiable. Each line links to the convention that holds the detail.
 
 ## Conventions
 
-| Convention                                                                 | Covers                                                             |
-| -------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| [artifacts](.agents/conventions/artifacts.convention.md)                   | Where working output is written, and why it is not committed.      |
-| [code-standards](.agents/conventions/code-standards.convention.md)         | Typing, naming, constants, module boundaries, file size.           |
-| [commits](.agents/conventions/commits.convention.md)                       | Conventional Commits, the scope list, and the history rule.        |
-| [documentation](.agents/conventions/documentation.convention.md)           | The module README contract, and comments in the body.              |
-| [error-handling](.agents/conventions/error-handling.convention.md)         | Rejection versus exception, error codes, what the log records.     |
-| [language-and-style](.agents/conventions/language-and-style.convention.md) | How prose in this repository is written.                           |
-| [ledger-domain](.agents/conventions/ledger-domain.convention.md)           | Money, the two clocks, append only, rounding, and the fee cascade. |
-| [testing](.agents/conventions/testing.convention.md)                       | Layout, naming, the three cases every test covers, determinism.    |
-| [tsdoc](.agents/conventions/tsdoc.convention.md)                           | Where a doc block goes, which tags exist, what it must say.        |
+| Convention                                                                 | Covers                                                               |
+| -------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| [artifacts](.agents/conventions/artifacts.convention.md)                   | Where working output is written, and why it is not committed.        |
+| [code-standards](.agents/conventions/code-standards.convention.md)         | Typing, naming, constants, module boundaries, file size.             |
+| [commits](.agents/conventions/commits.convention.md)                       | Conventional Commits, the scope list, and the history rule.          |
+| [documentation](.agents/conventions/documentation.convention.md)           | The module README contract, and comments in the body.                |
+| [error-handling](.agents/conventions/error-handling.convention.md)         | Rejection versus exception, error codes, what the log records.       |
+| [labels](.agents/conventions/labels.convention.md)                         | The four label families, and the three concerns that earn their own. |
+| [language-and-style](.agents/conventions/language-and-style.convention.md) | How prose in this repository is written.                             |
+| [ledger-domain](.agents/conventions/ledger-domain.convention.md)           | Money, the two clocks, append only, rounding, and the fee cascade.   |
+| [testing](.agents/conventions/testing.convention.md)                       | Layout, naming, the three cases every test covers, determinism.      |
+| [tsdoc](.agents/conventions/tsdoc.convention.md)                           | Where a doc block goes, which tags exist, what it must say.          |
 
 ## Layout
 
