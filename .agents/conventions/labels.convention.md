@@ -13,7 +13,7 @@ Every pull request carries labels. They exist so a reader can tell, from the lis
 
 ## The vocabulary is the commit scope list
 
-`module:` names match the scopes in [commits](commits.convention.md), which match the folders under `src/`. There is one vocabulary, not two.
+`module:` names match the scopes in [commits](commits.convention.md), which match the module folder names under `src/common/` and `src/modules/`. There is one vocabulary, not two.
 
 A second taxonomy for the same idea is what the index discipline exists to prevent. The GitHub default labels were removed for that reason. `bug`, `documentation` and `enhancement` duplicate `type:fix`, `type:docs` and `type:feat`. None of them had ever been applied.
 

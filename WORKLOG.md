@@ -120,8 +120,8 @@ rather than left in both lists.
 third, and expanded it from nine flat links to every heading with a one line gloss on each.
 
 Twenty five anchors written by hand is where a contents list rots. A comma in a heading is the
-usual reason: GitHub drops punctuation from a slug, so `### Three fees, and the one that got
-away` becomes `#three-fees-and-the-one-that-got-away`, and an anchor keeping the comma renders
+usual reason: GitHub drops punctuation from a slug, so `### Three fees, and why day three
+escapes` becomes `#three-fees-and-why-day-three-escapes`, and an anchor keeping the comma renders
 as a normal link that goes nowhere. Generated the anchors from the headings rather than typing
 them.
 
@@ -175,7 +175,8 @@ finding, but to report its absence as a blocking one.
 **13:18** Added the label taxonomy.
 
 The vocabulary is the commit scope list. `module:` names match the scopes in the commits
-convention, which match the folders under `src/`. One vocabulary, not two. The GitHub default
+convention, which match the module folder names under `src/common/` and `src/modules/`. One
+vocabulary, not two. The GitHub default
 labels were deleted for the same reason: `bug`, `documentation` and `enhancement` duplicate
 three of the `type:` labels, and none had ever been applied.
 
@@ -231,3 +232,36 @@ not make.
 
 Every code in the taxonomy is now both raised in the engine and reached by a test. That was not
 true of six of them an hour ago.
+
+**14:37 to 14:55** Published. Twelve pull requests, opened as a stack so each diff holds only
+its own commits, every one labelled at creation and merged with a merge commit. The thirty work
+commits keep their original dates, so `git log --first-parent` reads as the twelve steps and the
+full log keeps every one.
+
+The stack cost me an hour. GitHub only retargets a stacked pull request to `main` when the
+parent's branch is deleted, and I merged without deleting, so eleven of the twelve merged into
+their parent branch instead. Rebuilt `main` from the twelve branch heads and checked the result
+by tree hash rather than by reading it.
+
+**15:00 to 15:15** Closed the review of the series. Copilot raised twenty six findings across
+the twelve pull requests. Thirteen were already answered: real at the commit they were raised
+against, and fixed by a later commit in the same series, which is what reviewing a stack in
+slices produces. Two were wrong and were rejected with the evidence rather than accepted to be
+agreeable. Eleven were real and are fixed here.
+
+The one worth the review on its own: `applySettlement` never compared the authorization's
+account with the settlement's. `HoldRegister.settle` does not compare them either, since it
+looks up by `authId` alone. So a settlement naming account A with account B's authorization
+would debit A and release B's hold, and nothing would report it. Unreachable from this event
+stream, which is why the behaviour tests could not find it and reading the guards could.
+
+Two more were claims this repository makes and does not keep. The dispatcher's doc block said a
+missing handler is a compile error; a `switch` returning `void` compiles fine with an arm
+missing, which I checked with a four line probe rather than assuming either way. And
+`dayBlock()` in the report spec sliced from index zero when a day heading was absent, so every
+assertion searched the whole report and passed. A test that cannot fail for the reason it exists
+is worse than no test.
+
+The stale numbers were mine. Both READMEs quoted 229 tests against a suite that had been 273 for
+some hours and is 277 now. That is exactly the failure the `Numbers?` section of the pull request
+template exists to catch, in the repository that wrote the template.
