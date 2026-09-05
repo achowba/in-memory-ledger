@@ -10,7 +10,6 @@ import type { RefusalCode, WarningCode } from '../../common/errors/error-codes.j
  * @property bookingDay - The day the system learns of the event.
  * @property valueDate - The day the event changes a balance. Equal to `bookingDay` for an
  *   ordinary event, and earlier for a backdated one.
- *   Equal to `bookingDay` for an ordinary event, and earlier for a backdated one.
  * @property accountId - The account the event belongs to.
  */
 interface IEventBase {
