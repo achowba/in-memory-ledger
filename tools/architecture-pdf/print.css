@@ -20,8 +20,12 @@ body {
   column-gap: 7mm;
 }
 
-/* Headings, tables and code run the full width. A table in an 85mm column is unreadable, and a
-   section heading that starts halfway down a column loses the structure it exists to show. */
+/* Headings, the document subtitle and tables run the full width. A table in an 85mm column is
+   unreadable, and a section heading starting halfway down a column loses the structure it
+   exists to show.
+
+   Code blocks deliberately do not span. Every spanning element cuts the page into another short
+   two column band, and the two blocks here are written to fit an 85mm column instead. */
 h1,
 h1 + p,
 h2,
