@@ -58,7 +58,7 @@ npm test           1 failure, the known gap, as required by the brief
 
 ## Output
 
-- The description at `artifacts/pr/<branch>_<YYYYMMDDHHMMSS>.notes.md`, per the artifacts convention.
+- The description at `artifacts/pr/<descriptor>_<YYYYMMDDHHMMSS>.notes.md`, per the artifacts convention. The descriptor is short and `snake_case`, taken from what the change does. Never the branch name, which carries a slash and would write into a directory the convention does not describe.
 - A created or updated pull request.
 - The pull request URL printed.
 

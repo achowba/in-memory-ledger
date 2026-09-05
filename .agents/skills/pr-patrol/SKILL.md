@@ -1,6 +1,6 @@
 ---
 name: pr-patrol
-description: Reviews a diff against this repository's conventions, its ledger invariants and its checklist, then writes a severity rated review. Use before merging, or to review somebody else's branch.
+description: Reviews a diff against this repository's conventions, its ledger invariants and its checklist, then writes a review that rates the severity of each finding. Use before merging, or to review somebody else's branch.
 ---
 
 # pr-patrol

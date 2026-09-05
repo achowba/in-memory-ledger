@@ -16,6 +16,12 @@ const lines = report.split('\n');
  */
 function dayBlock(day: number): readonly string[] {
   const start = lines.findIndex((line) => line.trim() === `DAY ${day}`);
+  // findIndex returns -1 when the heading is gone, and slice(-1 + 1) is the whole report. Every
+  // assertion below would then search all six days and pass. A test that cannot fail for the
+  // reason it was written reports coverage it does not have.
+  if (start === -1) {
+    throw new RangeError(`The report has no DAY ${day} heading.`);
+  }
   const rest = lines.slice(start + 1);
   // A day block ends at the next day, or at the heavy rule that opens the interest schedule.
   // Without the second stop, day six swallows the schedule and the final balances.
@@ -105,6 +111,23 @@ describe('renderReport, the interest schedule shows its working', () => {
 
     assert.ok(rule !== undefined && total !== undefined);
     assert.equal(rule.length, total.length, 'the rule and the total end in the same column');
+  });
+});
+
+describe('renderReport, a result it cannot read', () => {
+  // The old code defaulted the currency to AED. AED has two decimal places and BHD three, so a
+  // BHD amount rendered as AED is out by a factor of ten and still looks like a plausible
+  // balance. Without this test the guard can quietly become a fallback again.
+  it('stops rather than guessing a currency for an account the result does not hold', () => {
+    const broken = { ...replay(ACCOUNTS, EVENT_STREAM), accounts: [] };
+
+    assert.throws(() => renderReport(broken), RangeError);
+  });
+
+  it('names the account it could not resolve, so the message is actionable', () => {
+    const broken = { ...replay(ACCOUNTS, EVENT_STREAM), accounts: [] };
+
+    assert.throws(() => renderReport(broken), /ACC-001/);
   });
 });
 

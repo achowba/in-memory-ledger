@@ -1,4 +1,4 @@
-# In memory account ledger
+# In-memory account ledger
 
 An append only, value dated account ledger core. No web layer, no persistence, no user interface, no database. One command replays a fixed stream of ten events across six days and two accounts, and prints what happened.
 
@@ -68,8 +68,8 @@ All three are correct. So every balance query names both clocks, and there is de
 ### The suite reports one failure, on purpose
 
 ```
-npm test             229 tests, 228 pass, 1 fail
-npm run test:green   228 tests, 228 pass
+npm test             279 tests, 278 pass, 1 fail
+npm run test:green   278 tests, 278 pass
 ```
 
 The failure is in [`test/known-gap.e2e-spec.ts`](test/known-gap.e2e-spec.ts) and it is required by the brief. It is annotated in place with what it reveals. Do not fix it by weakening the assertion.

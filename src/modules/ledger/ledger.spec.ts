@@ -181,7 +181,8 @@ describe('Ledger, the once per account per day guard', () => {
     assert.equal(ledger.hasEntry(ACCOUNT, ENTRY_ORIGIN.OVERDRAFT_FEE, 2), true);
   });
 
-  // The guard is per day, not per account. A fee on day two must not suppress day four.
+  // The guard is per account and per day. This asserts the day half: a fee on day two must
+  // not suppress day four.
   it('does not report a fee on a different day', () => {
     const ledger = new Ledger();
     post(ledger, 2, -2500n, ENTRY_ORIGIN.OVERDRAFT_FEE);
