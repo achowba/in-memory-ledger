@@ -27,10 +27,9 @@ export interface IDailyAccrual {
 /**
  * Calculates one day of interest on a closing balance.
  *
- * @remarks
- * `balanceMinor * 4n / 10000n`, rounded once at the end. The multiplication happens before
- * the division so no precision is lost in between, which is the whole reason the rate is a
- * pair of integers rather than a decimal.
+ * `balanceMinor * 4n / 10000n`, rounded once at the end. The multiplication happens before the
+ * division, so no precision is lost in between. That is the whole reason the rate is a pair of
+ * integers rather than a decimal.
  *
  * A balance at or below zero accrues nothing. There is no debit interest in this model.
  *
@@ -52,9 +51,11 @@ export function dailyAccrualMinor(closingBalanceMinor: MinorUnits): MinorUnits {
  * Every closing balance is read at the moment this runs, with every event known. That is the
  * restatement reading, and it is the consequential choice in the whole interest calculation.
  *
- * The brief never says which version of a day's closing balance to accrue on, and by day six
- * there are two answers for four of the six days. Restating gives AED 0.93 for ACC-001.
- * Accruing on the balance visible at each day's own close gives AED 0.81.
+ * Every closing balance is read at the moment this runs, with every event known. That is the
+ * restatement reading, and it is the consequential choice in the whole interest calculation.
+ * The brief never says which version of a day closing balance to accrue on. By day six there
+ * are two answers for four of the six days. Restating gives AED 0.93 for ACC-001. Accruing on
+ * the balance visible at each day close gives AED 0.81.
  *
  * Restatement is chosen because acceptance criterion 1 already restates. It asks for the day
  * two closing balance "evaluated at end of Day 5", which is the same operation applied to the
@@ -85,10 +86,9 @@ export function dailyAccruals(ledger: Ledger, accountId: string): readonly IDail
 /**
  * Books the whole window of interest as a single credit at the end of the last day.
  *
- * @remarks
- * The capitalized total is defined as the sum of the rounded daily accruals. The brief
- * requires the two to agree exactly, and defining one as the other is the only way to make
- * that true by construction rather than by luck.
+ * The capitalized total is defined as the sum of the rounded daily accruals. The brief requires
+ * the two to agree exactly. Defining one as the other is the only way to make that true by
+ * construction rather than by luck.
  *
  * The tempting alternative fails. Applying the rate to the summed balances gives
  * `0.0004 * 2295.00`, which is 0.918 and rounds to 0.92, while the six rounded accruals

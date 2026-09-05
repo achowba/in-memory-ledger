@@ -10,10 +10,10 @@ Defines every kind of event that can arrive, and holds the append only record of
 
 The two collections have different jobs, and keeping them apart is deliberate.
 
-| Collection | Holds | Affects a balance |
-|---|---|---|
-| Event log | Every input, accepted or refused, with its reason | No |
-| Ledger | The balance-affecting entries only | Yes |
+| Collection | Holds                                             | Affects a balance |
+| ---------- | ------------------------------------------------- | ----------------- |
+| Event log  | Every input, accepted or refused, with its reason | No                |
+| Ledger     | The balance-affecting entries only                | Yes               |
 
 ## The decisions it owns
 
@@ -35,11 +35,14 @@ A discriminated union makes the compiler reject that. Narrowing on `type` gives 
 
 E10 credits BHD 10.000 "as three equal instalments", so `ICreditEvent` carries an `instalmentCount`.
 
-Splitting it into three separate events would lose the fact that they are one instruction. It would also break the residual allocation, which only means anything across a known set of parts: three independent credits of 3.333 would total 9.999 and quietly lose a fils.
+It would also break the residual allocation. An allocation only means anything across a known
+set of parts. Three independent credits of 3.333 would total 9.999 and quietly lose a fils.
 
 ### Sequence numbers are the second clock
 
-The number this log hands out is what a balance query bounds with `knownAsOfSequence`. That is how the system answers "what did we think the day two balance was, at the end of day five", which is what acceptance criterion 1 asks for.
+The number this log hands out is what a balance query bounds with `knownAsOfSequence`. That is
+how the system answers one question. What did we think the day two balance was, at the end of
+day five? Acceptance criterion 1 asks exactly that.
 
 ## Its dependencies on other modules
 

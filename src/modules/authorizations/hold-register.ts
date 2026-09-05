@@ -1,18 +1,14 @@
 import { sumMinor, type MinorUnits } from '../../common/money/money.js';
 import type { ReplayDay } from '../../common/day/day.js';
-import {
-  AUTHORIZATION_STATE,
-  type IAuthorization,
-} from './authorization.types.js';
+import { AUTHORIZATION_STATE, type IAuthorization } from './authorization.types.js';
 
 /**
  * The state of every authorization, and the total currently held against each account.
  *
- * @remarks
- * This is a projection, not a source of truth. The event log is the source of truth, and
- * this register is what you get by replaying it. That is why a state transition here
- * replaces a frozen record rather than appending a new one: rebuilding the register from
- * the log at any time produces exactly the same content.
+ * This is a projection, not a source of truth. The event log is the source of truth, and this
+ * register is what you get by replaying it. So a state transition here replaces a frozen record
+ * rather than appending a new one. Rebuilding the register from the log produces exactly the
+ * same content.
  *
  * The distinction matters for the append only invariant. Invariant 2 constrains the log and
  * the ledger, which are history. A projection is a cache of history and is allowed to be
@@ -95,10 +91,10 @@ export class HoldRegister {
    * The whole hold is released even when the settled amount is smaller. E5 settles 185.00
    * against a hold of 200.00, and the remaining 15.00 is freed rather than kept.
    *
-   * That is the single presentment reading. A product that can present more than once
-   * against one authorization, such as a hotel folio or a split shipment, would keep the
-   * residual held until a final authorization or an expiry. Neither exists in this model.
-   * See AMBIGUITIES.md.
+   * That is the single presentment reading. A product that can present more than once against
+   * one authorization would keep the residual held. A hotel folio and a split shipment both do
+   * this. They hold until a final authorization arrives, or until an expiry. Neither exists in
+   * this model. See AMBIGUITIES.md.
    *
    * @param authId - The authorization being settled.
    * @param settledOnDay - The day the presentment arrived.

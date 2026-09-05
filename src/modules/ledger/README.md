@@ -2,7 +2,8 @@
 
 ## What it does
 
-Holds the balance-affecting entries, and answers the only question that matters: what did this account close at, on this day, as far as we knew at this point.
+Holds the balance-affecting entries. Answers the only question that matters: what did this
+account close at, on this day, as far as we knew at this point.
 
 ## How it relates to the rest of the project
 
@@ -20,13 +21,14 @@ balanceMinor(accountId, { valueDateOnOrBefore, knownAsOfSequence });
 
 A day's closing balance is not one number. The Day 2 closing balance of ACC-001 in this replay is:
 
-| Asked | Balance | Why |
-|---|---|---|
-| On day 2 | 250.00 | Only E1 and E2 exist |
-| On day 5 | (370.00) | E7 has arrived, backdated to day two |
-| On day 6 | 225.00 | E9 has reversed E7, and the fee remains |
+| Asked    | Balance  | Why                                     |
+| -------- | -------- | --------------------------------------- |
+| On day 2 | 250.00   | Only E1 and E2 exist                    |
+| On day 5 | (370.00) | E7 has arrived, backdated to day two    |
+| On day 6 | 225.00   | E9 has reversed E7, and the fee remains |
 
-All three are correct. Acceptance criterion 1 asks for the middle one, and the phrase it uses, "evaluated at end of Day 5", only means something if the other two exist.
+All three are correct. Acceptance criterion 1 asks for the middle one. The phrase it uses,
+"evaluated at end of Day 5", only means something if the other two exist.
 
 There is deliberately no convenience helper that takes a day alone. Such a helper would be a correct answer to the wrong question, and somebody would call it by mistake.
 
@@ -46,11 +48,15 @@ It is also the first thing that breaks at scale. A balance query scans the whole
 
 "At most one overdraft fee per account per day, ever" is enforced on the pair of account and day, not on the assessment run.
 
-The distinction matters because a later run revisits days an earlier run already charged. Without the guard, the day two fee would be charged again at every day close from day five onwards, and the balance would drift by 25.00 a day.
+The distinction matters because a later run revisits days an earlier run already charged.
+Without the guard, the day two fee would be charged again at every day close from day five
+onwards. The balance would drift by 25.00 a day.
 
 ### Identifiers are derived, not generated
 
-An entry gets `L1`, `L2`, and so on, from its sequence number. Two runs of the same event stream produce byte identical output, which the testing convention requires and which a ledger needs anyway: a ledger that cannot be replayed to the same result is not a ledger.
+An entry gets `L1`, `L2`, and so on, from its sequence number. Two runs of the same event stream
+produce byte identical output. The testing convention requires that, and a ledger needs it
+anyway. A ledger that cannot be replayed to the same result is not a ledger.
 
 ## Its dependencies on other modules
 

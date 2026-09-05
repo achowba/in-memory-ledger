@@ -17,10 +17,10 @@ There is no floating point anywhere, and there is no third party decimal type. T
 
 Every entry carries two independent times.
 
-| Clock | Field | Answers |
-|---|---|---|
-| Value date | `valueDate` | On which day does this entry change the balance? |
-| Arrival | `sequence` | In what order did the system learn of this entry? |
+| Clock      | Field       | Answers                                           |
+| ---------- | ----------- | ------------------------------------------------- |
+| Value date | `valueDate` | On which day does this entry change the balance?  |
+| Arrival    | `sequence`  | In what order did the system learn of this entry? |
 
 The two clocks normally agree. When an entry is backdated, the two clocks disagree, and a day's closing balance stops being a single number. The Day 2 closing balance is one number when asked on Day 2, and a different number when asked on Day 5.
 
@@ -43,10 +43,10 @@ Never add a balance helper that takes only one clock. A one-clock helper is a co
 
 Two collections, with different jobs:
 
-| Collection | Holds | Affects a balance |
-|---|---|---|
-| Event log | Every input, accepted or rejected, plus every entry the system generates | No |
-| Ledger | The balance-affecting entries only | Yes |
+| Collection | Holds                                                                    | Affects a balance |
+| ---------- | ------------------------------------------------------------------------ | ----------------- |
+| Event log  | Every input, accepted or rejected, plus every entry the system generates | No                |
+| Ledger     | The balance-affecting entries only                                       | Yes               |
 
 An authorization never produces a ledger entry. A hold reduces the available balance and never touches the ledger balance.
 
@@ -60,7 +60,7 @@ Nothing is created and nothing is discarded.
 
 ## The fee cascade
 
-An overdraft fee is itself a value-dated ledger entry. So a fee booked against an earlier day lowers the closing balance of every later day, and a fee can push a later day below zero.
+An overdraft fee is itself a value-dated ledger entry. So a fee booked against an earlier day lowers the closing balance of every later day. A fee can therefore push a later day below zero.
 
 Two rules follow, and both are load bearing:
 
@@ -85,4 +85,6 @@ This distinction decides what a reversal repairs.
 - **Interest is derived.** Interest is recomputed from the current entry set whenever it is needed. Reverse the cause and the interest corrects itself, with no extra event.
 - **A fee is assessed.** A fee records a decision the system made on a given day with the facts it had on that day. Reversing the cause does not retract the decision. Retracting a decision needs its own event, carrying its own reason.
 
-The consequence is deliberate and it is documented in `AMBIGUITIES.md`. A reversal restores the interest and leaves the fees standing. The system cannot do better, because a reversal carries no reason code and therefore cannot distinguish an error by the bank from a legitimate return by the customer. That gap is covered by the annotated failing test.
+The consequence is deliberate. `AMBIGUITIES.md` records it. A reversal restores the interest. A reversal leaves the fees standing.
+
+The system cannot do better. A reversal carries no reason code. So the system cannot tell an error by the bank from a legitimate return by the customer. The annotated failing test covers that gap.

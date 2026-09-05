@@ -15,11 +15,11 @@ artifacts/<category>/<descriptor>_<YYYYMMDDHHMMSS>.<type>.md
 
 ## Categories
 
-| Path | Holds |
-|---|---|
+| Path               | Holds                                                        |
+| ------------------ | ------------------------------------------------------------ |
 | `artifacts/plans/` | Implementation plans, written before the code they describe. |
 | `artifacts/notes/` | Research and working write ups, including the task analysis. |
-| `artifacts/refs/` | Lookup documents reused across sessions. |
+| `artifacts/refs/`  | Lookup documents reused across sessions.                     |
 
 ## Not committed
 

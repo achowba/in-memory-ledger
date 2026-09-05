@@ -24,14 +24,13 @@ export interface IBalanceQuery {
 /**
  * The append only store of balance-affecting entries, and the queries over it.
  *
- * @remarks
- * A day's closing balance is not one number. It depends on when you ask, because a backdated
- * entry changes the answer for a day that already closed. The brief proves it expects this:
- * acceptance criterion 1 asks for the day two closing balance "evaluated at end of Day 5",
- * and that qualifier only means something if the answer can differ.
+ * A day closing balance is not one number. It depends on when you ask, because a backdated
+ * entry changes the answer for a day that already closed.  The brief proves it expects this.
+ * Acceptance criterion 1 asks for the day two closing balance "evaluated at end of Day 5". That
+ * qualifier only means something if the answer can differ.
  *
- * The Day 2 closing balance of ACC-001 in this replay is 250.00 asked on day two, (370.00)
- * asked on day five, and 225.00 asked on day six. All three are correct.
+ * The Day 2 closing balance of ACC-001 in this replay has three values. It is 250.00 asked on
+ * day two. It is (370.00) asked on day five. It is 225.00 asked on day six.
  *
  * Nothing here mutates. There is no update and no delete. A correction is a new entry.
  */
@@ -95,11 +94,10 @@ export class Ledger {
   /**
    * Reports whether an account already carries an entry of one origin on one value date.
    *
-   * @remarks
-   * This is the guard behind "at most one overdraft fee per account per day, ever". The
-   * guard is on the pair of account and day, not on the assessment run, because a later run
-   * revisits days that an earlier run already charged. Without it, the day two fee would be
-   * charged again at every day close from day five onwards.
+   * This is the guard behind one overdraft fee per account per day, ever. The guard is on the
+   * pair of account and day, not on the assessment run. A later run revisits days that an
+   * earlier run already charged. Without the guard, the day two fee would be charged again at
+   * every day close from day five onwards.
    *
    * @param accountId - The account to check.
    * @param origin - The kind of entry to look for.
@@ -109,9 +107,7 @@ export class Ledger {
   public hasEntry(accountId: string, origin: EntryOrigin, valueDate: Day): boolean {
     return this.entries.some(
       (entry) =>
-        entry.accountId === accountId &&
-        entry.origin === origin &&
-        entry.valueDate === valueDate,
+        entry.accountId === accountId && entry.origin === origin && entry.valueDate === valueDate,
     );
   }
 

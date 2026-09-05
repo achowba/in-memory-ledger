@@ -40,9 +40,8 @@ export const OVERDRAFT_FEE_MINOR_BY_CURRENCY: Partial<Record<CurrencyCode, Minor
 /**
  * The balance at or above which no overdraft fee is charged.
  *
- * @remarks
- * Zero, and the comparison is strict. A day that closes at exactly 0.00 is not overdrawn, so
- * a flat account is never charged. Written as `<= 0n` this would put a fee on an account
- * that owes nothing, which is both wrong and the kind of wrong a customer notices.
+ * Zero, and the comparison is strict. A day that closes at exactly 0.00 is not overdrawn, so a
+ * flat account is never charged. Written as `<= 0n` this would put a fee on an account that
+ * owes nothing. That is wrong, and it is the kind of wrong a customer notices.
  */
 export const OVERDRAFT_THRESHOLD_MINOR: MinorUnits = 0n;

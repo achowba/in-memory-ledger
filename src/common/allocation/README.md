@@ -16,9 +16,9 @@ The brief asks for BHD 10.000 as "three equal instalments". Three equal instalme
 
 Two invariants are in conflict, and only one can hold:
 
-| Invariant | Result |
-|---|---|
-| The parts are equal | 3.334, 3.334, 3.334, totalling 10.002 |
+| Invariant                  | Result                                |
+| -------------------------- | ------------------------------------- |
+| The parts are equal        | 3.334, 3.334, 3.334, totalling 10.002 |
 | The parts sum to the total | 3.334, 3.333, 3.333, totalling 10.000 |
 
 Conservation wins. A ledger that can invent BHD 0.002 can invent anything, and the invented amount appears on a customer's statement as money nobody deposited. Acceptance criterion 7 asks for the first row and is refused. See `REJECTED.md`.
@@ -27,11 +27,14 @@ Conservation wins. A ledger that can invent BHD 0.002 can invent anything, and t
 
 Largest remainder, with the index as the tie break. All three parts of E10 carry the same value date, so the placement moves no money in time and is presentational.
 
-It is fixed anyway. An allocation that depends on nothing visible is an allocation that silently changes the day somebody reorders a loop, and the change would not fail a test that only checks the total.
+It is fixed anyway. An allocation that depends on nothing visible changes silently the day
+somebody reorders a loop. That change would not fail a test that only checks the total.
 
 ### The parts never spread by more than one minor unit
 
-Dumping the whole residual onto one part would also conserve value and would still be wrong. "As equal as the currency allows" is a real constraint, and the spec asserts it over a sweep of totals and part counts rather than on one example.
+Dumping the whole residual onto one part would also conserve value. It would still be wrong. "As
+equal as the currency allows" is a real constraint. The spec asserts it over a sweep of totals
+and part counts, rather than on one example.
 
 ### A negative total splits symmetrically
 

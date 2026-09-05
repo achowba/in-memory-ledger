@@ -14,7 +14,8 @@ This is the module acceptance criterion 2 is wrong about, so it carries the heav
 
 ### The walk is ascending, and one pass is enough
 
-A fee is a value dated ledger entry, so a fee booked against day two lowers the closing balance of days three through six as well. Fees cascade.
+A fee is a value dated ledger entry. So a fee booked against day two lowers the closing balance
+of days three through six as well. Fees cascade.
 
 Walking ascending makes a single pass sufficient, because a fee for day `d` can only affect days at or after `d`. By the time the walk reaches day four, every fee that could change day four has already been booked. Any other order would need iterating until nothing changes, and would have to prove it terminates.
 
@@ -28,7 +29,9 @@ A run that looked at today alone would miss both, and would charge one fee inste
 
 The guard is `ledger.hasEntry(accountId, OVERDRAFT_FEE, day)`, keyed on the pair of account and day, not on the assessment run.
 
-The distinction is what makes repeated runs safe. Every day close re-walks the window, so without the guard the day two fee would be charged again on day five, day six, and every close after that.
+The distinction is what makes repeated runs safe. Every day close re-walks the window. Without
+the guard the day two fee would be charged again on day five, on day six, and at every close
+after that.
 
 ### Strictly below zero
 
@@ -40,12 +43,12 @@ Written as `<= 0n` this would charge an account that owes nothing, which is both
 
 AED 25.00 sits just under a cliff. Day three of ACC-001 closes at 30.00 once E7 has posted, and the day two fee lowers it to 5.00.
 
-| Fee | Day 3 closing | Fees charged |
-|---|---|---|
-| 12.50 | 17.50 | 3 |
-| 25.00 | 5.00 | 3 |
-| 30.00 | 0.00 | 3 |
-| 30.01 | (0.01) | 4 |
+| Fee   | Day 3 closing | Fees charged |
+| ----- | ------------- | ------------ |
+| 12.50 | 17.50         | 3            |
+| 25.00 | 5.00          | 3            |
+| 30.00 | 0.00          | 3            |
+| 30.01 | (0.01)        | 4            |
 
 So halving the fee changes nothing, and the count moves only above AED 30.00, where the cascade reaches day three. See `NUMBERS.md`.
 
@@ -53,7 +56,9 @@ So halving the fee changes nothing, and the count moves only above AED 30.00, wh
 
 The brief prices the overdraft fee in AED only. `OVERDRAFT_FEE_MINOR_BY_CURRENCY` has one entry, and an account in an unpriced currency that goes overdrawn raises `FEE_NOT_PRICED_FOR_CURRENCY`.
 
-Defaulting to the AED figure, or to zero, would be guessing at an amount a customer gets charged. ACC-002 never goes below zero, so the case does not arise in this replay, but a two currency system with a one currency fee schedule is a real gap. See `AMBIGUITIES.md`.
+Defaulting to the AED figure, or to zero, would be guessing at an amount a customer gets
+charged. ACC-002 never goes below zero, so the case does not arise in this replay. A two
+currency system with a one currency fee schedule is still a real gap. See `AMBIGUITIES.md`.
 
 ### What a fee is, and what that means for a reversal
 

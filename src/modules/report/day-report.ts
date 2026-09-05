@@ -38,7 +38,9 @@ function renderEvent(
   const { event } = record;
   const currency = currencyOf(event.accountId);
   const amount =
-    'amountMinor' in event ? formatAmount(currency, event.amountMinor).padStart(12) : ''.padStart(12);
+    'amountMinor' in event
+      ? formatAmount(currency, event.amountMinor).padStart(12)
+      : ''.padStart(12);
   const reference =
     'authId' in event
       ? event.authId
@@ -85,10 +87,7 @@ function renderBalance(snapshot: IAccountDaySnapshot): string {
  * @param currencyOf - Resolves an account to its currency.
  * @returns The rendered block.
  */
-function renderDay(
-  result: IDayResult,
-  currencyOf: (accountId: string) => 'AED' | 'BHD',
-): string {
+function renderDay(result: IDayResult, currencyOf: (accountId: string) => 'AED' | 'BHD'): string {
   const lines: string[] = [LIGHT_RULE, `DAY ${result.day}`, LIGHT_RULE, ''];
 
   lines.push('  EVENTS');
@@ -150,9 +149,12 @@ function renderDay(
   const problems = result.events.flatMap((record) => [
     ...(record.refusal === null
       ? []
-      : [`    ${record.event.eventId.padEnd(4)} ERROR  ${record.refusal.code}: ${record.refusal.detail}`]),
+      : [
+          `    ${record.event.eventId.padEnd(4)} ERROR  ${record.refusal.code}: ${record.refusal.detail}`,
+        ]),
     ...record.warnings.map(
-      (warning) => `    ${record.event.eventId.padEnd(4)} WARN   ${warning.code}: ${warning.detail}`,
+      (warning) =>
+        `    ${record.event.eventId.padEnd(4)} WARN   ${warning.code}: ${warning.detail}`,
     ),
   ]);
 
@@ -166,10 +168,9 @@ function renderDay(
 /**
  * Renders the whole replay as text.
  *
- * @remarks
- * The interest schedule is printed with its working rather than as a single figure, because
- * the brief requires the rounded daily accruals to sum exactly to the capitalized total and
- * a reader should be able to check that by adding up a column.
+ * The interest schedule is printed with its working rather than as a single figure. The brief
+ * requires the rounded daily accruals to sum exactly to the capitalized total. A reader should
+ * be able to check that by adding up a column.
  *
  * @param result - Everything the replay produced.
  * @returns The report, ready to print.
@@ -204,7 +205,8 @@ export function renderReport(result: IReplayResult): string {
 
     for (const accrual of account.accruals) {
       lines.push(
-        (`     ${accrual.day}    ` +
+        (
+          `     ${accrual.day}    ` +
           formatAmount(account.currency, accrual.closingBalanceMinor).padStart(14)
         ).padEnd(ACCRUAL_COLUMN) +
           formatAmount(account.currency, accrual.accrualMinor).padStart(ACCRUAL_WIDTH),

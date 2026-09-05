@@ -7,7 +7,7 @@ See [tsdoc](tsdoc.convention.md). That file covers where a block goes, which tag
 ## Comments in the body
 
 - A comment explains why, not what. The code says what.
-- Comment the non-obvious decision: why the days are walked in ascending order, why zero is not treated as negative, why a residual goes to the first part.
+- Comment the non-obvious decision. Say why the days are walked in ascending order. Say why zero is not treated as negative. Say why a residual goes to the first part.
 - Do not narrate. `// add the amount` above `total += amount` is noise.
 - Where a line exists because of a specific acceptance criterion or a specific ambiguity, name it. `See AMBIGUITIES.md A8.5` is worth more than a paragraph.
 

@@ -12,8 +12,8 @@ import { ACCOUNTS, EVENT_STREAM } from '../src/modules/replay/scenario.js';
  * day six. So the list is not in arrival order, or a booking date is wrong.
  *
  * The engine groups by booking day and raises a warning. These tests show that the choice
- * changes nothing, so the ambiguity is real but harmless here, and that the warning is
- * raised anyway rather than the anomaly being reordered away in silence.
+ * changes nothing, so the ambiguity is real but harmless here. They also show that the warning
+ * is raised anyway, rather than the anomaly being reordered away in silence.
  */
 
 /** The same stream with E10 moved to where its booking day says it belongs. */

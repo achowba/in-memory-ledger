@@ -4,10 +4,10 @@
 
 Two different things go wrong, and they are handled differently.
 
-| Kind | Example | Handling |
-|---|---|---|
-| A domain refusal | A settlement names an authorization that does not exist. An authorization would take the available balance below zero. | Append a rejected record to the event log, with a code and a reason. Continue the replay. |
-| A programming fault | A currency has no registered exponent. An amount carries more precision than its currency allows. | Throw. The replay stops. |
+| Kind                | Example                                                                                                                | Handling                                                                                  |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| A domain refusal    | A settlement names an authorization that does not exist. An authorization would take the available balance below zero. | Append a rejected record to the event log, with a code and a reason. Continue the replay. |
+| A programming fault | A currency has no registered exponent. An amount carries more precision than its currency allows.                      | Throw. The replay stops.                                                                  |
 
 A domain refusal is an expected outcome of a correct system, and the brief requires it to be printed. A domain refusal must never be thrown away, and must never be silently swallowed.
 

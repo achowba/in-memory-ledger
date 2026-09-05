@@ -10,9 +10,17 @@ The runner is the built in `node:test`, with `node:assert/strict`. There is no t
 
 ## What a test covers
 
-Each unit under test gets three kinds of test: the happy path, the failure the code exists to reject, and the edge case that breaks a naive implementation.
+Each unit under test gets three kinds of test. Cover the happy path. Cover the failure the code exists to reject. Cover the edge case that breaks a naive implementation.
 
-For this project the edge cases that matter are a balance of exactly zero, a rounding tie, a total that does not divide evenly, a fee that cascades into a later day, a settlement larger than its hold, a second settlement against an already settled authorization, and a backdated entry that reopens a closed day.
+These are the edge cases that matter here:
+
+- A balance of exactly zero.
+- A rounding tie.
+- A total that does not divide evenly.
+- A fee that cascades into a later day.
+- A settlement larger than its hold.
+- A second settlement against an authorization that already settled.
+- A backdated entry that reopens a closed day.
 
 - Assert on behaviour, not on how it was reached.
 - One reason to fail per test. A test whose name contains "and" is usually two tests.

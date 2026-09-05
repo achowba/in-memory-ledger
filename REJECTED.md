@@ -6,16 +6,16 @@ Every refusal here is executable. `test/rejected-criteria.e2e-spec.ts` runs the 
 
 ## The verdicts
 
-| # | Criterion, in short | Verdict |
-|---|---|---|
-| 1 | Day 2 closing at end of Day 5, before fees, is (370.00) | Accepted |
-| 2 | E7 causes exactly one overdraft fee, on Day 2 | **Refused** |
-| 3 | The Day 4 settlement of Auth-A must be accepted | Accepted |
-| 4 | A settlement naming an unknown authorization is rejected, funds stay | Accepted, with a caveat |
-| 5 | If Auth-B is approved, its hold cuts available but not ledger balance | **Refused as a criterion** |
-| 6 | After E9, all balances and fees return to their pre-E7 values | **Refused** |
-| 7 | The three BHD instalments must each be BHD 3.334 | **Refused** |
-| 8 | An interest remainder that does not sum is discarded | **Refused** |
+| #   | Criterion, in short                                                   | Verdict                    |
+| --- | --------------------------------------------------------------------- | -------------------------- |
+| 1   | Day 2 closing at end of Day 5, before fees, is (370.00)               | Accepted                   |
+| 2   | E7 causes exactly one overdraft fee, on Day 2                         | **Refused**                |
+| 3   | The Day 4 settlement of Auth-A must be accepted                       | Accepted                   |
+| 4   | A settlement naming an unknown authorization is rejected, funds stay  | Accepted, with a caveat    |
+| 5   | If Auth-B is approved, its hold cuts available but not ledger balance | **Refused as a criterion** |
+| 6   | After E9, all balances and fees return to their pre-E7 values         | **Refused**                |
+| 7   | The three BHD instalments must each be BHD 3.334                      | **Refused**                |
+| 8   | An interest remainder that does not sum is discarded                  | **Refused**                |
 
 ---
 
@@ -80,10 +80,10 @@ The conditional phrasing, "if Auth-B is approved", suggests the author knew.
 Nothing returns. The ledger is append only, so the three fees cannot be un-booked.
 
 | Day | Before E7 | After E9 |
-|---|---|---|
-| 2 | 250.00 | 225.00 |
-| 4 | 465.00 | 415.00 |
-| 6 | 465.00 | 390.00 |
+| --- | --------- | -------- |
+| 2   | 250.00    | 225.00   |
+| 4   | 465.00    | 415.00   |
+| 6   | 465.00    | 390.00   |
 
 E7 itself is still in the ledger. E9 sits beside it as an opposite entry that names it through `reversesEntryId`. Neither record was edited.
 
@@ -113,9 +113,9 @@ The criterion creates BHD 0.002 that nobody deposited. A ledger that can invent 
 
 Three genuinely equal instalments do not exist at three decimal places. 10000 fils over three parts is 3333 each with 1 left over. Two invariants are in conflict and only one can hold:
 
-| Invariant | Result |
-|---|---|
-| The parts are equal | 3.334, 3.334, 3.334, totalling 10.002 |
+| Invariant                  | Result                                |
+| -------------------------- | ------------------------------------- |
+| The parts are equal        | 3.334, 3.334, 3.334, totalling 10.002 |
 | The parts sum to the total | 3.334, 3.333, 3.333, totalling 10.000 |
 
 Conservation wins. The split is **3.334, 3.333, 3.333**, with the residual allocated to the earliest part by largest remainder.
@@ -186,7 +186,9 @@ The fee schedule was first written as a `const` object with an index cast:
 const fee: MinorUnits | undefined =
   OVERDRAFT_FEE_MINOR_BY_CURRENCY[currency as keyof typeof OVERDRAFT_FEE_MINOR_BY_CURRENCY];
 
-if (fee === undefined) { /* raise FEE_NOT_PRICED_FOR_CURRENCY */ }
+if (fee === undefined) {
+  /* raise FEE_NOT_PRICED_FOR_CURRENCY */
+}
 ```
 
 The linter rejected the comparison: "the types have no overlap". It was right. The cast asserted that every currency has an entry, which made the `undefined` branch unreachable. The BHD gap that the code carefully documented would have returned `undefined` at runtime with the guard skipped.

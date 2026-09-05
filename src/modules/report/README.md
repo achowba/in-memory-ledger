@@ -26,13 +26,16 @@ Not only when it differs from the booking day. A reader checking a backdated ent
 
 ### The interest schedule shows its working
 
-The daily accruals are printed as a column with a rule and a total under them, aligned, so a reader can add the column up by eye.
+The daily accruals are printed as a column, with a rule and a total under them, aligned. So a
+reader can add the column up by eye.
 
 That check is precisely the rule the brief states: the rounded daily accruals must sum exactly to the capitalized total. Printing only the total would ask the reader to trust it.
 
 ### One column width for every currency
 
-AED prints two decimals and BHD three. A width derived from the currency would leave the two accounts misaligned in the same column, which makes a report harder to scan than a slightly wider one.
+AED prints two decimals and BHD three. A width derived from the currency would leave the two
+accounts misaligned in the same column. That makes a report harder to scan than a slightly wider
+one.
 
 ## Its dependencies on other modules
 

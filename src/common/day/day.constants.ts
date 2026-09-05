@@ -5,10 +5,9 @@
 /**
  * The value date carried by an opening balance.
  *
- * @remarks
- * Zero, which sits outside the replay window on purpose. An opening balance is modelled as
- * an ordinary ledger entry rather than as a field on the account, so that a balance stays a
- * pure function of the entry list and nothing has to remember to add a starting figure.
+ * Zero, which sits outside the replay window on purpose. An opening balance is an ordinary
+ * ledger entry rather than a field on the account. So a balance stays a pure function of the
+ * entry list. Nothing has to remember to add a starting figure.
  *
  * Placing it on day zero rather than day one keeps the two ideas separate. Day one holds
  * what happened on day one. Day zero holds what was already true before the window opened.
@@ -27,8 +26,8 @@ export const OPENING_DAY = 0;
  * five days by excluding either end is a defensible reading of some interest conventions
  * and is not the reading taken here.
  *
- * This is a list rather than a pair of bounds because every loop over the window should be
- * a loop over this array. A hand written `for` loop with its own start and end is a place
- * an off by one can hide, and an off by one here silently changes a fee count.
+ * This is a list rather than a pair of bounds, because every loop over the window should
+ * iterate this array. A hand written `for` loop carries its own start and end. That is where an
+ * off by one hides. An off by one here silently changes a fee count.
  */
 export const REPLAY_DAYS = [1, 2, 3, 4, 5, 6] as const;

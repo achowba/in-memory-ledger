@@ -15,8 +15,8 @@ import { ROUNDING_MODE, type RoundingMode } from './rounding.constants.js';
  * one direction.
  *
  * The tie test avoids division entirely. Comparing `remainder * 2n` against the divisor is
- * exact for any bigint, whereas comparing a computed fraction against one half would
- * reintroduce the floating point this ledger exists to avoid.
+ * exact for any bigint. Comparing a computed fraction against one half would reintroduce the
+ * floating point this ledger exists to avoid.
  *
  * @steps
  * 1. Work out the sign of the result, then take the magnitude of both operands.

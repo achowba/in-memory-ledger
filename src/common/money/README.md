@@ -8,7 +8,9 @@ Represents money as a whole count of the smallest unit of its currency, and know
 
 Everything that holds an amount imports from here. This folder imports only from `common/errors`, so it sits near the bottom of the dependency graph.
 
-Rounding does not live here. Rounding lives beside it in `common/rounding` and `common/allocation`, because those two are the only places a value can be lost or created and they deserve their own files and their own tests.
+Rounding does not live here. Rounding lives beside it in `common/rounding` and
+`common/allocation`. Those two are the only places a value can be lost or created, so they
+deserve their own files and their own tests.
 
 ## The decisions it owns
 
@@ -24,11 +26,16 @@ The result is a claim that can be checked in one pass of the codebase. There is 
 
 `CURRENCY_EXPONENT` is the only place a precision is declared. AED is 2 and BHD is 3, from ISO 4217.
 
-The brief pairs a 2 place currency with a 3 place one deliberately. A single global precision passes every AED test and silently corrupts every BHD amount, which is a bug that only shows up in the third decimal place of an account nobody is watching.
+The brief pairs a 2 place currency with a 3 place one deliberately. A single global precision
+passes every AED test and silently corrupts every BHD amount. That bug only shows up in the
+third decimal place of an account nobody is watching.
 
 ### `MinorUnits` is an alias, not a branded type
 
-A brand would force a cast at every literal. That costs more in readability than it buys here, because there is no second numeric money representation in the codebase to confuse it with, and the naming rule puts `Minor` on the end of every money identifier. The unit is visible at the call site without the type system having to shout it.
+A brand would force a cast at every literal. That costs more in readability than it buys here.
+There is no second numeric money representation in the codebase to confuse it with. The naming
+rule also puts `Minor` on the end of every money identifier, so the unit is visible at the call
+site.
 
 ### An input is refused rather than rounded
 
@@ -36,7 +43,8 @@ A brand would force a cast at every literal. That costs more in readability than
 
 Rounding an input silently would discard what the caller meant, and nothing downstream could ever tell that it happened. Refusing is louder and cheaper.
 
-Parsing text also lets the event stream be written in the same notation as the brief, so the two can be compared line by line during review.
+Parsing text also lets the event stream use the same notation as the brief. A reviewer can then
+compare the two line by line.
 
 ### A negative amount prints in brackets
 

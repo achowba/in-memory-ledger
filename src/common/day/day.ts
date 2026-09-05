@@ -22,10 +22,9 @@ export type Day = typeof OPENING_DAY | ReplayDay;
 /**
  * Lists the replay days from the start of the window up to and including one day.
  *
- * @remarks
- * This is how every backward looking walk over the window is written. The fee engine uses
- * it to reassess earlier days after a backdated entry arrives, and the order it returns is
- * the ascending order that makes a single pass sufficient. See the ledger domain convention.
+ * This is how every backward looking walk over the window is written. The fee engine uses it to
+ * reassess earlier days after a backdated entry arrives. It returns the days in ascending
+ * order, which is what makes a single pass sufficient. See the ledger domain convention.
  *
  * Passing the opening day returns an empty list, which is correct: nothing is assessed
  * against a day that exists only to hold a starting figure.
@@ -40,10 +39,9 @@ export function replayDaysThrough(throughDay: Day): readonly ReplayDay[] {
 /**
  * Reports whether one day falls on or before another.
  *
- * @remarks
- * A named predicate rather than a bare comparison, because `entry.valueDate <= day` appears
- * in every balance query and reads as an arithmetic accident rather than as the value date
- * rule it actually is.
+ * A named predicate rather than a bare comparison. `entry.valueDate <= day` appears in every
+ * balance query. Written inline it reads as an arithmetic accident. Named, it reads as the
+ * value date rule that it is.
  *
  * @param valueDate - The value date of an entry.
  * @param day - The day whose closing balance is being computed.

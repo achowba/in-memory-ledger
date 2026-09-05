@@ -1,11 +1,10 @@
 /**
  * Stable codes for everything that can go wrong, split by how it is handled.
  *
- * @remarks
- * The split is the point. A refusal is an expected outcome of a correct system and the
- * brief requires it to be printed, so a refusal is recorded and the replay continues. A
- * fault means the model was handed something it was not designed for, so a fault throws
- * and the replay stops. See `.agents/conventions/error-handling.convention.md`.
+ * The split is the point. A refusal is an expected outcome of a correct system, and the brief
+ * requires it to be printed. So a refusal is recorded and the replay continues. A fault means
+ * the model was handed something it was not designed for. So a fault throws and the replay
+ * stops. See `.agents/conventions/error-handling.convention.md`.
  *
  * A code names the situation, never the message text. A test asserts on the code, because
  * a message is for a human and may be reworded.

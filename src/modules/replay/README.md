@@ -26,17 +26,19 @@ Fees run after the day's events rather than before, so a backdated entry arrivin
 
 ### Only an authorization is gated on available balance
 
-| Event | Gated | Why |
-|---|---|---|
-| `AUTHORIZATION` | Yes | The brief states the rule, and it is the only place it states it. |
-| `DEBIT` | No | A direct debit posts and may overdraw. That is the reason an overdraft fee exists. Gating it would decline E7 and make acceptance criterion 1 unreachable. |
-| `SETTLEMENT` | No | The hold already reserved the funds and the bank is committed to the payment. |
+| Event           | Gated | Why                                                                                                                                                        |
+| --------------- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AUTHORIZATION` | Yes   | The brief states the rule, and it is the only place it states it.                                                                                          |
+| `DEBIT`         | No    | A direct debit posts and may overdraw. That is the reason an overdraft fee exists. Gating it would decline E7 and make acceptance criterion 1 unreachable. |
+| `SETTLEMENT`    | No    | The hold already reserved the funds and the bank is committed to the payment.                                                                              |
 
 ### A reversal never edits the original
 
 E9 appends an opposite entry for each entry E7 produced, inheriting the original value date. E7 itself is untouched, and the pair can be read together through `reversesEntryId`.
 
-Inheriting the value date is what makes the correction land on the day the money was supposed to have moved, rather than on the day the mistake was noticed. Reversing at the current value date instead would leave the whole fee and interest footprint in place and produce a very different answer. See `AMBIGUITIES.md`.
+Inheriting the value date is what makes the correction land on the day the money was supposed to
+have moved. It does not land on the day the mistake was noticed. Reversing at the current value
+date instead would leave the whole fee and interest footprint in place. See `AMBIGUITIES.md`.
 
 Three guards: the target must exist, must have been accepted, and must not already carry a reversal. Reversing twice would credit the account for money that only ever left it once.
 

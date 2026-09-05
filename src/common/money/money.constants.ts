@@ -1,10 +1,9 @@
 /**
  * The currency registry, and the reasoning behind each exponent.
  *
- * @remarks
- * This file is the only place a currency exponent is declared. Adding a currency anywhere
- * else would let two parts of the system disagree about how many fils are in a dirham, and
- * that disagreement would show up as a rounding bug rather than as a type error.
+ * This file is the only place a currency exponent is declared. Adding a currency anywhere else
+ * would let two parts of the system disagree about how many fils are in a dirham. That
+ * disagreement shows up as a rounding bug rather than as a type error.
  */
 
 /**

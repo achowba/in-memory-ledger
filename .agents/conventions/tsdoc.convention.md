@@ -6,7 +6,9 @@ Enforced, not merely expected. `tsdoc/syntax` is an eslint error, so a malformed
 
 ## What gets a block
 
-Everything exported, and every method: functions, classes, interfaces, type aliases, and exported constants. A short declaration still has a reason to exist that its body does not state.
+Every export takes a block. So does every method. That covers a function, a class, an interface, a type alias, and an exported constant.
+
+A short declaration still has a reason to exist. Its body does not state that reason.
 
 ## The block goes above the declaration
 
@@ -35,7 +37,7 @@ export interface ILedgerEntry {
 }
 ```
 
-A member list stays scannable when it is not tripled in height by interleaved comments, and one block moves as a unit when the declaration moves.
+Interleaved comments triple the height of a member list. One block above the declaration keeps the list scannable. One block also moves as a unit when the declaration moves.
 
 ## Tags
 
@@ -43,10 +45,10 @@ Standard TSDoc: `@remarks`, `@param`, `@returns`, `@throws`, `@typeParam`, `@exa
 
 Two custom block tags are declared in `tsdoc.json`, which is the only place a new tag may be introduced:
 
-| Tag | Use |
-|---|---|
-| `@property` | One per member of an interface, a type alias, or a const object. Repeatable. |
-| `@steps` | The ordered steps a function takes, where the sequence is the thing worth knowing. |
+| Tag         | Use                                                                                |
+| ----------- | ---------------------------------------------------------------------------------- |
+| `@property` | One per member of an interface, a type alias, or a const object. Repeatable.       |
+| `@steps`    | The ordered steps a function takes, where the sequence is the thing worth knowing. |
 
 Using a tag that is neither standard nor declared in `tsdoc.json` is a lint error.
 

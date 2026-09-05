@@ -47,19 +47,19 @@ import { ACCOUNTS, EVENT_STREAM } from '../src/modules/replay/scenario.js';
  * WHAT WOULD FIX IT
  *
  * Not a change to the fee engine. A missing domain concept: a reason code on the reversal,
- * drawn from a closed list, with bank error routed to a fee reversal workflow under maker
- * checker, and customer return leaving the fees in place. That is the control named in
- * section three of ARCHITECTURE.md. It is named there rather than built here because of
- * scope, not because the gap went unnoticed.
+ * drawn from a closed list. Bank error routes to a fee reversal workflow under maker checker.
+ * Customer return leaves the fees in place. That is the control named in section three of
+ * ARCHITECTURE.md. It is named there rather than built here because of scope, not because the
+ * gap went unnoticed.
  *
  * THE COST, IN THIS REPLAY
  *
- * Had E7 never posted, ACC-001 would close at AED 466.03: a balance of 465.00 plus 1.03 of
- * interest. It closes at 390.93. The shortfall is AED 75.10, which is 75.00 of fees plus
- * 0.10 of interest those fees cost the customer by holding every later balance down.
+ * Had E7 never posted, ACC-001 would close at AED 466.03. That is a balance of 465.00 plus
+ * 1.03 of interest. It closes at 390.93. The shortfall is AED 75.10. That is 75.00 of fees,
+ * plus 0.10 of interest those fees cost by holding every later balance down.
  *
- * On a balance of 466.03 that is 16 percent of the account, decided by a rule the customer
- * cannot see and the system cannot justify either way.
+ * On a balance of 466.03 that is 16 percent of the account. It is decided by a rule the
+ * customer cannot see, and one the system cannot justify either way.
  */
 
 /** The closing balances of ACC-001 had E7 never been posted at all. */
@@ -76,15 +76,9 @@ before(() => {
 });
 
 describe('a reversal that undoes its cause', () => {
-  // FAILS, on purpose. See the block comment at the top of this file.
-  //
-  // The account is AED 75.10 short of where it would be had E7 never posted: 75.00 of fees
-  // that append only forbids un-booking, and 0.10 of interest those fees cost by holding
-  // every later balance down.
-  //
-  // The fee engine is not broken. It is answering a question nobody asked it, because the
-  // reversal carries no reason and the system therefore cannot know whether the fees were
-  // the bank's mistake or the customer's own overdraft.
+  // The account is AED 75.10 short of where it would be had E7 never posted. That is 75.00 of
+  // fees, which append only forbids un-booking. It is also 0.10 of interest those fees cost, by
+  // holding every later balance down.
   it('known gap: leaves the customer where they would have been without E7', () => {
     const actualMinor = result.ledger.balanceMinor('ACC-001', { valueDateOnOrBefore: 6 });
     const shortfallMinor = WITHOUT_E7_FINAL_MINOR - actualMinor;
