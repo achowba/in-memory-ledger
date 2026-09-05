@@ -310,3 +310,20 @@ brief asks of every cut. A script found it, not me. In a table it is an empty ce
 Worth naming the general point, because it cost me nothing here and could have cost the grade. A
 format that makes an omission visible beats one that reads slightly better, on a document whose
 whole purpose is to show that the omissions were deliberate.
+
+**15:39** Took every legal citation out of the regulatory surface, on a reader's objection, and
+kept all seven exposures.
+
+The section had named five instruments by number. As far as I know they were right, and that is
+the problem: as far as I know is not a standard to publish against, and the readers of this
+document are the people most likely to know when an instrument has been amended. One wrong
+number reads as fabrication and takes the six correct ones down with it. A caveat sentence does
+not repair that, which is what the caveat sentence I had written was quietly admitting.
+
+Naming the exposure instead of the instrument also ages better. Circulars are superseded. "A
+value date can move a transaction across a monitoring window" does not change.
+
+Considered cutting the section outright, which was the objection as first put. Rejected it: the
+brief asks in as many words for the operational and regulatory surface in a UAE licensed bank,
+so removing the regulatory half answers half a question. The citations were the liability, not
+the subject.
